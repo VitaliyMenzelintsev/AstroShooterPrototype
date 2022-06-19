@@ -19,12 +19,12 @@ public class Gun : MonoBehaviour
     private bool _isReloading; 
 
     [Header("Recoil")]
-    public Vector2 kickMinMax = new Vector2(0.05f, 2f);       
-    public Vector2 recoilAngleMinMax = new Vector2(3, 5);     
-    public float timeOfReturnToPosition = 0.1f;
-    private Vector3 recoilSmoothDampVelocity;    
-    private float recoilRotSmoothDampVelocity;   
-    private float recoilAngle;                  
+    //public Vector2 kickMinMax = new Vector2(0.005f, .2f);       
+    //public Vector2 recoilAngleMinMax = new Vector2(.1f, .2f);     
+    //public float timeOfReturnToPosition = 0.1f;
+    //private Vector3 recoilSmoothDampVelocity;    
+    //private float recoilRotSmoothDampVelocity;   
+    //private float recoilAngle;                  
 
     private float _nextShotTime;
     private bool _triggerReleasedSinceLastShot;  
@@ -39,9 +39,9 @@ public class Gun : MonoBehaviour
 
     private void LateUpdate()          
     {
-        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, Vector3.zero, ref recoilSmoothDampVelocity, timeOfReturnToPosition);
-        recoilAngle = Mathf.SmoothDamp(recoilAngle, 0, ref recoilRotSmoothDampVelocity, timeOfReturnToPosition);           
-        transform.localEulerAngles = transform.localEulerAngles + Vector3.left * recoilAngle;
+        //transform.localPosition = Vector3.SmoothDamp(transform.localPosition, Vector3.zero, ref recoilSmoothDampVelocity, timeOfReturnToPosition);
+        //recoilAngle = Mathf.SmoothDamp(recoilAngle, 0, ref recoilRotSmoothDampVelocity, timeOfReturnToPosition);           
+        //transform.localEulerAngles = transform.localEulerAngles + Vector3.left * recoilAngle;
 
         if (!_isReloading && _projectilesRemainingInMagazine == 0)
             Reload();    
@@ -77,9 +77,9 @@ public class Gun : MonoBehaviour
                 Projectile _newProjectile = Instantiate(Projectile, ProjectileSpawnPoint[i].position, ProjectileSpawnPoint[i].rotation) as Projectile;
                 _newProjectile.SetSpeed(MuzzleVelocity);
             }
-            transform.localPosition -= Vector3.forward * Random.Range(kickMinMax.x, kickMinMax.y);
-            recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
-            recoilAngle = Mathf.Clamp(recoilAngle, 0, 25);
+            //transform.localPosition -= Vector3.forward * Random.Range(kickMinMax.x, kickMinMax.y);
+            //recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
+            //recoilAngle = Mathf.Clamp(recoilAngle, 0, 5);
         }
     }
 

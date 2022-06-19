@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.AI;
 
-// висит на игроке и любом анимированном персонаже
+// висит на игроке и любом анимированном персонаже. Принимает команды от базовых скриптов "PLayer" или "Enemy"
 public class AnimatorController : MonoBehaviour
 {
     private Animator _characterAnimator;
@@ -9,10 +8,18 @@ public class AnimatorController : MonoBehaviour
 
 
     // Animation States
-    const string IDLE = "";
-    const string RUN = "";
-    const string SPRINT = "";
-    const string SHOOT = "";
+    const string IDLE = "Rifle_Idle";
+    const string IDLE_SHOOT = "Rifle_Idle_Shooting";
+    const string RUN_FORWARD = "Rifle_Run_Forward";
+    const string RUN_BACKWARD = "Rifle_Run_Backward";
+    const string RUN_SHOOT = "Rifle_Run_Shooting";
+    //const string SPRINT = "Sprint";
+    //const string SPRINT_SHOOT = "Sprint_Shoot";
+    const string LEFTTURN = "Rifle_Left_turn";
+    const string RIGHTTURN = "Rifle_Right_Turn";
+    const string LEFTSTRAFE = "Rifle_Strafe_Left";
+    const string RIGHTSTRAFE = "Rifle_Strafe_Right";
+
 
     private void Start()
     {
@@ -28,5 +35,30 @@ public class AnimatorController : MonoBehaviour
         _characterAnimator.Play(_newState);
 
         _currentState = _newState;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.W))
+            ChangeState(RUN_FORWARD);
+        
+        else if (Input.GetKey(KeyCode.A))
+            ChangeState(LEFTSTRAFE);
+        
+        else if (Input.GetKey(KeyCode.D))
+            ChangeState(RIGHTSTRAFE);
+        
+        else if (Input.GetKey(KeyCode.S))
+            ChangeState(RUN_BACKWARD);
+       
+        else if(Input.GetKey(KeyCode.W) && Input.GetMouseButton(0))
+            ChangeState(RUN_SHOOT);
+        
+        else if (Input.GetMouseButton(0))
+            ChangeState(IDLE_SHOOT);
+        
+        else
+            ChangeState(IDLE);
+        
     }
 }

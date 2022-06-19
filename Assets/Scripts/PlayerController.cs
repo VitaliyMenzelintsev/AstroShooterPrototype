@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector3 _moveVelocity)
     {
         this._velocity = _moveVelocity;
+        
     }
 
     public void LookAt(Vector3 _lookPoint)       

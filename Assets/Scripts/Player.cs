@@ -3,6 +3,7 @@
 [RequireComponent(typeof(PlayerController))]
 [RequireComponent(typeof(GunController))]
 
+
 // Висит на игроке
 public class Player : LivingEntity
 {
@@ -12,7 +13,6 @@ public class Player : LivingEntity
     private Camera _viewCamera;
     private PlayerController _controller;
     private GunController _gunController;
-
 
     private void Awake()
     {
@@ -38,6 +38,7 @@ public class Player : LivingEntity
         Vector3 _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")); 
         Vector3 _moveVelocity = _moveInput.normalized * _moveSpeed;
         _controller.Move(_moveVelocity);
+       
 
         // Look input
         Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);     
