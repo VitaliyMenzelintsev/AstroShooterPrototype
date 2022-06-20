@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: f5bda410b20619e4998ccd7878b5209e
+guid: 3cb6b99be1569b64992c0658156b57f4
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Rifle_Idle_SimpleShoot
+    second: Idle_Shot
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -36,7 +36,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Rifle_Idle_SimpleShoot
+      name: Idle_Shot
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0

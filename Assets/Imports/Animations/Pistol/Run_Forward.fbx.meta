@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 8ab65ebace4348b4da8936d093eeb750
+guid: 35beed4d4ea22b4469f32609b6d72338
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Rifle_Walk_Forward
+    second: Run_Forward
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -18,7 +18,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
-    motionNodeName: <Root Transform>
+    motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
@@ -36,11 +36,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Rifle_Walk_Forward
+      name: Run_Forward
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 43
+      lastFrame: 15
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
