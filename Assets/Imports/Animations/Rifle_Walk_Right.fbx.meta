@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: aa571cf0f39af274c9ae04ac35a8764c
+guid: fa0b6b855311baa4981e47101aa24d9e
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Rifle_Run_Backward
+    second: Rifle_Walk_Right
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -17,7 +17,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    removeConstantScaleCurves: 0
+    removeConstantScaleCurves: 1
     motionNodeName: <Root Transform>
     rigImportErrors: 
     rigImportWarnings: 
@@ -36,11 +36,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Rifle_Run_Backward
+      name: Rifle_Walk_Right
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 16
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -76,7 +76,7 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
-    nodeNameCollisionStrategy: 0
+    nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0

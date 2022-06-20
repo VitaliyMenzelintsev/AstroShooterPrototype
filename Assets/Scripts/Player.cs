@@ -9,7 +9,7 @@ public class Player : LivingEntity
 {
     public Transform crosshairs;
 
-    private float _moveSpeed = 3f;
+    private float _moveSpeed = 3.2f;
     private Camera _viewCamera;
     private PlayerController _controller;
     private GunController _gunController;

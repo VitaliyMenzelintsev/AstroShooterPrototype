@@ -10,15 +10,15 @@ public class AnimatorController : MonoBehaviour
     // Animation States
     const string IDLE = "Rifle_Idle";
     const string IDLE_SHOOT = "Rifle_Idle_SimpleShoot";
-    const string RUN_FORWARD = "Rifle_Run_Forward";
-    const string RUN_BACKWARD = "Rifle_Run_Backward";
+    const string WALK_FORWARD = "Rifle_Walk_Forward";
+    const string WALK_BACKWARD = "Rifle_Walk_Backward";
     const string RUN_SHOOT = "Rifle_Run_Shooting";
     //const string SPRINT = "Sprint";
     //const string SPRINT_SHOOT = "Sprint_Shoot";
     const string LEFTTURN = "Rifle_Left_turn";
     const string RIGHTTURN = "Rifle_Right_Turn";
-    const string LEFTSTRAFE = "Rifle_Strafe_Left";
-    const string RIGHTSTRAFE = "Rifle_Strafe_Right";
+    const string WALKLEFT = "Rifle_Walk_Left";
+    const string WALKRIGHT = "Rifle_Walk_Right";
 
 
     private void Start()
@@ -40,16 +40,16 @@ public class AnimatorController : MonoBehaviour
     private void Update()
     {
         if (Input.GetKey(KeyCode.W))
-            ChangeState(RUN_FORWARD);
+            ChangeState(WALK_FORWARD);
         
         else if (Input.GetKey(KeyCode.A))
-            ChangeState(LEFTSTRAFE);
+            ChangeState(WALKLEFT);
         
         else if (Input.GetKey(KeyCode.D))
-            ChangeState(RIGHTSTRAFE);
+            ChangeState(WALKRIGHT);
         
         else if (Input.GetKey(KeyCode.S))
-            ChangeState(RUN_BACKWARD);
+            ChangeState(WALK_BACKWARD);
        
         else if(Input.GetKey(KeyCode.W) && Input.GetMouseButton(0))
             ChangeState(RUN_SHOOT);
