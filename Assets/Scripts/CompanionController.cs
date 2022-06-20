@@ -41,18 +41,6 @@ public class CompanionController : LivingEntity
             if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
                 _gunController.Aim(_point);
         }
-
-        //// Position Check
-        //Vector3 _npcPosition = gameObject.transform.position;
-        //if (_npcPosition != Vector3.zero)
-        //{
-        //    _npcAnimator.SetBool("IsMoving", true);
-        //}
-        //else
-        //{
-        //    _npcAnimator.SetBool("IsMoving", false);
-        //}
-
     }
 
     public void LookAt(Vector3 _lookPoint)

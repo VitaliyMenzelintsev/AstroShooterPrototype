@@ -54,11 +54,11 @@ public class AnimatorController : MonoBehaviour
         //else if(Input.GetKey(KeyCode.W) && Input.GetMouseButton(0))
         //    ChangeState(RUN_SHOOT);
         
-        else if (Input.GetMouseButton(0))
-            ChangeState(IDLE_SHOOT);
-        
         else
             ChangeState(IDLE);
-        
+
+        if (_currentState == IDLE && Input.GetMouseButton(0))
+            ChangeState(IDLE_SHOOT);
+
     }
 }

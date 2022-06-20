@@ -515,7 +515,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7777778, y: 1}
+    m_SensorSize: {x: 1.7771261, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -564,7 +564,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
@@ -11872,10 +11872,6 @@ PrefabInstance:
       propertyPath: Crosshair
       value: 
       objectReference: {fileID: 1894884302}
-    - target: {fileID: 4610072071314047095, guid: 963dbae7381185e4bb1330aa3d959ecb, type: 3}
-      propertyPath: crosshairs
-      value: 
-      objectReference: {fileID: 1894884302}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 963dbae7381185e4bb1330aa3d959ecb, type: 3}
 --- !u!1001 &3464028607516348262
@@ -11891,7 +11887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3459804270058001027, guid: 9452c0e658f40d74391cab069a6c1664, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.6360084
+      value: 2.3483083
       objectReference: {fileID: 0}
     - target: {fileID: 3459804270058001027, guid: 9452c0e658f40d74391cab069a6c1664, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12017,7 +12013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8410415111210985184, guid: c8b72ba031250ac42a5e08dc9f728150, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.21399152
+      value: -0.795
       objectReference: {fileID: 0}
     - target: {fileID: 8410415111210985184, guid: c8b72ba031250ac42a5e08dc9f728150, type: 3}
       propertyPath: m_LocalPosition.y
