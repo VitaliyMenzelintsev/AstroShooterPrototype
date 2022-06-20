@@ -7,7 +7,7 @@
 // Висит на игроке
 public class Player : LivingEntity
 {
-    public Transform crosshairs;
+    public Transform Crosshair;
 
     private float _moveSpeed = 3.2f;
     private Camera _viewCamera;
@@ -49,7 +49,7 @@ public class Player : LivingEntity
         {
             Vector3 _point = _ray.GetPoint(_rayDistance);                 
             _controller.LookAt(_point);
-            crosshairs.position = _point;
+            Crosshair.position = _point;
 
 
             if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
