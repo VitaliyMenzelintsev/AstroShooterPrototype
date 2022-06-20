@@ -18,7 +18,7 @@ public class Gun : MonoBehaviour
 
     private bool _isReloading; 
 
-    [Header("Recoil")]
+    //[Header("Recoil")]
     //public Vector2 kickMinMax = new Vector2(0.005f, .2f);       
     //public Vector2 recoilAngleMinMax = new Vector2(.1f, .2f);     
     //public float timeOfReturnToPosition = 0.1f;
