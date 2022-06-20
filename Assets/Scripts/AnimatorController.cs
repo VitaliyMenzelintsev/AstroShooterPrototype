@@ -9,7 +9,7 @@ public class AnimatorController : MonoBehaviour
 
     // Animation States
     const string IDLE = "Idle";
-    const string IDLE_SHOOT = "Idle_Shot";
+    //const string IDLE_SHOOT = "Idle_Shot";
     const string WALK_FORWARD = "Walk_Forward";
     const string WALK_BACKWARD = "Walk_Backward";
     //const string RUN_SHOOT = "Rifle_Run_Shooting";
@@ -57,8 +57,7 @@ public class AnimatorController : MonoBehaviour
         else
             ChangeState(IDLE);
 
-        if (_currentState == IDLE && Input.GetMouseButton(0))
-            ChangeState(IDLE_SHOOT);
-
+        //if (_currentState == IDLE && Input.GetMouseButton(0))
+        //    ChangeState(IDLE_SHOOT);
     }
 }
