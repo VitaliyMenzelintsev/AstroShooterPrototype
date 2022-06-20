@@ -9,7 +9,7 @@ public class AnimatorController : MonoBehaviour
 
     // Animation States
     const string IDLE = "Rifle_Idle";
-    const string IDLE_SHOOT = "Rifle_Idle_Shooting";
+    const string IDLE_SHOOT = "Rifle_Idle_SimpleShoot";
     const string RUN_FORWARD = "Rifle_Run_Forward";
     const string RUN_BACKWARD = "Rifle_Run_Backward";
     const string RUN_SHOOT = "Rifle_Run_Shooting";
