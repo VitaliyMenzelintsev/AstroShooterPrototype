@@ -1777,7 +1777,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponHold: {fileID: 4139248297866792543}
   AllGuns: []
-  StartingGun: {fileID: 0}
+  StartingGun: {fileID: 3816571695711588486, guid: 9b5a76c9e4c33d84ab63374d220b6344, type: 3}
 --- !u!114 &7558730153770314598
 MonoBehaviour:
   m_ObjectHideFlags: 0

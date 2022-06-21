@@ -22,7 +22,7 @@ public class RangeRobotAI : MonoBehaviour
 
     private void Hit()
     {
-        Debug.Log("Melee Robot hits player");
+        Debug.Log("Range Robot hits player");
     }
 
     public void StartHitting()
