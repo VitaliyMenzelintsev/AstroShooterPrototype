@@ -26,11 +26,11 @@ public class Player : LivingEntity
         base.Start();
     }
 
-    private void OnNewWave(int _waveNumber)
-    {
-        _health = _startingHealth;
-        _gunController.EquipGun(_waveNumber - 1);
-    }
+    //private void OnNewWave(int _waveNumber)
+    //{
+    //    _health = _startingHealth;
+    //    _gunController.EquipGun(_waveNumber - 1);
+    //}
 
     private void Update()
     {

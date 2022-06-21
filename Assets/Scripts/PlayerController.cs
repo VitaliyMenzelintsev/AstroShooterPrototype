@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _velocity;
     private Rigidbody _myRigidbody;
 
+
     private void Start()
     {
         _myRigidbody = GetComponent<Rigidbody>();
@@ -16,7 +17,6 @@ public class PlayerController : MonoBehaviour
     public void Move(Vector3 _moveVelocity)
     {
         this._velocity = _moveVelocity;
-        
     }
 
     public void LookAt(Vector3 _lookPoint)       

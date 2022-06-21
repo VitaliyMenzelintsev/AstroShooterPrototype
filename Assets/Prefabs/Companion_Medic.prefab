@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6278806918831176379
 Transform:
   m_ObjectHideFlags: 0
@@ -1582,7 +1582,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponHold: {fileID: 2110321031160166512}
   AllGuns: []
-  StartingGun: {fileID: 0}
+  StartingGun: {fileID: 451536171949756890, guid: b38e61597d6f91a4f9048517f30006ad, type: 3}
 --- !u!114 &9187866209708864796
 MonoBehaviour:
   m_ObjectHideFlags: 0

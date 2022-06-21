@@ -9,7 +9,7 @@ public class CompanionController : LivingEntity
     private State _currentState;
     private NavMeshAgent _navMeshAgent;
     private GunController _gunController;
-    private Animator _npcAnimator;
+    //private Animator _npcAnimator;
     private Camera _viewCamera;
     private bool _hasTarget;
 
@@ -17,10 +17,8 @@ public class CompanionController : LivingEntity
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _gunController = GetComponent<GunController>();
-        _npcAnimator = GetComponent<Animator>();
+        //_npcAnimator = GetComponent<Animator>();
         _viewCamera = Camera.main;
-
-        
     }
 
     private void Update()
