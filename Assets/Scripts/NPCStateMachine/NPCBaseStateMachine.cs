@@ -13,6 +13,6 @@ public class NPCBaseStateMachine : StateMachineBehaviour
     public override void OnStateEnter(Animator _animator, AnimatorStateInfo _stateInfo, int _layerIndex)
     {
         NPC = _animator.gameObject;
-        Opponent = NPC.GetComponent<RobotAI>().GetPlayer();  // FindObjectFithTag("Player") ???
+        Opponent = NPC.GetComponent<MeleeRobotAI>().GetPlayer();  // FindObjectFithTag("Player") ???
     }
 }
