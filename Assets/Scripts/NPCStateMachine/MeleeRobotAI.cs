@@ -27,7 +27,7 @@ public class MeleeRobotAI : MonoBehaviour
 
     public void StartHitting()
     {
-        InvokeRepeating("Hit", 0.5f, 0.5f);
+        InvokeRepeating("Hit", 1.5f, 1.5f);
     }
 
     public void StopHitting()
