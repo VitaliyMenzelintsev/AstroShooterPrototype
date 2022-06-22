@@ -1164,9 +1164,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8440072435941374183}
   - component: {fileID: 8393675161592354793}
-  - component: {fileID: 8393675161592354792}
   - component: {fileID: 1665259148896836329}
   - component: {fileID: 1665259148896836328}
+  - component: {fileID: 8393675161592354792}
   m_Layer: 0
   m_Name: Melee_Robot
   m_TagString: Untagged
@@ -1211,19 +1211,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8393675161592354792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8443021689120757679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 550579a59a66bf346b72e46ed40c3447, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Player: {fileID: 0}
 --- !u!54 &1665259148896836329
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1250,10 +1237,23 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.4
+  m_Radius: 0.3
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &8393675161592354792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8443021689120757679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 550579a59a66bf346b72e46ed40c3447, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Player: {fileID: 0}
 --- !u!1 &8443025085741114633
 GameObject:
   m_ObjectHideFlags: 0
