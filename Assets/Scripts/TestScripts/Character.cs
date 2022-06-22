@@ -13,16 +13,16 @@ public class Character : MonoBehaviour
     private Animator _characteAnimator;
 
     [SerializeField]
-    private float minAttackDistance = 7;
+    private float _minAttackDistance = 7;
     [SerializeField]
-    private float maxAttackDistance = 15;
+    private float _maxAttackDistance = 15;
     [SerializeField]
-    private float moveSpeed = 15;
+    private float _moveSpeed = 3;
     [SerializeField]
-    private float damageDealt = 50F;
+    private float _damageDealt = 25F;
     [SerializeField]
     private float _fireCooldown = 1F;
-    float _currentFireCooldown = 0;
+    private float _currentFireCooldown = 0;
 
     private Vector3 _targetLastKnownPosition;
     private Path _currentPath = null;
@@ -104,7 +104,7 @@ public class Character : MonoBehaviour
                 _coverManager.ExitCover(_currentCover);
             }
 
-            _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, maxAttackDistance, minAttackDistance, _currentCover);
+            _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
 
             if (_currentCover != null)
             {
@@ -123,7 +123,7 @@ public class Character : MonoBehaviour
             }
             else
             {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= maxAttackDistance && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= minAttackDistance)
+                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
                 {
                     //attack
                     State = AI_States.combat;
@@ -159,7 +159,7 @@ public class Character : MonoBehaviour
                     {
                         _currentTarget = _alternateTarget;
                         _coverManager.ExitCover(_currentCover);
-                        _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, maxAttackDistance, minAttackDistance, _currentCover);
+                        _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
                         _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
                         return;
                     }
@@ -186,7 +186,7 @@ public class Character : MonoBehaviour
                 {
                     //else we'll move towards current node
                     _myTransform.LookAt(_nodePosition);
-                    _myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+                    _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
                 }
 
             }
@@ -239,14 +239,14 @@ public class Character : MonoBehaviour
 
             _myTransform.LookAt(_currentTarget.transform);
 
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= maxAttackDistance && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= minAttackDistance)
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
                 //attack
                 if (_currentFireCooldown <= 0)
                 {
                     _characteAnimator.SetTrigger("fire");
 
-                    _currentTarget.GetComponent<Vitals>().GetHit(damageDealt);
+                    _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
 
                     _currentFireCooldown = _fireCooldown;
                 }
@@ -304,7 +304,7 @@ public class Character : MonoBehaviour
             {
                 //else we'll move towards current node
                 _myTransform.LookAt(_nodePosition);
-                _myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+                _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
             }
 
         }
@@ -366,7 +366,7 @@ public class Character : MonoBehaviour
         RaycastHit _hit; //record of what we hit with the raycast
 
         //cast ray towards current soldier, make the raycast line infinity in length
-        if (Physics.Raycast(Eyes.position, _directionTowardsEnemy, out _hit, Mathf.Infinity))
+        if (Physics.Raycast(Eyes.position, _directionTowardsEnemy, out _hit, Mathf.Infinity))  // бесконечность заменить на диаметр локации (40)
         {
             //if the raycast hit the target, then we know that we can see it
             if (_hit.transform == _target.transform)
@@ -374,7 +374,6 @@ public class Character : MonoBehaviour
                 _canSeeIt = true;
             }
         }
-
         return _canSeeIt;
     }
 
