@@ -3,7 +3,6 @@ using UnityEngine.AI;
 
 public class Character : MonoBehaviour
 {
-
     public Team MyTeam;
     public Vitals MyVitals;
     public Transform Eyes;
