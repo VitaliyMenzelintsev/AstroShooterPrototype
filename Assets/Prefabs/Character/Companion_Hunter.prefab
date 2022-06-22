@@ -1665,11 +1665,12 @@ GameObject:
   m_Component:
   - component: {fileID: 3459804270058001027}
   - component: {fileID: 3549268526951838709}
+  - component: {fileID: 3549268526951838704}
   - component: {fileID: 3549268526951838707}
   - component: {fileID: 3549268526951838706}
-  - component: {fileID: 3549268526951838704}
   - component: {fileID: 3549268526951838705}
   - component: {fileID: 7558730153770314598}
+  - component: {fileID: 795394701002939235}
   m_Layer: 0
   m_Name: Companion_Hunter
   m_TagString: Untagged
@@ -1714,6 +1715,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!136 &3549268526951838704
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3465436245006335477}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.3
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!195 &3549268526951838707
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1735,7 +1750,7 @@ NavMeshAgent:
   m_Height: 1.8
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 2
 --- !u!114 &3549268526951838706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1749,20 +1764,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FollowTarget: {fileID: 0}
---- !u!136 &3549268526951838704
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3465436245006335477}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &3549268526951838705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1795,6 +1796,19 @@ MonoBehaviour:
   WALK_BACKWARD: 0
   WALKLEFT: 0
   WALKRIGHT: 0
+--- !u!135 &795394701002939235
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3465436245006335477}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 10
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3465448189550230199
 GameObject:
   m_ObjectHideFlags: 0
