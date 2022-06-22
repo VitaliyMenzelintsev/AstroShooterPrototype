@@ -1197,12 +1197,12 @@ GameObject:
   m_Component:
   - component: {fileID: 7806519473771265238}
   - component: {fileID: 7857966753568836070}
+  - component: {fileID: 6151842689002094069}
   - component: {fileID: 7806519473771265195}
   - component: {fileID: 7806519473771265193}
   - component: {fileID: 7806519473771265239}
   - component: {fileID: 7806519473771265194}
   - component: {fileID: 7806519473771265196}
-  - component: {fileID: 6151842689002094069}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1250,6 +1250,22 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!54 &6151842689002094069
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7808584245307135350}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!136 &7806519473771265195
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1322,22 +1338,6 @@ MonoBehaviour:
   WALK_BACKWARD: 0
   WALKLEFT: 0
   WALKRIGHT: 0
---- !u!54 &6151842689002094069
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808584245307135350}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!1 &7808592668304627954
 GameObject:
   m_ObjectHideFlags: 0

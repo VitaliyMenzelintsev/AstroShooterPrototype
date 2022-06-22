@@ -53,7 +53,7 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!114 &-1260393436366698749
+--- !u!114 &-6023713261296695914
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
   Opponent: {fileID: 0}
-  Speed: 2
+  Speed: 3
   RotationSpeed: 2
   Accuracy: 1
 --- !u!91 &9100000
@@ -84,7 +84,7 @@ AnimatorController:
     m_DefaultFloat: 100
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -189,7 +189,8 @@ AnimatorState:
   m_Transitions:
   - {fileID: 2734103857178403139}
   - {fileID: 1305666286936124731}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 7637016884017627733}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -234,7 +235,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: -6447475740084603446}
   m_StateMachineBehaviours:
-  - {fileID: -1260393436366698749}
+  - {fileID: -6023713261296695914}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -274,3 +275,37 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &7637016884017627733
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767524b7f8085c74a94650f3ebc24956, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NPC: {fileID: 0}
+  Opponent: {fileID: 0}
+  Speed: 3
+  RotationSpeed: 2
+  Accuracy: 1
+--- !u!114 &8503338422488407365
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14a2a4e299b151d47907a7e2dcc61215, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NPC: {fileID: 0}
+  Opponent: {fileID: 0}
+  Speed: 3
+  RotationSpeed: 2
+  Accuracy: 1
