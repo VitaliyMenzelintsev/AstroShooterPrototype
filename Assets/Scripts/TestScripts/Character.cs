@@ -12,12 +12,19 @@ public class Character : MonoBehaviour
     private Character _currentTarget;
     private Animator _characteAnimator;
 
-    [SerializeField] float minAttackDistance = 10, maxAttackDistance = 25, moveSpeed = 15;
-    [SerializeField] float damageDealt = 50F;
-    [SerializeField] float _fireCooldown = 1F;
+    [SerializeField]
+    private float minAttackDistance = 7;
+    [SerializeField]
+    private float maxAttackDistance = 15;
+    [SerializeField]
+    private float moveSpeed = 15;
+    [SerializeField]
+    private float damageDealt = 50F;
+    [SerializeField]
+    private float _fireCooldown = 1F;
     float _currentFireCooldown = 0;
 
-    private Vector3 targetLastKnownPosition;
+    private Vector3 _targetLastKnownPosition;
     private Path _currentPath = null;
     private CoverSpot _currentCover = null;
     private float _coverChangeCooldown = 5;
@@ -211,10 +218,10 @@ public class Character : MonoBehaviour
                 if (_alternateTarget == null)
                 {
                     //If I can't see the target anymore, I'll need to Investigate last known position
-                    targetLastKnownPosition = _currentTarget.transform.position;
+                    _targetLastKnownPosition = _currentTarget.transform.position;
 
                     //we'll need to calculate a path towards the target's last known position and we'll do so using the Unity NavMesh combined with some custom code
-                    _currentPath = CalculatePath(_myTransform.position, targetLastKnownPosition);
+                    _currentPath = CalculatePath(_myTransform.position, _targetLastKnownPosition);
                     _characteAnimator.SetBool("move", true);
 
                     if (_currentCover != null)
