@@ -77,9 +77,9 @@ public class Character : MonoBehaviour
             _characteAnimator.SetBool("move", false);
 
             //to be able to investigate last known position of dead soldiers, we'll need to implement dead, instead of destroying the soldier gameobject
-            if (GetComponent<BoxCollider>() != null)
+            if (GetComponent<CapsuleCollider>() != null)
             {
-                Destroy(GetComponent<BoxCollider>());
+                Destroy(GetComponent<CapsuleCollider>());
             }
 
             if (_currentCover != null)
@@ -143,7 +143,9 @@ public class Character : MonoBehaviour
     }
     private void StateMoveToCover()
     {
-        if (_currentTarget != null && _currentCover != null && _currentCover.AmICoveredFrom(_currentTarget.transform.position))
+        if (_currentTarget != null 
+            && _currentCover != null 
+            && _currentCover.AmICoveredFrom(_currentTarget.transform.position))
         {
             if (_currentPath != null)
             {
@@ -151,11 +153,11 @@ public class Character : MonoBehaviour
 
                 if (_alternateTarget != null && _alternateTarget != _currentTarget)
                 {
-                    float _distanceToCurTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
+                    float _distanceToCurrentTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
                     float _distanceToAlternateTarget = Vector3.Distance(_myTransform.position, _alternateTarget.transform.position);
                     float _distanceBetweenTargets = Vector3.Distance(_currentTarget.transform.position, _alternateTarget.transform.position);
 
-                    if (Mathf.Abs(_distanceToAlternateTarget - _distanceToCurTarget) > 5 && _distanceBetweenTargets > 5)
+                    if (Mathf.Abs(_distanceToAlternateTarget - _distanceToCurrentTarget) > 5 && _distanceBetweenTargets > 5)
                     {
                         _currentTarget = _alternateTarget;
                         _coverManager.ExitCover(_currentCover);
@@ -239,7 +241,8 @@ public class Character : MonoBehaviour
 
             _myTransform.LookAt(_currentTarget.transform);
 
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance 
+                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
                 //attack
                 if (_currentFireCooldown <= 0)

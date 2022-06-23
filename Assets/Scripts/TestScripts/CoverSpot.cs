@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class CoverSpot : MonoBehaviour
 {
-    bool _occupied = false;
-    Transform _occupier;
-
-    Transform _cover;
+    private bool _occupied = false;
+    private Transform _occupier;
+    private Transform _cover;
 
     private void Start()
     {

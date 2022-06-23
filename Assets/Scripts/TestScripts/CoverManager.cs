@@ -6,7 +6,6 @@ public class CoverManager : MonoBehaviour
 
     List<CoverSpot> _unOccupiedCoverSpots = new List<CoverSpot>();
     List<CoverSpot> _occupiedCoverSpots = new List<CoverSpot>();
-
     List<Character> _allCharacters = new List<Character>();
 
     private void Awake()
@@ -40,7 +39,11 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    public CoverSpot GetCoverTowardsTarget(Character _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CoverSpot _prevCoverSpot)
+    public CoverSpot GetCoverTowardsTarget(Character _character, 
+        Vector3 _targetPosition, 
+        float _maxAttackDistance,
+        float _minAttackDistance, 
+        CoverSpot _prevCoverSpot)
     {
         CoverSpot _bestCover = null;
         Vector3 _characterPosition = _character.transform.position;
@@ -50,7 +53,10 @@ public class CoverManager : MonoBehaviour
         for(int i = 0; i < _possibleCoverSpots.Length; i++)
         {
             CoverSpot _spot = _possibleCoverSpots[i];
-            if(_spot.IsOccupied() && _spot.AmICoveredFrom(_targetPosition) && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance)
+            if(_spot.IsOccupied() 
+                && _spot.AmICoveredFrom(_targetPosition) 
+                && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance
+                && !CoverIsPastEnemyLine(_character, _spot))
             {
                 if(_bestCover == null)
                 {
