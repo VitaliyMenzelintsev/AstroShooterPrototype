@@ -151,11 +151,11 @@ public class Character : MonoBehaviour
 
                 if (_alternateTarget != null && _alternateTarget != _currentTarget)
                 {
-                    float distanceToCurTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
-                    float distanceToAlternativeTarget = Vector3.Distance(_myTransform.position, _alternateTarget.transform.position);
-                    float distanceBetweenTargets = Vector3.Distance(_currentTarget.transform.position, _alternateTarget.transform.position);
+                    float _distanceToCurTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
+                    float _distanceToAlternateTarget = Vector3.Distance(_myTransform.position, _alternateTarget.transform.position);
+                    float _distanceBetweenTargets = Vector3.Distance(_currentTarget.transform.position, _alternateTarget.transform.position);
 
-                    if (Mathf.Abs(distanceToAlternativeTarget - distanceToCurTarget) > 5 && distanceBetweenTargets > 5)
+                    if (Mathf.Abs(_distanceToAlternateTarget - _distanceToCurTarget) > 5 && _distanceBetweenTargets > 5)
                     {
                         _currentTarget = _alternateTarget;
                         _coverManager.ExitCover(_currentCover);

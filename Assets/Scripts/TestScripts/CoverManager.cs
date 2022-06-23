@@ -7,9 +7,13 @@ public class CoverManager : MonoBehaviour
     List<CoverSpot> _unOccupiedCoverSpots = new List<CoverSpot>();
     List<CoverSpot> _occupiedCoverSpots = new List<CoverSpot>();
 
+    List<Character> _allCharacters = new List<Character>();
+
     private void Awake()
     {
         _unOccupiedCoverSpots = new List<CoverSpot>(GameObject.FindObjectsOfType<CoverSpot>());
+
+        _allCharacters = new List<Character>(GameObject.FindObjectsOfType<Character>());
     }
 
     private void AddToOccupied(CoverSpot _spot)
@@ -79,5 +83,23 @@ public class CoverManager : MonoBehaviour
 
             AddToUnOccupied(_spot);
         }
+    }
+
+    bool CoverIsPastEnemyLine(Character _character, CoverSpot _spot)
+    {
+        bool _isPastEnemyLine = false;
+
+        foreach(Character _unit in _allCharacters)
+        {
+            if(_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
+            {
+                if(_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
+                {
+                    _isPastEnemyLine = true;
+                    break;
+                }
+            }
+        }
+        return _isPastEnemyLine;
     }
 }
