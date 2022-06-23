@@ -7,13 +7,13 @@ public class CoverManager : MonoBehaviour
     List<CoverSpot> unOccupiedCoverSpots = new List<CoverSpot>();
     List<CoverSpot> occupiedCoverSpots = new List<CoverSpot>();
 
-    List<Soldier> allSoldiers = new List<Soldier>();
+    List<Character> allSoldiers = new List<Character>();
 
     private void Awake()
     {
         unOccupiedCoverSpots = new List<CoverSpot>(GameObject.FindObjectsOfType<CoverSpot>());
 
-        allSoldiers = new List<Soldier>(GameObject.FindObjectsOfType<Soldier>());
+        allSoldiers = new List<Character>(GameObject.FindObjectsOfType<Character>());
     }
 
     void AddToOccupied(CoverSpot spot)
@@ -39,7 +39,7 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    public CoverSpot GetCoverTowardsTarget(Soldier soldier, Vector3 targetPosition, float maxAttackDistance, float minAttackDistance, CoverSpot prevCoverSpot)
+    public CoverSpot GetCoverTowardsTarget(Character soldier, Vector3 targetPosition, float maxAttackDistance, float minAttackDistance, CoverSpot prevCoverSpot)
     {
         CoverSpot bestCover = null;
         Vector3 soldierPosition = soldier.transform.position;
@@ -85,13 +85,13 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    bool CoverIsPastEnemyLine(Soldier soldier, CoverSpot spot)
+    bool CoverIsPastEnemyLine(Character soldier, CoverSpot spot)
     {
         bool isPastEnemyLine = false;
 
-        foreach (Soldier unit in allSoldiers)
+        foreach (Character unit in allSoldiers)
         {
-            if (soldier.myTeam.getTeamNumber() != unit.myTeam.getTeamNumber() && unit.myVitals.getCurHealth() > 0)
+            if (soldier.MyTeam.getTeamNumber() != unit.MyTeam.getTeamNumber() && unit.MyVitals.getCurHealth() > 0)
             {
                 if (spot.AmIBehindTargetPosition(soldier.transform.position, unit.transform.position))
                 {
