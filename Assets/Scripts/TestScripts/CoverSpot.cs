@@ -1,42 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CoverSpot : MonoBehaviour
 {
-    bool occupied = false;
-    Transform occupier;
-
-    Transform cover;
+    private bool _occupied = false;
+    private Transform _occupier;
+    private Transform _cover;
 
     // Start is called before the first frame update
     void Start()
     {
-        cover = transform.parent;
+        _cover = transform.parent;
     }
 
-    public void SetOccupier(Transform occupier)
+    public void SetOccupier(Transform _occupier)
     {
-        this.occupier = occupier;
+        this._occupier = _occupier;
 
-        if (this.occupier == null)
+        if (this._occupier == null)
         {
-            occupied = false;
+            _occupied = false;
         }
         else
         {
-            occupied = true;
+            _occupied = true;
         }
     }
 
     public Transform GetOccupier()
     {
-        return occupier;
+        return _occupier;
     }
 
     public bool IsOccupied()
     {
-        return occupied;
+        return _occupied;
     }
 
     private void OnDrawGizmos()
@@ -53,12 +50,12 @@ public class CoverSpot : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 0.5F);
     }
 
-    public bool AmICoveredFrom(Vector3 targetPosition)
+    public bool AmICoveredFrom(Vector3 _targetPosition)
     {
-        Vector3 targetDirection = targetPosition - transform.position;
-        Vector3 coverDirection = cover.position - transform.position;
+        Vector3 _targetDirection = _targetPosition - transform.position;
+        Vector3 _coverDirection = _cover.position - transform.position;
 
-        if (Vector3.Dot(coverDirection, targetDirection) > 0.9F)
+        if (Vector3.Dot(_coverDirection, _targetDirection) > 0.9F)
         {
             return true;
         }
@@ -68,24 +65,23 @@ public class CoverSpot : MonoBehaviour
         }
     }
 
-    public bool AmIBehindTargetPosition(Vector3 soldierPosition, Vector3 targetPosition)
+    public bool AmIBehindTargetPosition(Vector3 _characterPosition, Vector3 _targetPosition)
     {
-        Vector3 soldierToTargetDirection = targetPosition - soldierPosition;
-        Vector3 soldierToCoverDirection = transform.position - soldierPosition;
+        Vector3 _characterToTargetDirection = _targetPosition - _characterPosition;
+        Vector3 _characterToCoverDirection = transform.position - _characterPosition;
 
-        float soldierToTargetDistance = Vector3.Distance(soldierPosition, targetPosition);
-        float soldierToCoverDistance = Vector3.Distance(soldierPosition, transform.position);
+        float _characterToTargetDistance = Vector3.Distance(_characterPosition, _targetPosition);
+        float _characterToCoverDistance = Vector3.Distance(_characterPosition, transform.position);
 
-        if ((soldierToCoverDistance + 1) < soldierToTargetDistance)
+        if ((_characterToCoverDistance + 1) < _characterToTargetDistance)
         {
             return false;
         }
 
-        if (Vector3.Dot(soldierToTargetDirection, soldierToCoverDirection) < 0.7F)
+        if (Vector3.Dot(_characterToTargetDirection, _characterToCoverDirection) < 0.7F)
         {
             return false;
         }
-
         return true;
     }
 }

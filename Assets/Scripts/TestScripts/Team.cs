@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Team : MonoBehaviour
 {
-    [SerializeField] int teamNumber;
+    [SerializeField]
+    private int _teamNumber;
 
-    public int getTeamNumber()
+    public int GetTeamNumber()
     {
-        return teamNumber;
+        return _teamNumber;
     }
 }

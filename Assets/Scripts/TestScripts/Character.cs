@@ -54,7 +54,7 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        if (MyVitals.getCurHealth() > 0)
+        if (MyVitals.GetCurHealth() > 0)
         {
             switch (state)
             {
@@ -99,7 +99,7 @@ public class Character : MonoBehaviour
 
     private void StateIdle()
     {
-        if (_curTarget != null && _curTarget.GetComponent<Vitals>().getCurHealth() > 0)
+        if (_curTarget != null && _curTarget.GetComponent<Vitals>().GetCurHealth() > 0)
         {
             if (_currentCover != null)
             {
@@ -182,7 +182,7 @@ public class Character : MonoBehaviour
                 if (Vector3.Distance(_myTransform.position, _nodePosition) < 1)
                 {
                     //if we reached the current node, then we'll begin going towards the next node
-                    _currentPath.currentPathIndex++;
+                    _currentPath._currentPathIndex++;
                 }
                 else
                 {
@@ -210,7 +210,7 @@ public class Character : MonoBehaviour
 
     private void StateCombat()
     {
-        if (_curTarget != null && _curTarget.GetComponent<Vitals>().getCurHealth() > 0)
+        if (_curTarget != null && _curTarget.GetComponent<Vitals>().GetCurHealth() > 0)
         {
             //if the target escapes during combat
             if (!CanISeeTheTarget(_curTarget))
@@ -241,14 +241,15 @@ public class Character : MonoBehaviour
 
             _myTransform.LookAt(_curTarget.transform);
 
-            if (Vector3.Distance(_myTransform.position, _curTarget.transform.position) <= _maxAttackDistance && Vector3.Distance(_myTransform.position, _curTarget.transform.position) >= _minAttackDistance)
+            if (Vector3.Distance(_myTransform.position, _curTarget.transform.position) <= _maxAttackDistance 
+                && Vector3.Distance(_myTransform.position, _curTarget.transform.position) >= _minAttackDistance)
             {
                 //attack
                 if (_curFireCooldown <= 0)
                 {
                     _characterAnimator.SetTrigger("fire");
 
-                    _curTarget.GetComponent<Vitals>().getHit(_damageDealt);
+                    _curTarget.GetComponent<Vitals>().GetHit(_damageDealt);
 
                     _curFireCooldown = _fireCooldown;
                 }
@@ -300,7 +301,7 @@ public class Character : MonoBehaviour
             if (Vector3.Distance(_myTransform.position, _nodePosition) < 1)
             {
                 //if we reached the current node, then we'll begin going towards the next node
-                _currentPath.currentPathIndex++;
+                _currentPath._currentPathIndex++;
             }
             else
             {
@@ -331,7 +332,7 @@ public class Character : MonoBehaviour
             Character _currentCharacter = _allCharacters[i];
 
             //only select current soldier as target, if we are not on the same team and if it got health left
-            if (_currentCharacter.GetComponent<Team>().getTeamNumber() != MyTeam.getTeamNumber() && _currentCharacter.GetComponent<Vitals>().getCurHealth() > 0)
+            if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber() && _currentCharacter.GetComponent<Vitals>().GetCurHealth() > 0)
             {
                 //if the raycast hit the target, then we know that we can see it
                 if (CanISeeTheTarget(_currentCharacter))

@@ -93,7 +93,7 @@ public class CoverManager : MonoBehaviour
 
         foreach (Character _unit in _allCharacters)
         {
-            if (_character.MyTeam.getTeamNumber() != _unit.MyTeam.getTeamNumber() && _unit.MyVitals.getCurHealth() > 0)
+            if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurHealth() > 0)
             {
                 if (_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
                 {
