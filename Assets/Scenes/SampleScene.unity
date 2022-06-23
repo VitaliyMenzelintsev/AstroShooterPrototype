@@ -15382,7 +15382,7 @@ GameObject:
   - component: {fileID: 95485171553123479}
   - component: {fileID: 6409944624584909827}
   - component: {fileID: 6409944624584909825}
-  - component: {fileID: 6409944624584909826}
+  - component: {fileID: 6409944624584909828}
   m_Layer: 0
   m_Name: Companion_Hunter
   m_TagString: Untagged
@@ -16635,7 +16635,7 @@ GameObject:
   - component: {fileID: 95468278663467441}
   - component: {fileID: 803805486486521956}
   - component: {fileID: 803805486486521954}
-  - component: {fileID: 803805486486521955}
+  - component: {fileID: 803805486486521957}
   m_Layer: 0
   m_Name: Companion_Medic
   m_TagString: Untagged
@@ -29196,28 +29196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
---- !u!114 &803805486486521955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1614792746709933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70f207e2aecdf414bb693521d56c586a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MyTeam: {fileID: 0}
-  MyVitals: {fileID: 0}
-  Eyes: {fileID: 1384320019}
-  _minAttackDistance: 7
-  _maxAttackDistance: 15
-  _moveSpeed: 15
-  _damageDealt: 50
-  _fireCooldown: 1
-  State: 0
+  health: 100
 --- !u!114 &803805486486521956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29230,7 +29209,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f22c4f7124c7341b78d8b30e84035a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _teamNumber: 1
+  teamNumber: 0
+--- !u!114 &803805486486521957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614792746709933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694bb132e959a7f41baadb13249a2c8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTeam: {fileID: 0}
+  myVitals: {fileID: 0}
+  eyes: {fileID: 0}
+  minAttackDistance: 10
+  maxAttackDistance: 25
+  moveSpeed: 15
+  damageDealt: 50
+  fireCooldown: 1
+  state: 0
 --- !u!1 &1183945252608928152
 GameObject:
   m_ObjectHideFlags: 0
@@ -31660,7 +31660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f22c4f7124c7341b78d8b30e84035a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _teamNumber: 1
+  teamNumber: 0
 --- !u!23 &2490360656885169404
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -33904,28 +33904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
---- !u!114 &6409944624584909826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407706226242195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70f207e2aecdf414bb693521d56c586a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MyTeam: {fileID: 0}
-  MyVitals: {fileID: 0}
-  Eyes: {fileID: 1886974885}
-  _minAttackDistance: 5
-  _maxAttackDistance: 10
-  _moveSpeed: 15
-  _damageDealt: 50
-  _fireCooldown: 1
-  State: 0
+  health: 100
 --- !u!114 &6409944624584909827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33938,7 +33917,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f22c4f7124c7341b78d8b30e84035a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _teamNumber: 1
+  teamNumber: 1
+--- !u!114 &6409944624584909828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407706226242195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694bb132e959a7f41baadb13249a2c8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTeam: {fileID: 0}
+  myVitals: {fileID: 0}
+  eyes: {fileID: 1886974885}
+  minAttackDistance: 10
+  maxAttackDistance: 25
+  moveSpeed: 15
+  damageDealt: 50
+  fireCooldown: 1
+  state: 0
 --- !u!23 &6418330859053677535
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -34814,7 +34814,7 @@ GameObject:
   - component: {fileID: 4098589919693087981}
   - component: {fileID: 6629164463189958721}
   - component: {fileID: 6629164463189958719}
-  - component: {fileID: 6629164463189958720}
+  - component: {fileID: 6629164463189958723}
   m_Layer: 0
   m_Name: Range_Robot_Test
   m_TagString: Untagged
@@ -35843,28 +35843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
---- !u!114 &6629164463189958720
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6625634392181018990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70f207e2aecdf414bb693521d56c586a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MyTeam: {fileID: 0}
-  MyVitals: {fileID: 0}
-  Eyes: {fileID: 1927116070}
-  _minAttackDistance: 5
-  _maxAttackDistance: 10
-  _moveSpeed: 15
-  _damageDealt: 50
-  _fireCooldown: 1
-  State: 0
+  health: 100
 --- !u!114 &6629164463189958721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35877,7 +35856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f22c4f7124c7341b78d8b30e84035a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _teamNumber: 2
+  teamNumber: 2
 --- !u!195 &6629164463189958722
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -35900,6 +35879,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6629164463189958723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6625634392181018990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 694bb132e959a7f41baadb13249a2c8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTeam: {fileID: 0}
+  myVitals: {fileID: 0}
+  eyes: {fileID: 1927116070}
+  minAttackDistance: 10
+  maxAttackDistance: 25
+  moveSpeed: 15
+  damageDealt: 50
+  fireCooldown: 1
+  state: 0
 --- !u!4 &6629231122757042632
 Transform:
   m_ObjectHideFlags: 0

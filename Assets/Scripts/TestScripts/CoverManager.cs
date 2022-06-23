@@ -1,111 +1,106 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CoverManager : MonoBehaviour
 {
+    List<CoverSpot> unOccupiedCoverSpots = new List<CoverSpot>();
+    List<CoverSpot> occupiedCoverSpots = new List<CoverSpot>();
 
-    List<CoverSpot> _unOccupiedCoverSpots = new List<CoverSpot>();
-    List<CoverSpot> _occupiedCoverSpots = new List<CoverSpot>();
-    List<Character> _allCharacters = new List<Character>();
+    List<Soldier> allSoldiers = new List<Soldier>();
 
     private void Awake()
     {
-        _unOccupiedCoverSpots = new List<CoverSpot>(GameObject.FindObjectsOfType<CoverSpot>());
+        unOccupiedCoverSpots = new List<CoverSpot>(GameObject.FindObjectsOfType<CoverSpot>());
 
-        _allCharacters = new List<Character>(GameObject.FindObjectsOfType<Character>());
+        allSoldiers = new List<Soldier>(GameObject.FindObjectsOfType<Soldier>());
     }
 
-    private void AddToOccupied(CoverSpot _spot)
+    void AddToOccupied(CoverSpot spot)
     {
-        if (_unOccupiedCoverSpots.Contains(_spot))
+        if (unOccupiedCoverSpots.Contains(spot))
         {
-            _unOccupiedCoverSpots.Remove(_spot);
+            unOccupiedCoverSpots.Remove(spot);
         }
-        if (!_occupiedCoverSpots.Contains(_spot))
+        if (!occupiedCoverSpots.Contains(spot))
         {
-            _occupiedCoverSpots.Add(_spot);
+            occupiedCoverSpots.Add(spot);
+        }
+    }
+    void AddToUnoccupied(CoverSpot spot)
+    {
+        if (occupiedCoverSpots.Contains(spot))
+        {
+            occupiedCoverSpots.Remove(spot);
+        }
+        if (!unOccupiedCoverSpots.Contains(spot))
+        {
+            unOccupiedCoverSpots.Add(spot);
         }
     }
 
-    private void AddToUnOccupied(CoverSpot _spot)
+    public CoverSpot GetCoverTowardsTarget(Soldier soldier, Vector3 targetPosition, float maxAttackDistance, float minAttackDistance, CoverSpot prevCoverSpot)
     {
-        if (_occupiedCoverSpots.Contains(_spot))
-        {
-            _occupiedCoverSpots.Remove(_spot);
-        }
-        if (!_unOccupiedCoverSpots.Contains(_spot))
-        {
-            _unOccupiedCoverSpots.Add(_spot);
-        }
-    }
+        CoverSpot bestCover = null;
+        Vector3 soldierPosition = soldier.transform.position;
 
-    public CoverSpot GetCoverTowardsTarget(Character _character, 
-        Vector3 _targetPosition, 
-        float _maxAttackDistance,
-        float _minAttackDistance, 
-        CoverSpot _prevCoverSpot)
-    {
-        CoverSpot _bestCover = null;
-        Vector3 _characterPosition = _character.transform.position;
+        CoverSpot[] possibleCoverSpots = unOccupiedCoverSpots.ToArray();
 
-        CoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
-
-        for(int i = 0; i < _possibleCoverSpots.Length; i++)
+        for (int i = 0; i < possibleCoverSpots.Length; i++)
         {
-            CoverSpot _spot = _possibleCoverSpots[i];
-            if(_spot.IsOccupied() 
-                && _spot.AmICoveredFrom(_targetPosition) 
-                && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance
-                && !CoverIsPastEnemyLine(_character, _spot))
+            CoverSpot spot = possibleCoverSpots[i];
+
+            if (!spot.IsOccupied() && spot.AmICoveredFrom(targetPosition) && Vector3.Distance(spot.transform.position, targetPosition) >= minAttackDistance && !CoverIsPastEnemyLine(soldier, spot))
             {
-                if(_bestCover == null)
+                if (bestCover == null)
                 {
-                    _bestCover = _spot;
+                    bestCover = spot;
                 }
-                else if(_prevCoverSpot != _spot 
-                    && Vector3.Distance(_bestCover.transform.position, _characterPosition) > Vector3.Distance(_spot.transform.position, _characterPosition) 
-                    && Vector3.Distance(_spot.transform.position, _targetPosition) < Vector3.Distance(_characterPosition, _targetPosition)) 
+                else if (prevCoverSpot != spot && Vector3.Distance(bestCover.transform.position, soldierPosition) > Vector3.Distance(spot.transform.position, soldierPosition) && Vector3.Distance(spot.transform.position, targetPosition) < Vector3.Distance(soldierPosition, targetPosition))
                 {
-                    if(Vector3.Distance(_spot.transform.position, _characterPosition) < Vector3.Distance(_targetPosition, _characterPosition))
+                    if (Vector3.Distance(spot.transform.position, soldierPosition) < Vector3.Distance(targetPosition, soldierPosition))
                     {
-                        _bestCover = _spot;
+                        bestCover = spot;
                     }
                 }
-            } 
+            }
         }
-        if(_bestCover != null)
+
+        if (bestCover != null)
         {
-            _bestCover.SetOccupier(_character.transform);
-            AddToOccupied(_bestCover);
+            bestCover.SetOccupier(soldier.transform);
+            AddToOccupied(bestCover);
         }
-        return _bestCover;
+
+        return bestCover;
     }
 
-    public void ExitCover(CoverSpot _spot)
+    public void ExitCover(CoverSpot spot)
     {
-        if(_spot != null)
+        if (spot != null)
         {
-            _spot.SetOccupier(null);
+            spot.SetOccupier(null);
 
-            AddToUnOccupied(_spot);
+            AddToUnoccupied(spot);
         }
     }
 
-    bool CoverIsPastEnemyLine(Character _character, CoverSpot _spot)
+    bool CoverIsPastEnemyLine(Soldier soldier, CoverSpot spot)
     {
-        bool _isPastEnemyLine = false;
+        bool isPastEnemyLine = false;
 
-        foreach(Character _unit in _allCharacters)
+        foreach (Soldier unit in allSoldiers)
         {
-            if(_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
+            if (soldier.myTeam.getTeamNumber() != unit.myTeam.getTeamNumber() && unit.myVitals.getCurHealth() > 0)
             {
-                if(_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
+                if (spot.AmIBehindTargetPosition(soldier.transform.position, unit.transform.position))
                 {
-                    _isPastEnemyLine = true;
+                    isPastEnemyLine = true;
                     break;
                 }
             }
         }
-        return _isPastEnemyLine;
+
+        return isPastEnemyLine;
     }
 }

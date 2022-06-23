@@ -1,23 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Vitals : MonoBehaviour
 {
-    [SerializeField] 
-    private float _health = 100;
-    private float _currentHealth = 100;
+    [SerializeField] float health = 100;
+    float curHealth = 100;
 
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
-        _currentHealth = _health;
+        curHealth = health;
     }
 
-    public float GetCurrentHealth()
+    public float getCurHealth()
     {
-        return _currentHealth;
+        return curHealth;
     }
 
-    public void GetHit(float _damage)
+    public void getHit(float damage)
     {
-        _currentHealth -= _damage;
+        curHealth -= damage;
     }
 }

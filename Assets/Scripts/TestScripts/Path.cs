@@ -1,32 +1,35 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
+//this will store our path towards a location the AI wants to move towards
 public class Path
 {
-    private Vector3[] _pathNodes;
-    public int _currentPathIndex = 0;
+    Vector3[] pathNodes;
+    public int currentPathIndex = 0;
 
-    public Path(Vector3[] _pathNodes)
+    public Path(Vector3[] pathNodes)
     {
-        this._pathNodes = _pathNodes;
+        this.pathNodes = pathNodes;
     }
 
-    public Vector3[] _GetPathNodes()
+    public Vector3[] GetPathNodes()
     {
-        return _pathNodes;
+        return pathNodes;
     }
 
     public Vector3 GetNextNode()
     {
-        if (_currentPathIndex < _pathNodes.Length)
+        if (currentPathIndex < pathNodes.Length)
         {
-            return _pathNodes[_currentPathIndex];
+            return pathNodes[currentPathIndex];
         }
 
-        return Vector3.negativeInfinity; 
+        return Vector3.negativeInfinity; //we reached the end / there is no path to follow
     }
 
     public bool ReachedEndNode()
     {
-        return (_currentPathIndex == _pathNodes.Length); 
+        return (currentPathIndex == pathNodes.Length); //returns true if we have reached the end of our path
     }
 }
