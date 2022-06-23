@@ -24,13 +24,13 @@ public class Character : MonoBehaviour
     private float _damageDealt = 50F;
     [SerializeField]
     private float _fireCooldown = 1F;
-    private float _curFireCooldown = 0;
+    private float _currentFireCooldown = 0;
 
     private Vector3 _targetLastKnownPosition;
     private Path _currentPath = null;
     private CoverSpot _currentCover = null;
     private float _coverChangeCooldown = 5;
-    private float _curCoverChangeCooldown;
+    private float _currentCoverChangeCooldown;
 
     public enum AI_States 
     {
@@ -49,7 +49,7 @@ public class Character : MonoBehaviour
         _characterAnimator = GetComponent<Animator>();
 
         _coverManager = GameObject.FindObjectOfType<CoverManager>();
-        _curCoverChangeCooldown = _coverChangeCooldown;
+        _currentCoverChangeCooldown = _coverChangeCooldown;
     }
 
     private void Update()
@@ -79,9 +79,9 @@ public class Character : MonoBehaviour
             _characterAnimator.SetBool("move", false);
 
             //to be able to investigate last known position of dead soldiers, we'll need to implement dead, instead of destroying the soldier gameobject
-            if (GetComponent<BoxCollider>() != null)
+            if (GetComponent<CapsuleCollider>() != null)
             {
-                Destroy(GetComponent<BoxCollider>());
+                Destroy(GetComponent<CapsuleCollider>());
             }
 
             if (_currentCover != null)
@@ -245,31 +245,31 @@ public class Character : MonoBehaviour
                 && Vector3.Distance(_myTransform.position, _curTarget.transform.position) >= _minAttackDistance)
             {
                 //attack
-                if (_curFireCooldown <= 0)
+                if (_currentFireCooldown <= 0)
                 {
                     _characterAnimator.SetTrigger("fire");
 
                     _curTarget.GetComponent<Vitals>().GetHit(_damageDealt);
 
-                    _curFireCooldown = _fireCooldown;
+                    _currentFireCooldown = _fireCooldown;
                 }
                 else
                 {
-                    _curFireCooldown -= 1 * Time.deltaTime;
+                    _currentFireCooldown -= 1 * Time.deltaTime;
                 }
             }
             else
             {
-                if (_curCoverChangeCooldown <= 0)
+                if (_currentCoverChangeCooldown <= 0)
                 {
-                    _curCoverChangeCooldown = _coverChangeCooldown;
+                    _currentCoverChangeCooldown = _coverChangeCooldown;
                     _characterAnimator.SetBool("move", false);
 
                     state = AI_States.idle;
                 }
                 else
                 {
-                    _curCoverChangeCooldown -= 1 * Time.deltaTime;
+                    _currentCoverChangeCooldown -= 1 * Time.deltaTime;
                 }
             }
         }
