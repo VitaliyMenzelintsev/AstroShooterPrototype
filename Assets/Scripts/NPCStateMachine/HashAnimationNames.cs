@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class HashAnimationNames 
 {
-    protected HashAnimationNames _animBase;
+    protected HashAnimationNames _animationBase;
 
     public int IdleHash = Animator.StringToHash("Idle");
     public int WalkForwardHash = Animator.StringToHash("Walk_Forward");

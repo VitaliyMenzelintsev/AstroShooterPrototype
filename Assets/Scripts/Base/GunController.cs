@@ -4,7 +4,7 @@
 public class GunController : MonoBehaviour
 {
     public Transform WeaponHold;             
-    public Gun[] AllGuns;
+    //public Gun[] AllGuns;
     public Gun StartingGun;
 
     private Gun _equippedGun;
@@ -24,10 +24,10 @@ public class GunController : MonoBehaviour
         _equippedGun.transform.parent = WeaponHold;
     }
 
-    public void EquipGun(int _weaponIndex)
-    {
-        EquipGun(AllGuns[_weaponIndex]);
-    }
+    //public void EquipGun(int _weaponIndex)
+    //{
+    //    EquipGun(AllGuns[_weaponIndex]);
+    //}
     
     public void OnTriggerHold()
     {

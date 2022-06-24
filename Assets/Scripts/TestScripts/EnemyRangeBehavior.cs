@@ -5,6 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
+
 public class EnemyRangeBehavior : MonoBehaviour
 {
     [HideInInspector]

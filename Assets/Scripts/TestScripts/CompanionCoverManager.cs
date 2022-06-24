@@ -40,7 +40,7 @@ public class CompanionCoverManager : MonoBehaviour
     public CompanionCoverSpot GetCoverTowardsTarget(CompanionRangeBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CompanionCoverSpot _prevCoverSpot)
     {
         CompanionCoverSpot _bestCover = null;
-        Vector3 _soldierPosition = _character.transform.position;
+        Vector3 _characterPosition = _character.transform.position;
 
         CompanionCoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
 
@@ -57,10 +57,10 @@ public class CompanionCoverManager : MonoBehaviour
                     _bestCover = _spot;
                 }
                 else if (_prevCoverSpot != _spot
-                    && Vector3.Distance(_bestCover.transform.position, _soldierPosition) > Vector3.Distance(_spot.transform.position, _soldierPosition)
-                    && Vector3.Distance(_spot.transform.position, _targetPosition) < Vector3.Distance(_soldierPosition, _targetPosition))
+                    && Vector3.Distance(_bestCover.transform.position, _characterPosition) > Vector3.Distance(_spot.transform.position, _characterPosition)
+                    && Vector3.Distance(_spot.transform.position, _targetPosition) < Vector3.Distance(_characterPosition, _targetPosition))
                 {
-                    if (Vector3.Distance(_spot.transform.position, _soldierPosition) < Vector3.Distance(_targetPosition, _soldierPosition))
+                    if (Vector3.Distance(_spot.transform.position, _characterPosition) < Vector3.Distance(_targetPosition, _characterPosition))
                     {
                         _bestCover = _spot;
                     }

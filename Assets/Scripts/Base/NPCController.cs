@@ -1,26 +1,19 @@
 ﻿using UnityEngine;
 
 // висит на игроке и любом анимированном персонаже. Принимает команды от базовых скриптов "PLayer" или "Enemy"
-public class AnimatorController : MonoBehaviour
+public class NPCController : MonoBehaviour
 {
     private Animator _characterAnimator;
     private int _currentState;
 
-    protected HashAnimationNames _animBase = new HashAnimationNames();
-
-    // Старая версия анимаций
-    //const string IDLE = "Idle";
-    //const string WALK_FORWARD = "Walk_Forward";
-    //const string WALK_BACKWARD = "Walk_Backward";
-    //const string WALKLEFT = "Walk_Left";
-    //const string WALKRIGHT = "Walk_Right";
+    protected HashAnimationNames _animationBase = new HashAnimationNames();
 
     // Хэшированные анимации
-    public int IDLE;
-    public int WALK_FORWARD;
-    public int WALK_BACKWARD;
-    public int WALKLEFT;
-    public int WALKRIGHT;
+    [HideInInspector] public int IDLE;
+    [HideInInspector] public int WALK_FORWARD;
+    [HideInInspector] public int WALK_BACKWARD;
+    [HideInInspector] public int WALKLEFT;
+    [HideInInspector] public int WALKRIGHT;
 
     // Не реализованные анимации
     //const string IDLE_SHOOT = "Idle_Shot";
@@ -33,14 +26,13 @@ public class AnimatorController : MonoBehaviour
     private void Start()
     {
         _characterAnimator = GetComponent<Animator>();
-        //_characterAnimator.Play("Idle");
 
         // инициализация хэшированных анимаций 
-        IDLE = _animBase.IdleHash;
-        WALK_FORWARD = _animBase.WalkForwardHash;
-        WALK_BACKWARD = _animBase.WalkBackwardHash;
-        WALKLEFT = _animBase.WalkLeftHash;
-        WALKRIGHT = _animBase.WalkRightHash;
+        IDLE = _animationBase.IdleHash;
+        WALK_FORWARD = _animationBase.WalkForwardHash;
+        WALK_BACKWARD = _animationBase.WalkBackwardHash;
+        WALKLEFT = _animationBase.WalkLeftHash;
+        WALKRIGHT = _animationBase.WalkRightHash;
 
         ChangeState(IDLE);
     }
@@ -68,14 +60,8 @@ public class AnimatorController : MonoBehaviour
         
         else if (Input.GetKey(KeyCode.S))
             ChangeState(WALK_BACKWARD);
-       
-        //else if(Input.GetKey(KeyCode.W) && Input.GetMouseButton(0))
-        //    ChangeState(RUN_SHOOT);
-        
+   
         else
             ChangeState(IDLE);
-
-        //if (_currentState == IDLE && Input.GetMouseButton(0))
-        //    ChangeState(IDLE_SHOOT);
     }
 }

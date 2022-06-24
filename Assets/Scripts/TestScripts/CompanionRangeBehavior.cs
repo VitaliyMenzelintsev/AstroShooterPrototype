@@ -8,13 +8,16 @@ using UnityEngine.AI;
 
 public class CompanionRangeBehavior : MonoBehaviour
 {
-    public Transform FollowPoint;
-    public Transform Player;
     [HideInInspector]
     public Team MyTeam;
     [HideInInspector]
     public Vitals MyVitals;
-    public Transform Eyes; // не нужно - целимся туда же, куда игрок (курсор)
+    public Transform Eyes;
+
+    private Transform _myTransform;
+    private Animator _characterAnimator;
+    private CompanionCoverManager _coverManager;
+    private EnemyRangeBehavior _currentTarget; // 
 
     [SerializeField]
     private float _minAttackDistance = 10;
@@ -26,20 +29,12 @@ public class CompanionRangeBehavior : MonoBehaviour
     private float _damageDealt = 50F;
     [SerializeField]
     private float _fireCooldown = 1F;
-
-    private Transform _myTransform;
-    private Animator _characterAnimator;
-    private CompanionCoverManager _coverManager;
-    private EnemyRangeBehavior _currentTarget;  //!!!!!!!!!!!!!!!
-    private CompanionCoverSpot _currentCover = null;
-    private Path _currentPath = null;
-    private float _coverChangeCooldown = 5;
-    private float _currentCoverChangeCooldown;
     private float _currentFireCooldown = 0;
 
-    //private NavMeshAgent _navMeshAgent;
-    //private Camera _viewCamera;
-    //private GunController _gunController;
+    private Path _currentPath = null;
+    private CompanionCoverSpot _currentCover = null;
+    private float _coverChangeCooldown = 5;
+    private float _currentCoverChangeCooldown;
 
     public enum AI_States
     {
@@ -53,11 +48,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void Start()
     {
-        //_navMeshAgent = GetComponent<NavMeshAgent>();
-
-        //_viewCamera = Camera.main;
-
-        //_gunController = GetComponent<GunController>();
+        _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
 
@@ -106,12 +97,6 @@ public class CompanionRangeBehavior : MonoBehaviour
 
             Destroy(gameObject, 25f);
         }
-    }
-
-    public void LookAt(Vector3 _lookPoint)
-    {
-        Vector3 _heightCorrectedPoint = new Vector3(_lookPoint.x, transform.position.y, _lookPoint.z);
-        transform.LookAt(_heightCorrectedPoint);
     }
 
     private void StateIdle()
@@ -365,6 +350,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         return _path;
     }
 }
+
 
 
 
