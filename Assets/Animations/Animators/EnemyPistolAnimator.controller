@@ -37,7 +37,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 4
-    m_ConditionEvent: _distanceToPlayer
+    m_ConditionEvent: _distanceToTarget
     m_EventTreshold: 10
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3608278494698810860}
@@ -66,7 +66,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  Opponent: {fileID: 0}
+  GoodEntity: []
+  BadEntity: []
+  _nearestGoodEntity: {fileID: 0}
+  _nearestBadEntity: {fileID: 0}
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
@@ -79,12 +82,12 @@ AnimatorController:
   m_Name: EnemyPistolAnimator
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: _distanceToPlayer
+  - m_Name: _distanceToTarget
     m_Type: 1
     m_DefaultFloat: 100
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -107,7 +110,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 4
-    m_ConditionEvent: _distanceToPlayer
+    m_ConditionEvent: _distanceToTarget
     m_EventTreshold: 8
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -7103407605018194102}
@@ -132,7 +135,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 3
-    m_ConditionEvent: _distanceToPlayer
+    m_ConditionEvent: _distanceToTarget
     m_EventTreshold: 10
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4961437661351818757}
@@ -218,7 +221,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  Opponent: {fileID: 0}
+  GoodEntity: []
+  BadEntity: []
+  _nearestGoodEntity: {fileID: 0}
+  _nearestBadEntity: {fileID: 0}
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
@@ -259,7 +265,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 3
-    m_ConditionEvent: _distanceToPlayer
+    m_ConditionEvent: _distanceToTarget
     m_EventTreshold: 8
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 3608278494698810860}
@@ -288,7 +294,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  Opponent: {fileID: 0}
+  GoodEntity: []
+  BadEntity: []
+  _nearestGoodEntity: {fileID: 0}
+  _nearestBadEntity: {fileID: 0}
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1

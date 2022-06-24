@@ -5,14 +5,18 @@
 
 
 // Висит на игроке
-public class Player : LivingEntity
+public class Player : MonoBehaviour
 {
     public Transform Crosshair;
+    public float _startingHealth;
+    public float _health;
+    public bool _dead;
 
     private float _moveSpeed = 3.2f;
     private Camera _viewCamera;
     private PlayerController _controller;
     private GunController _gunController;
+
 
     private void Awake()
     {
@@ -21,16 +25,10 @@ public class Player : LivingEntity
         _viewCamera = Camera.main;                                     
     }
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
+        _health = _startingHealth;
     }
-
-    //private void OnNewWave(int _waveNumber)
-    //{
-    //    _health = _startingHealth;
-    //    _gunController.EquipGun(_waveNumber - 1);
-    //}
 
     private void Update()
     {
