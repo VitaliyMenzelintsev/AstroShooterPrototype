@@ -5,13 +5,13 @@ public class CoverManager : MonoBehaviour
 {
     List<CoverSpot> _unOccupiedCoverSpots = new List<CoverSpot>();
     List<CoverSpot> _occupiedCoverSpots = new List<CoverSpot>();
-    List<Character> _allCharacters = new List<Character>();
+    List<RangeEnemyBehavior> _allCharacters = new List<RangeEnemyBehavior>();
 
     private void Awake()
     {
         _unOccupiedCoverSpots = new List<CoverSpot>(GameObject.FindObjectsOfType<CoverSpot>());
 
-        _allCharacters = new List<Character>(GameObject.FindObjectsOfType<Character>());
+        _allCharacters = new List<RangeEnemyBehavior>(GameObject.FindObjectsOfType<RangeEnemyBehavior>());
     }
 
     private void AddToOccupied(CoverSpot _spot)
@@ -37,7 +37,7 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    public CoverSpot GetCoverTowardsTarget(Character _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CoverSpot _prevCoverSpot)
+    public CoverSpot GetCoverTowardsTarget(RangeEnemyBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CoverSpot _prevCoverSpot)
     {
         CoverSpot _bestCover = null;
         Vector3 _soldierPosition = _character.transform.position;
@@ -87,13 +87,13 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    private bool CoverIsPastEnemyLine(Character _character, CoverSpot _spot)
+    private bool CoverIsPastEnemyLine(RangeEnemyBehavior _character, CoverSpot _spot)
     {
         bool _isPastEnemyLine = false;
 
-        foreach (Character _unit in _allCharacters)
+        foreach (RangeEnemyBehavior _unit in _allCharacters)
         {
-            if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurHealth() > 0)
+            if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
             {
                 if (_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
                 {

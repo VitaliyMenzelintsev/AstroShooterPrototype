@@ -4,7 +4,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class CompanionController : LivingEntity
 {
-    public Transform FollowTarget;
+    public Transform FollowPoint;
+    public Transform Player;
     public enum State { Idle, Chasing, Attacking }
     private State _currentState;
     private NavMeshAgent _navMeshAgent;
@@ -24,7 +25,8 @@ public class CompanionController : LivingEntity
     private void Update()
     {
         // Movement
-        _navMeshAgent.SetDestination(FollowTarget.position); // ввести проверку, если координаты цели изменились, то запустить поиск пути
+        if(Vector3.Distance(Player.position, transform.position) > 3)
+        _navMeshAgent.SetDestination(FollowPoint.position); // ввести проверку, если координаты цели изменились, то запустить поиск пути
 
         // Look input
         Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);

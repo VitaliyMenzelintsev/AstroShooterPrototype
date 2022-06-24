@@ -12,7 +12,7 @@ public class Vitals : MonoBehaviour
         _currentHealth = _health;
     }
 
-    public float GetCurHealth()
+    public float GetCurrentHealth()
     {
         return _currentHealth;
     }
