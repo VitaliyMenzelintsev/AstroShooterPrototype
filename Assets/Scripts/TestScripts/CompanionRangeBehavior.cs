@@ -2,6 +2,10 @@
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Team))]
+[RequireComponent(typeof(Vitals))]
+[RequireComponent(typeof(Animator))]
+
 public class CompanionRangeBehavior : MonoBehaviour
 {
     public Transform FollowPoint;

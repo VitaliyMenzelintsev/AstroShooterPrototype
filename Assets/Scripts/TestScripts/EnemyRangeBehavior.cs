@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Team))]
+[RequireComponent(typeof(Vitals))]
+[RequireComponent(typeof(Animator))]
 public class EnemyRangeBehavior : MonoBehaviour
 {
     [HideInInspector]
@@ -12,7 +16,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     private Transform _myTransform;
     private Animator _characterAnimator;
     private EnemyCoverManager _coverManager;
-    private EnemyRangeBehavior _currentTarget; // 
+    private CompanionRangeBehavior _currentTarget; // 
 
     [SerializeField] 
     private float _minAttackDistance = 10;
@@ -133,7 +137,7 @@ public class EnemyRangeBehavior : MonoBehaviour
         else
         {
             //find new target
-            EnemyRangeBehavior _bestTarget = GetNewTarget();
+            CompanionRangeBehavior _bestTarget = GetNewTarget();
 
             if (_bestTarget != null)
             {
@@ -150,7 +154,7 @@ public class EnemyRangeBehavior : MonoBehaviour
         {
             if (_currentPath != null)
             {
-                EnemyRangeBehavior _alternativeTarget = GetNewTarget();
+                CompanionRangeBehavior _alternativeTarget = GetNewTarget();
 
                 if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
                 {
@@ -225,7 +229,7 @@ public class EnemyRangeBehavior : MonoBehaviour
             //if the target escapes during combat
             if (!CanSeeTarget(_currentTarget))
             {
-                EnemyRangeBehavior _alternativeTarget = GetNewTarget();
+                CompanionRangeBehavior _alternativeTarget = GetNewTarget();
 
                  _currentTarget = _alternativeTarget;
                 
@@ -273,15 +277,15 @@ public class EnemyRangeBehavior : MonoBehaviour
         }
     }
 
-    private EnemyRangeBehavior GetNewTarget()
+    private CompanionRangeBehavior GetNewTarget()
     {
-        EnemyRangeBehavior[] _allCharacters = GameObject.FindObjectsOfType<EnemyRangeBehavior>();
+        CompanionRangeBehavior[] _allCharacters = GameObject.FindObjectsOfType<CompanionRangeBehavior>();
 
-        EnemyRangeBehavior _bestTarget = null;
+        CompanionRangeBehavior _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)
         {
-            EnemyRangeBehavior _currentCharacter = _allCharacters[i];
+            CompanionRangeBehavior _currentCharacter = _allCharacters[i];
 
             //only select current soldier as target, if we are not on the same team and if it got health left
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber() 
@@ -309,7 +313,7 @@ public class EnemyRangeBehavior : MonoBehaviour
         return _bestTarget;
     }
 
-    private bool CanSeeTarget(EnemyRangeBehavior _target)
+    private bool CanSeeTarget(CompanionRangeBehavior _target)
     {
         bool _canSeeIt = false;
 
