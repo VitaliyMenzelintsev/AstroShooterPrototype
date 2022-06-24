@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoverManager : MonoBehaviour
+public class EnemyCoverManager : MonoBehaviour
 {
-    List<CoverSpot> _unOccupiedCoverSpots = new List<CoverSpot>();
-    List<CoverSpot> _occupiedCoverSpots = new List<CoverSpot>();
-    List<RangeEnemyBehavior> _allCharacters = new List<RangeEnemyBehavior>();
+    List<EnemyCoverSpot> _unOccupiedCoverSpots = new List<EnemyCoverSpot>();
+    List<EnemyCoverSpot> _occupiedCoverSpots = new List<EnemyCoverSpot>();
+    List<EnemyRangeBehavior> _allCharacters = new List<EnemyRangeBehavior>();
 
     private void Awake()
     {
-        _unOccupiedCoverSpots = new List<CoverSpot>(GameObject.FindObjectsOfType<CoverSpot>());
+        _unOccupiedCoverSpots = new List<EnemyCoverSpot>(GameObject.FindObjectsOfType<EnemyCoverSpot>());
 
-        _allCharacters = new List<RangeEnemyBehavior>(GameObject.FindObjectsOfType<RangeEnemyBehavior>());
+        _allCharacters = new List<EnemyRangeBehavior>(GameObject.FindObjectsOfType<EnemyRangeBehavior>());
     }
 
-    private void AddToOccupied(CoverSpot _spot)
+    private void AddToOccupied(EnemyCoverSpot _spot)
     {
         if (_unOccupiedCoverSpots.Contains(_spot))
         {
@@ -25,7 +25,7 @@ public class CoverManager : MonoBehaviour
             _occupiedCoverSpots.Add(_spot);
         }
     }
-    private void AddToUnoccupied(CoverSpot _spot)
+    private void AddToUnoccupied(EnemyCoverSpot _spot)
     {
         if (_occupiedCoverSpots.Contains(_spot))
         {
@@ -37,16 +37,16 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    public CoverSpot GetCoverTowardsTarget(RangeEnemyBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CoverSpot _prevCoverSpot)
+    public EnemyCoverSpot GetCoverTowardsTarget(EnemyRangeBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, EnemyCoverSpot _prevCoverSpot)
     {
-        CoverSpot _bestCover = null;
+        EnemyCoverSpot _bestCover = null;
         Vector3 _soldierPosition = _character.transform.position;
 
-        CoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
+        EnemyCoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
 
         for (int i = 0; i < _possibleCoverSpots.Length; i++)
         {
-            CoverSpot _spot = _possibleCoverSpots[i];
+            EnemyCoverSpot _spot = _possibleCoverSpots[i];
 
             if (!_spot.IsOccupied() && _spot.AmICoveredFrom(_targetPosition) 
                 && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance 
@@ -77,7 +77,7 @@ public class CoverManager : MonoBehaviour
         return _bestCover;
     }
 
-    public void ExitCover(CoverSpot _spot)
+    public void ExitCover(EnemyCoverSpot _spot)
     {
         if (_spot != null)
         {
@@ -87,11 +87,11 @@ public class CoverManager : MonoBehaviour
         }
     }
 
-    private bool CoverIsPastEnemyLine(RangeEnemyBehavior _character, CoverSpot _spot)
+    private bool CoverIsPastEnemyLine(EnemyRangeBehavior _character, EnemyCoverSpot _spot)
     {
         bool _isPastEnemyLine = false;
 
-        foreach (RangeEnemyBehavior _unit in _allCharacters)
+        foreach (EnemyRangeBehavior _unit in _allCharacters)
         {
             if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
             {

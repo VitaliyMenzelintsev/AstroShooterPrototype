@@ -1,13 +1,12 @@
 using UnityEngine;
 
-public class CoverSpot : MonoBehaviour
+public class EnemyCoverSpot : MonoBehaviour
 {
     private bool _occupied = false;
     private Transform _occupier;
     private Transform _cover;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _cover = transform.parent;
     }

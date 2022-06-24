@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class RangeEnemyBehavior : MonoBehaviour
+public class EnemyRangeBehavior : MonoBehaviour
 {
     [HideInInspector]
     public Team MyTeam;
@@ -11,8 +11,8 @@ public class RangeEnemyBehavior : MonoBehaviour
     
     private Transform _myTransform;
     private Animator _characterAnimator;
-    private CoverManager _coverManager;
-    private RangeEnemyBehavior _currentTarget;
+    private EnemyCoverManager _coverManager;
+    private EnemyRangeBehavior _currentTarget; // 
 
     [SerializeField] 
     private float _minAttackDistance = 10;
@@ -26,9 +26,8 @@ public class RangeEnemyBehavior : MonoBehaviour
     private float _fireCooldown = 1F;
     private float _currentFireCooldown = 0;
 
-    private Vector3 _targetLastKnownPosition;
     private Path _currentPath = null;
-    private CoverSpot _currentCover = null;
+    private EnemyCoverSpot _currentCover = null;
     private float _coverChangeCooldown = 5;
     private float _currentCoverChangeCooldown;
 
@@ -52,7 +51,7 @@ public class RangeEnemyBehavior : MonoBehaviour
 
         _characterAnimator = GetComponent<Animator>();
 
-        _coverManager = GameObject.FindObjectOfType<CoverManager>();
+        _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>();
 
         _currentCoverChangeCooldown = _coverChangeCooldown;
     }
@@ -134,7 +133,7 @@ public class RangeEnemyBehavior : MonoBehaviour
         else
         {
             //find new target
-            RangeEnemyBehavior _bestTarget = GetNewTarget();
+            EnemyRangeBehavior _bestTarget = GetNewTarget();
 
             if (_bestTarget != null)
             {
@@ -151,7 +150,7 @@ public class RangeEnemyBehavior : MonoBehaviour
         {
             if (_currentPath != null)
             {
-                RangeEnemyBehavior _alternativeTarget = GetNewTarget();
+                EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
                 if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
                 {
@@ -226,7 +225,7 @@ public class RangeEnemyBehavior : MonoBehaviour
             //if the target escapes during combat
             if (!CanSeeTarget(_currentTarget))
             {
-                RangeEnemyBehavior _alternativeTarget = GetNewTarget();
+                EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
                  _currentTarget = _alternativeTarget;
                 
@@ -274,15 +273,15 @@ public class RangeEnemyBehavior : MonoBehaviour
         }
     }
 
-    private RangeEnemyBehavior GetNewTarget()
+    private EnemyRangeBehavior GetNewTarget()
     {
-        RangeEnemyBehavior[] _allCharacters = GameObject.FindObjectsOfType<RangeEnemyBehavior>();
+        EnemyRangeBehavior[] _allCharacters = GameObject.FindObjectsOfType<EnemyRangeBehavior>();
 
-        RangeEnemyBehavior _bestTarget = null;
+        EnemyRangeBehavior _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)
         {
-            RangeEnemyBehavior _currentCharacter = _allCharacters[i];
+            EnemyRangeBehavior _currentCharacter = _allCharacters[i];
 
             //only select current soldier as target, if we are not on the same team and if it got health left
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber() 
@@ -310,7 +309,7 @@ public class RangeEnemyBehavior : MonoBehaviour
         return _bestTarget;
     }
 
-    private bool CanSeeTarget(RangeEnemyBehavior _target)
+    private bool CanSeeTarget(EnemyRangeBehavior _target)
     {
         bool _canSeeIt = false;
 
