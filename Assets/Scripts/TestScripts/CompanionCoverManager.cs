@@ -40,6 +40,7 @@ public class CompanionCoverManager : MonoBehaviour
     public CompanionCoverSpot GetCoverTowardsTarget(CompanionRangeBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CompanionCoverSpot _prevCoverSpot)
     {
         CompanionCoverSpot _bestCover = null;
+
         Vector3 _characterPosition = _character.transform.position;
 
         CompanionCoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();

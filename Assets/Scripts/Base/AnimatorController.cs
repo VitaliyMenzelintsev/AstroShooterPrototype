@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 // висит на игроке и любом анимированном персонаже. Принимает команды от базовых скриптов "PLayer" или "Enemy"
-public class NPCController : MonoBehaviour
+public class AnimatorController : MonoBehaviour
 {
     private Animator _characterAnimator;
     private int _currentState;

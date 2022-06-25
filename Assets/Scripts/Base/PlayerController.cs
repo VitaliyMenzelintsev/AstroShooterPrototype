@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-
 // Висит на игроке
 public class PlayerController : MonoBehaviour
 {

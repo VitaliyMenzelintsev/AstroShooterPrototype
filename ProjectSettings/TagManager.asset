@@ -8,6 +8,7 @@ TagManager:
   - Vault
   - Enemy
   - GoodEntity
+  - BadEntity
   layers:
   - Default
   - TransparentFX

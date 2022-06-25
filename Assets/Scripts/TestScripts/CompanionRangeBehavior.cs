@@ -13,7 +13,9 @@ public class CompanionRangeBehavior : MonoBehaviour
     [HideInInspector]
     public Vitals MyVitals;
     public Transform Eyes;
+    public Transform FollowPoint;
 
+    private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
@@ -24,7 +26,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     [SerializeField]
     private float _maxAttackDistance = 25;
     [SerializeField]
-    private float _moveSpeed = 15;
+    private float _moveSpeed = 3.4f;
     [SerializeField]
     private float _damageDealt = 50F;
     [SerializeField]
@@ -39,6 +41,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     public enum AI_States
     {
         idle,
+        followThePlayer,
         moveToCover,
         combat,
         death
@@ -53,6 +56,8 @@ public class CompanionRangeBehavior : MonoBehaviour
         MyTeam = GetComponent<Team>();
 
         MyVitals = GetComponent<Vitals>();
+
+        _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
 
@@ -69,6 +74,9 @@ public class CompanionRangeBehavior : MonoBehaviour
             {
                 case AI_States.idle:
                     StateIdle();
+                    break;
+                case AI_States.followThePlayer:
+                    StateFollowThePlayer();
                     break;
                 case AI_States.moveToCover:
                     StateMoveToCover();
@@ -99,20 +107,32 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
     }
 
+
+    private void StateFollowThePlayer()
+    {
+        _navMeshAgent.SetDestination(FollowPoint.position);
+        if (Vector3.Distance(FollowPoint.position, _myTransform.position) < 0.1f)
+        {
+            _characterAnimator.SetBool("move", false);
+            _state = AI_States.idle;
+        }
+    }
+
+
     private void StateIdle()
     {
         if (_currentTarget != null && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
         {
             if (_currentCover != null)
             {
-                _coverManager.ExitCover(_currentCover);
+                _coverManager.ExitCover(_currentCover); // Что делает?
             }
 
             _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
 
             if (_currentCover != null)
             {
-                if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F)
+                if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
                 {
                     _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
 
@@ -130,22 +150,31 @@ public class CompanionRangeBehavior : MonoBehaviour
                 if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                     && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
                 {
-                    //attack
                     _state = AI_States.combat;
                 }
             }
         }
         else
         {
-            //find new target
+            //ищем новую цель
             EnemyRangeBehavior _bestTarget = GetNewTarget();
 
             if (_bestTarget != null)
             {
                 _currentTarget = _bestTarget;
             }
+            // ПОДКЛЮЧЕНИЕ ПЕРЕМЕЩЕНИЯ К ИГРОКУ
+            //else
+            //{
+            //    if (_currentCover != null)
+            //        _coverManager.ExitCover(_currentCover);
+
+            //    _characterAnimator.SetBool("move", true);
+            //    _state = AI_States.followThePlayer;
+            //}
         }
     }
+
 
     private void StateMoveToCover()
     {
@@ -200,11 +229,10 @@ public class CompanionRangeBehavior : MonoBehaviour
                 else
                 {
                     //else we'll move towards current node
-                    _myTransform.LookAt(_nodePosition);
+                    _myTransform.LookAt(_nodePosition);  // ЗАМЕНИТЬ НА НАВ МЕШ АГЕНТА???
 
                     _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
                 }
-
             }
             else
             {
@@ -216,9 +244,10 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-            _characterAnimator.SetBool("move", false);
-
-            _state = AI_States.idle;
+            if (_currentCover != null)
+                _coverManager.ExitCover(_currentCover);
+            _characterAnimator.SetBool("move", true);
+            _state = AI_States.followThePlayer;
         }
     }
 
@@ -258,7 +287,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             }
             else
             {
-                if (_currentCoverChangeCooldown <= 0)
+                if (_currentCoverChangeCooldown <= 0)    // СМЕНА УКРЫТИЙ ТУТ
                 {
                     _currentCoverChangeCooldown = _coverChangeCooldown;
 
@@ -274,7 +303,12 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-            _state = AI_States.idle;
+            //_state = AI_States.idle;
+
+            if (_currentCover != null)
+                _coverManager.ExitCover(_currentCover);
+            _characterAnimator.SetBool("move", true);
+            _state = AI_States.followThePlayer;
         }
     }
 

@@ -1,22 +1,26 @@
 using UnityEngine;
 
-public class MeleeAttackOnGoodEntity : NPCBaseStateMachine
+public class EnemyRangeAttack : NPCBaseFSM
 {
+    public GameObject NearestGoodEntity;
 
-
+    private void Awake()
+    {
+        
+    }
     override public void OnStateEnter(Animator _animator, AnimatorStateInfo _stateInfo, int _layerIndex)
     {
         base.OnStateEnter(_animator, _stateInfo, _layerIndex);
-        NPC.GetComponent<MeleeEnemyAI>().StartHitting();
+        NPC.GetComponent<RangeEnemyAI>().StartHitting(); 
     }
 
     override public void OnStateUpdate(Animator _animator, AnimatorStateInfo _stateInfo, int _layerIndex)
     {
-        NPC.transform.LookAt(_nearestGoodEntity.transform.position);
+
     }
 
     override public void OnStateExit(Animator _animator, AnimatorStateInfo _stateInfo, int _layerIndex)
     {
-        NPC.GetComponent<MeleeEnemyAI>().StopHitting();
+        NPC.GetComponent<RangeEnemyAI>().StopHitting();
     }
 }

@@ -1,24 +1,28 @@
-using UnityEngine;
+using UnityEngine; 
 
 public class RangeEnemyAI : BaseAI
 {
-    
     public override void Start()
     {
         base.Start();
-        FindNearestGoodEntity();
-        Target = NearestGoodEntity;
     }
 
-    private void Update()
+    public override void Update()
     {
-        _characterAnimator.SetFloat("_distanceToTarget", Vector3.Distance(transform.position, NearestGoodEntity.transform.position));
+        base.Update();
+
+        GetTarget();
+
+        CharacterAnimator.SetFloat("_distanceToTarget", Vector3.Distance(transform.position, Target.transform.position));
+    }
+
+    public override GameObject GetTarget()
+    {
+        return base.GetTarget();
     }
 
     private void Hit()
     {
-        /*NearestGoodEntity.TakeDamage(Damage);*/ //  ¿  œ≈–≈ƒ¿“‹ ÷≈À‹,  ŒÃ” Õ¿Õ≈—®“—ﬂ ”–ŒÕ
-
         Debug.Log("Range Robot hits");
     }
 

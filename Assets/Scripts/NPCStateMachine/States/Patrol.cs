@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Patrol : NPCBaseStateMachine
+public class Patrol : NPCBaseFSM
 {
     GameObject[] WayPoints;
     int _currentWP;
@@ -33,10 +33,10 @@ public class Patrol : NPCBaseStateMachine
         }
 
         var _direction = WayPoints[_currentWP].transform.position - NPC.transform.position;
-        NPC.transform.rotation = Quaternion.Slerp(NPC.transform.rotation,    // кватернион слёрп плавно поворачивает в сторону нужной точки (исопльзовать для поворота игрока)
-            Quaternion.LookRotation(_direction),
-            RotationSpeed * Time.deltaTime);   
-        NPC.transform.Translate(0, 0, Time.deltaTime * Speed);                // может лучше перемещать через НавМешАгент Сет Дестинейшн
+
+        NPC.transform.rotation = Quaternion.Slerp(NPC.transform.rotation, Quaternion.LookRotation(_direction), RotationSpeed * Time.deltaTime);
+
+        NPC.transform.Translate(0, 0, Time.deltaTime * Speed); 
     }
 
     override public void OnStateExit(Animator _animator, AnimatorStateInfo _stateInfo, int _layerIndex)

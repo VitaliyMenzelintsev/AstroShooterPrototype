@@ -196,7 +196,7 @@ AnimatorStateTransition:
     m_ConditionEvent: _distanceToPlayer
     m_EventTreshold: 7
   - m_ConditionMode: 4
-    m_ConditionEvent: _distanceToEnemy
+    m_ConditionEvent: _distanceToTarget
     m_EventTreshold: 20
   - m_ConditionMode: 1
     m_ConditionEvent: _EnemyExists
@@ -271,9 +271,9 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: _distanceToEnemy
+  - m_Name: _distanceToTarget
     m_Type: 1
-    m_DefaultFloat: 0
+    m_DefaultFloat: 100
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
@@ -344,7 +344,7 @@ AnimatorStateTransition:
     m_ConditionEvent: _EnemyExists
     m_EventTreshold: 0
   - m_ConditionMode: 3
-    m_ConditionEvent: _distanceToEnemy
+    m_ConditionEvent: _distanceToTarget
     m_EventTreshold: 20
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -7103407605018194102}
@@ -520,11 +520,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  GoodEntity: {fileID: 0}
-  BadEntity: {fileID: 0}
+  Target: {fileID: 0}
+  GoodEntities: []
+  BadEntiies: []
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
+  NearestGoodEntity: {fileID: 0}
 --- !u!1101 &4474207856952655900
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -592,8 +594,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  GoodEntity: {fileID: 0}
-  BadEntity: {fileID: 0}
+  Target: {fileID: 0}
+  GoodEntities: []
+  BadEntiies: []
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
@@ -668,8 +671,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  GoodEntity: {fileID: 0}
-  BadEntity: {fileID: 0}
+  Target: {fileID: 0}
+  GoodEntities: []
+  BadEntiies: []
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1

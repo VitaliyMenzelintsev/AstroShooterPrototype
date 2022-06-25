@@ -6,12 +6,11 @@ public class MeleeEnemyAI : BaseAI
     public override void Start()
     {
         base.Start();
-        FindNearestGoodEntity();
     }
 
-    private void Update()
+    public override void Update()
     {
-        _characterAnimator.SetFloat("_distanceToTarget", Vector3.Distance(transform.position, NearestGoodEntity.transform.position));
+        CharacterAnimator.SetFloat("_distanceToTarget", Vector3.Distance(transform.position, Target.transform.position));
     }
 
     private void Hit()

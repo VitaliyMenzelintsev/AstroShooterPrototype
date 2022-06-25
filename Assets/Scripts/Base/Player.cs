@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(PlayerController))]
-[RequireComponent(typeof(GunController))]
-
-
 // Висит на игроке
 public class Player : MonoBehaviour
 {
