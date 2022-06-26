@@ -46529,6 +46529,7 @@ GameObject:
   - component: {fileID: 7934835405865402489}
   - component: {fileID: 8024492776106691159}
   - component: {fileID: 8024492776106691158}
+  - component: {fileID: 8024492776106691160}
   m_Layer: 0
   m_Name: 1_Medic
   m_TagString: GoodEntity
@@ -47479,7 +47480,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8018841119344075365}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c52c3cd003241b4e9abec9c012020b9, type: 3}
   m_Name: 
@@ -47515,6 +47516,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8024492776106691160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8018841119344075365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12b2518afafad0a4b8df9fcdfec99a20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 100
+  BadEntities: []
+  CoverSpots: []
+  FollowDestination: {fileID: 0}
+  FollowPoint: {fileID: 2154757934513703818}
+  Player: {fileID: 7806519472615645509}
+  NearestEnemy: {fileID: 0}
+  NearestCoverSpot: {fileID: 0}
+  NavMeshAI: {fileID: 7934835405865402471}
 --- !u!4 &8024585808008493525
 Transform:
   m_ObjectHideFlags: 0

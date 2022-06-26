@@ -26,14 +26,14 @@ public class CompanionRangeAI : CharacterBase
     private bool _hasEnemy;
 
 
-    // ДОБАВИТЬ СОСТОЯНИЕ АТАКИ
+    // ДОБАВИТЬ СОСТОЯНИЕ АТАКИ И СДЕЛАТЬ НОРМАЛЬНЫЙ АНИМАТОР СЮДА
 
 
     private void Awake()
     {
         NavMeshAI = GetComponent<NavMeshAgent>();
 
-        FollowDestination = GameObject.FindGameObjectWithTag("Player").transform;
+        FollowDestination = FollowPoint;
 
         _targetEntity = FollowDestination.GetComponent<CharacterBase>();
     }
@@ -43,13 +43,14 @@ public class CompanionRangeAI : CharacterBase
     {
         base.Start();
 
-        StartCoroutine(MoveTo());
+        StateMove();     // не должен быть здесь
 
         StartCoroutine(FindEnemy());
 
         StartCoroutine(FindCover());
 
         _currentState = State.Move;
+
         _targetEntity.OnDeath += OnTargetDeath;
     }
 
@@ -82,32 +83,32 @@ public class CompanionRangeAI : CharacterBase
     }
 
 
-    private void StateAttack()
-    {
-    //    if (_currentTarget != null
-    //&& _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+    //private void StateAttack()
+    //{
+    //    if (NearestEnemy != null
+    //&& NearestEnemy.GetComponent<Vitals>().GetCurrentHealth() > 0)
     //    {
     //        //if the target escapes during combat
-    //        if (!CanSeeTarget(_currentTarget))
+    //        if (!CanSeeTarget(NearestEnemy))
     //        {
     //            EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
-    //            _currentTarget = _alternativeTarget;
+    //            NearestEnemy = _alternativeTarget;
 
     //            return;
     //        }
 
-    //        _myTransform.LookAt(_currentTarget.transform);
+    //        _myTransform.LookAt(NearestEnemy.transform);
 
-    //        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-    //            && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+    //        if (Vector3.Distance(_myTransform.position, NearestEnemy.transform.position) <= _maxAttackDistance
+    //            && Vector3.Distance(_myTransform.position, NearestEnemy.transform.position) >= _minAttackDistance)
     //        {
     //            //attack
     //            if (_currentFireCooldown <= 0)
     //            {
     //                _characterAnimator.SetTrigger("fire");
 
-    //                _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
+    //                NearestEnemy.GetComponent<Vitals>().GetHit(_damageDealt);
 
     //                _currentFireCooldown = _fireCooldown;
     //            }
@@ -136,6 +137,33 @@ public class CompanionRangeAI : CharacterBase
     //    {
     //        _state = AI_States.idle;
     //    }
+    //}
+
+
+    private void StateMove()  // в зависимости от условий подставляем сюда либо место ближайшего укрытия, либо точку около игрока
+    {
+        if (_currentState == State.Move)
+        {
+            //Vector3 directionToTarget = (Target.position - transform.position).normalized;
+            //Vector3 targetPosition = Target.position - directionToTarget * (_myCollisionRadius * _targetCollisionRadius + _attackDistance / 2);
+
+            if (!dead)
+            {
+                NavMeshAI.SetDestination(FollowDestination.position);
+                if (Vector3.Distance(FollowDestination.position, transform.position) < 0.2f)
+                {
+                    if (_hasEnemy == true)
+                    {
+                        _currentState = State.Attack;
+                        StateAttack();
+                    }
+                    else
+                    {
+                        _currentState = State.Idle;
+                    }
+                }
+            }
+        }
     }
 
     IEnumerator FindCover()
@@ -213,35 +241,5 @@ public class CompanionRangeAI : CharacterBase
         yield return new WaitForSeconds(_refreshRate);
     }
 
-
-    IEnumerator MoveTo()  // в зависимости от условий подставляем сюда либо место ближайшего укрытия, либо точку около игрока
-    {
-        float _refreshRate = .25f;
-
-        if (_currentState == State.Move)
-        {
-            //Vector3 directionToTarget = (Target.position - transform.position).normalized;
-            //Vector3 targetPosition = Target.position - directionToTarget * (_myCollisionRadius * _targetCollisionRadius + _attackDistance / 2);
-
-            if (!dead)
-            {
-                NavMeshAI.SetDestination(FollowDestination.position);
-                if (Vector3.Distance(FollowDestination.position, transform.position) < 0.2f)
-                {
-                    if (_hasEnemy == true)
-                    {
-                        _currentState = State.Attack;
-                        StateAttack();
-                    }
-                    else
-                    {
-                        _currentState = State.Idle;
-                    }
-                }
-            }
-        }
-        yield return new WaitForSeconds(_refreshRate);
-
-    }
 }
 
