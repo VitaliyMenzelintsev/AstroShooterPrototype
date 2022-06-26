@@ -19,16 +19,16 @@ public class CompanionRangeBehavior : MonoBehaviour
     private Transform _myTransform;
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
-    private EnemyRangeBehavior _currentTarget; // 
+    private EnemyRangeBehavior _currentTarget; 
 
     [SerializeField]
-    private float _minAttackDistance = 10;
+    private float _minAttackDistance = 5;
     [SerializeField]
-    private float _maxAttackDistance = 25;
+    private float _maxAttackDistance = 13;
     [SerializeField]
     private float _moveSpeed = 3.4f;
     [SerializeField]
-    private float _damageDealt = 50F;
+    private float _damageDealt = 20F;
     [SerializeField]
     private float _fireCooldown = 1F;
     private float _currentFireCooldown = 0;
@@ -38,12 +38,15 @@ public class CompanionRangeBehavior : MonoBehaviour
     private float _coverChangeCooldown = 5;
     private float _currentCoverChangeCooldown;
 
+    private Vector3 _targetLastKnownPosition;
+
     public enum AI_States
     {
         idle,
         followThePlayer,
         moveToCover,
         combat,
+        investigate,
         death
     }
 
@@ -57,7 +60,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
         MyVitals = GetComponent<Vitals>();
 
-        _navMeshAgent = GetComponent<NavMeshAgent>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();  // нет
 
         _characterAnimator = GetComponent<Animator>();
 
@@ -78,6 +81,9 @@ public class CompanionRangeBehavior : MonoBehaviour
                 case AI_States.followThePlayer:
                     StateFollowThePlayer();
                     break;
+                case AI_States.investigate:
+                    StateInvestigate();
+                    break;
                 case AI_States.moveToCover:
                     StateMoveToCover();
                     break;
@@ -90,11 +96,11 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-            _characterAnimator.SetBool("move", false);
+            _characterAnimator.SetBool("Move", false);
 
             Destroy(GetComponent<CapsuleCollider>());
 
-            _characterAnimator.SetBool("dead", true);
+            _characterAnimator.SetBool("Dead", true);
 
             if (_currentCover != null)
             {
@@ -103,7 +109,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
             _state = AI_States.death;
 
-            Destroy(gameObject, 25f);
+            Destroy(gameObject, 7f);
         }
     }
 
@@ -163,15 +169,6 @@ public class CompanionRangeBehavior : MonoBehaviour
             {
                 _currentTarget = _bestTarget;
             }
-            // ПОДКЛЮЧЕНИЕ ПЕРЕМЕЩЕНИЯ К ИГРОКУ
-            //else
-            //{
-            //    if (_currentCover != null)
-            //        _coverManager.ExitCover(_currentCover);
-
-            //    _characterAnimator.SetBool("move", true);
-            //    _state = AI_States.followThePlayer;
-            //}
         }
     }
 
@@ -209,7 +206,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                 }
 
                 if (_currentPath.ReachedEndNode())
-                { //if we reached the end, we'll start looking for a target
+                { //если мы дошли до конца, мы начнем искать цель
                     _characterAnimator.SetBool("move", false);
 
                     _currentPath = null;
@@ -221,7 +218,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
                 Vector3 _nodePosition = _currentPath.GetNextNode();
 
-                if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f)  // 0.1 расстояние до точки укрытия
+                if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f) 
                 {
                     //if we reached the current node, then we'll begin going towards the next node
                     _currentPath._currentPathIndex++;
@@ -248,21 +245,42 @@ public class CompanionRangeBehavior : MonoBehaviour
                 _coverManager.ExitCover(_currentCover);
             _characterAnimator.SetBool("move", true);
             _state = AI_States.followThePlayer;
+
+            //anim.SetBool("move", false);
+            ////в исходнике только это 
+            //state = ai_states.idle;
         }
     }
+
 
     private void StateCombat()
     {
         if (_currentTarget != null
             && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
         {
-            //if the target escapes during combat
+            //если цель убегает во время боя
             if (!CanSeeTarget(_currentTarget))
             {
                 EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
-                _currentTarget = _alternativeTarget;
+                if(_alternativeTarget == null)
+                {
+                    _targetLastKnownPosition = _currentTarget.transform.position;
 
+                    _currentPath = CalculatePath(_myTransform.position, _targetLastKnownPosition);
+                    _characterAnimator.SetBool("Move", true);
+
+                    if(_currentCover != null)
+                    {
+                        _coverManager.ExitCover(_currentCover);
+                    }
+
+                    _state = AI_States.investigate;
+                }
+                else
+                {
+                    _currentTarget = _alternativeTarget;
+                }
                 return;
             }
 
@@ -271,10 +289,10 @@ public class CompanionRangeBehavior : MonoBehaviour
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
-                //attack
+                // Атака
                 if (_currentFireCooldown <= 0)
                 {
-                    _characterAnimator.SetTrigger("fire");
+                    _characterAnimator.SetTrigger("Fire");
 
                     _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
 
@@ -291,7 +309,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                 {
                     _currentCoverChangeCooldown = _coverChangeCooldown;
 
-                    _characterAnimator.SetBool("move", false);
+                    _characterAnimator.SetBool("Move", false);
 
                     _state = AI_States.idle;
                 }
@@ -303,7 +321,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-            //_state = AI_States.idle;
+            //_state = AI_States.idle;  // из прежней версии
 
             if (_currentCover != null)
                 _coverManager.ExitCover(_currentCover);
@@ -311,6 +329,52 @@ public class CompanionRangeBehavior : MonoBehaviour
             _state = AI_States.followThePlayer;
         }
     }
+
+
+    private void StateInvestigate()
+    {
+        if (_currentPath != null)
+        {
+            EnemyRangeBehavior _alternativeTarget = GetNewTarget();
+
+            if (_currentPath.ReachedEndNode() || _alternativeTarget != null)
+            { //если мы дошли до конца, мы начнем искать цель
+                _characterAnimator.SetBool("Move", false);
+
+                _currentPath = null;
+                _currentTarget = _alternativeTarget;
+
+                _state = AI_States.idle;
+                return;
+            }
+
+            Vector3 _nodePosition = _currentPath.GetNextNode();
+
+            if (Vector3.Distance(_myTransform.position, _nodePosition) < 1)
+            {
+                //если мы достигли текущего узла, то мы начнем двигаться к следующему узлу
+                _currentPath._currentPathIndex++;
+            }
+            else
+            {
+                //иначе мы будем двигаться к текущему узлу
+                _myTransform.LookAt(_nodePosition);
+                _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
+            }
+
+        }
+        else
+        {
+            //если у нас нет пути, мы будем искать цель
+            _characterAnimator.SetBool("Move", false);
+
+            _currentPath = null;
+            _currentTarget = null;
+
+            _state = AI_States.idle;
+        }
+    }
+
 
     private EnemyRangeBehavior GetNewTarget()
     {
@@ -322,11 +386,11 @@ public class CompanionRangeBehavior : MonoBehaviour
         {
             EnemyRangeBehavior _currentCharacter = _allCharacters[i];
 
-            //only select current soldier as target, if we are not on the same team and if it got health left
+            //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
                 && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
             {
-                //if the raycast hit the target, then we know that we can see it
+                //если рейкаст попал в цель, то мы знаем, что можем его увидеть
                 if (CanSeeTarget(_currentCharacter))
                 {
                     if (_bestTarget == null)
@@ -335,7 +399,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                     }
                     else
                     {
-                        //if current soldier is closer than best target, then choose current soldier as best target
+                        //если текущий враг ближе, чем лучшая цель, то выбрать текущего солдата в качестве лучшей цели
                         if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
                         {
                             _bestTarget = _currentCharacter;
@@ -348,22 +412,21 @@ public class CompanionRangeBehavior : MonoBehaviour
         return _bestTarget;
     }
 
+
     private bool CanSeeTarget(EnemyRangeBehavior _target)
     {
         bool _canSeeIt = false;
-
-        //Can I see the Target Soldier?
 
         Vector3 _enemyPosition = _target.Eyes.position;
 
         Vector3 _directionTowardsEnemy = _enemyPosition - Eyes.position;
 
-        RaycastHit _hit; //record of what we hit with the raycast
+        RaycastHit _hit;
 
-        //cast ray towards current soldier, make the raycast line infinity in length
+        //направить луч на текущего врага
         if (Physics.Raycast(Eyes.position, _directionTowardsEnemy, out _hit, Mathf.Infinity))
         {
-            //if the raycast hit the target, then we know that we can see it
+            //если рейкаст попал в цель, то мы знаем, что можем его увидеть
             if (_hit.transform == _target.transform)
             {
                 _canSeeIt = true;
@@ -373,91 +436,15 @@ public class CompanionRangeBehavior : MonoBehaviour
         return _canSeeIt;
     }
 
+
     private Path CalculatePath(Vector3 _source, Vector3 _destination)
     {
         NavMeshPath _navMeshPath = new NavMeshPath();
 
-        NavMesh.CalculatePath(_source, _destination, NavMesh.AllAreas, _navMeshPath); //calculates a path using the Unity NavMesh
+        NavMesh.CalculatePath(_source, _destination, NavMesh.AllAreas, _navMeshPath);
 
         Path _path = new Path(_navMeshPath.corners);
 
         return _path;
     }
 }
-
-
-
-
-
-//using UnityEngine;
-//using UnityEngine.AI;
-
-//[RequireComponent(typeof(NavMeshAgent))]
-//public class CompanionBehavior : MonoBehaviour
-//{
-//    public Transform FollowPoint;
-//    public Transform Player;
-//    [HideInInspector]
-//    public Team MyTeam;
-//    [HideInInspector]
-//    public Vitals MyVitals;
-
-//    private NavMeshAgent _navMeshAgent;
-//    private GunController _gunController;
-//    //private Animator _npcAnimator;
-//    private Camera _viewCamera;
-
-//    public enum AI_States
-//    {
-//        idle,
-//        moveToCover,
-//        combat,
-//        death
-//    }
-
-//    public AI_States _state = AI_States.idle;
-
-//    private void Awake()
-//    {
-//        _navMeshAgent = GetComponent<NavMeshAgent>();
-
-//        _gunController = GetComponent<GunController>();
-
-//        //_npcAnimator = GetComponent<Animator>();
-
-//        _viewCamera = Camera.main;
-
-//        MyTeam = GetComponent<Team>();
-
-//        MyVitals = GetComponent<Vitals>();
-//    }
-
-//    private void Update()
-//    {
-//        // Movement
-//        if (Vector3.Distance(Player.position, transform.position) > 3)
-//            _navMeshAgent.SetDestination(FollowPoint.position); // ввести проверку, если координаты цели изменились, то запустить поиск пути
-
-
-
-//        // Look input
-//        Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);
-//        Plane _groundPlane = new Plane(Vector3.up, Vector3.up * 1.8f);
-//        float _rayDistance;
-
-//        if (_groundPlane.Raycast(_ray, out _rayDistance))
-//        {
-//            Vector3 _point = _ray.GetPoint(_rayDistance);
-//            LookAt(_point);
-
-//            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
-//                _gunController.Aim(_point);
-//        }
-//    }
-
-//    public void LookAt(Vector3 _lookPoint)
-//    {
-//        Vector3 _heightCorrectedPoint = new Vector3(_lookPoint.x, transform.position.y, _lookPoint.z);
-//        transform.LookAt(_heightCorrectedPoint);
-//    }
-//}

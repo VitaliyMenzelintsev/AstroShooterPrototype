@@ -1,134 +1,391 @@
-﻿//using System.Collections;
-//using UnityEngine;
-//using UnityEngine.AI;
+﻿//using UnityEngine;
+//using UnityEngine.AI; 
 
-//[RequireComponent(typeof(NavMeshAgent))]
-//public class Enemy 
+//public class Soldier : MonoBehaviour
 //{
-//    public enum State { Idle, Chasing, Attacking }
-//    State currentState;
+//    CoverManager coverManager;
 
-//    public ParticleSystem deathEffect;
+//    Soldier curTarget;
+//    public Team myTeam;
+//    public Vitals myVitals;
 
-//    NavMeshAgent pathfinder;
-//    Transform target;
-//    LivingEntity targetEntity;
-//    Material skinMaterial;
+//    Transform myTransform;
+//    public Transform eyes;
 
-//    Color originalColor;
+//    Animator anim;
 
-//    float attackDistance = 0.5f;
-//    float timeBetweenAttacks = 1f;
-//    float damage = 1;
+//    [SerializeField] float minAttackDistance = 10, maxAttackDistance = 25, moveSpeed = 15;
 
-//    float nextAttackTime;
-//    float myCollisionRadius;
-//    float targetCollisionRadius;
+//    [SerializeField] float damageDealt = 50F;
+//    [SerializeField] float fireCooldown = 1F;
+//    float curFireCooldown = 0;
 
-//    bool hasTarget;
+//    Vector3 targetLastKnownPosition;
+//    Path currentPath = null;
 
-//    private void Awake()
+//    CoverSpot currentCover = null;
+//    float coverChangeCooldown = 5;
+//    float curCoverChangeCooldown;
+
+//    public enum ai_states
 //    {
-//        pathfinder = GetComponent<NavMeshAgent>();
+//        idle,
+//        moveToCover,
+//        combat,
+//        investigate
+//    }
+//    public ai_states state = ai_states.idle;
 
-//        if (GameObject.FindGameObjectWithTag("Player") != null)
-//        {
-//            hasTarget = true;
+//    // Start is called before the first frame update
+//    void Start()
+//    {
+//        myTransform = transform;
+//        myTeam = GetComponent<Team>();
+//        myVitals = GetComponent<Vitals>();
+//        anim = GetComponent<Animator>();
 
-//            target = GameObject.FindGameObjectWithTag("Player").transform;
-//            targetEntity = target.GetComponent<LivingEntity>();
-
-//            myCollisionRadius = GetComponent<CapsuleCollider>().radius;
-//            targetCollisionRadius = target.GetComponent<CapsuleCollider>().radius;
-
-//        }
+//        coverManager = GameObject.FindObjectOfType<CoverManager>();
+//        curCoverChangeCooldown = coverChangeCooldown;
 //    }
 
-//    protected override void Start()
-//    {
-//        base.Start();
-
-//        if (hasTarget)
-//        {
-//            currentState = State.Chasing;
-//            targetEntity.OnDeath += OnTargetDeath;
-//            StartCoroutine(UpdatePath());
-//        }
-//    }
-
-//    public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor)
-//    {
-//        pathfinder.speed = moveSpeed;
-
-//        if (hasTarget)
-//        {
-//            damage = Mathf.Ceil(targetEntity.startingHealth / hitsToKillPlayer); 
-//        }
-//        startingHealth = enemyHealth;
-//    }
-
-//    public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
-//    {
-//        if (damage >= health)
-//        {
-//            Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathEffect.startLifetime);
-//        }
-//        base.TakeHit(damage, hitPoint, hitDirection);
-//    }
-
-//    void OnTargetDeath()
-//    {
-//        hasTarget = false;
-//        currentState = State.Idle;
-//    }
-
+//    // Update is called once per frame
 //    void Update()
 //    {
-//        if (hasTarget)
+//        if (myVitals.getCurHealth() > 0)
 //        {
-//            if (Time.time > nextAttackTime)
+//            switch (state)
 //            {
-//                float sqrDistanceToTarget = (target.position - transform.position).sqrMagnitude;
-//                if (sqrDistanceToTarget < Mathf.Pow(attackDistance + myCollisionRadius + targetCollisionRadius, 2))
-//                {
-//                    nextAttackTime = Time.time + timeBetweenAttacks;
-//                    StartCoroutine(Attack());
-//                }
+//                case ai_states.idle:
+//                    stateIdle();
+//                    break;
+//                case ai_states.moveToCover:
+//                    stateMoveToCover();
+//                    break;
+//                case ai_states.combat:
+//                    stateCombat();
+//                    break;
+//                case ai_states.investigate:
+//                    stateInvestigate();
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
+//        else
+//        {
+//            anim.SetBool("move", false);
+
+//            if (GetComponent<BoxCollider>() != null)
+//            {
+//                Destroy(GetComponent<BoxCollider>());
+//            }
+
+//            if (currentCover != null)
+//            {
+//                coverManager.ExitCover(currentCover);
+//            }
+
+//            Quaternion deathRotation = Quaternion.Euler(90, myTransform.rotation.eulerAngles.y, myTransform.rotation.eulerAngles.z);
+//            if (myTransform.rotation != deathRotation)
+//            {
+//                myTransform.rotation = deathRotation; //maybe it will work?
 //            }
 //        }
 //    }
 
-//    IEnumerator Attack()
+//    void stateIdle()
 //    {
-//        currentState = State.Attacking;
-//        pathfinder.enabled = false;
-
-//        Vector3 originalPosition = transform.position;
-//        Vector3 directionToTarget = (target.position - transform.position).normalized;
-//        Vector3 attackPosition = target.position - directionToTarget * (myCollisionRadius);
-
-
-//        currentState = State.Chasing;
-//        pathfinder.enabled = true;
-//    }
-
-//    IEnumerator UpdatePath()
-//    {
-//        float refreshRate = .25f;
-
-//        while (hasTarget)
+//        if (curTarget != null && curTarget.GetComponent<Vitals>().getCurHealth() > 0)
 //        {
-//            if (currentState == State.Chasing)
+//            if (currentCover != null)
 //            {
-//                Vector3 directionToTarget = (target.position - transform.position).normalized;
-//                Vector3 targetPosition = target.position - directionToTarget * (myCollisionRadius * targetCollisionRadius + attackDistance / 2);
+//                coverManager.ExitCover(currentCover);
+//            }
 
-//                if (!dead)
+//            currentCover = coverManager.GetCoverTowardsTarget(this, curTarget.transform.position, maxAttackDistance, minAttackDistance, currentCover);
+
+//            if (currentCover != null)
+//            {
+//                if (Vector3.Distance(myTransform.position, currentCover.transform.position) > 0.2F)
 //                {
-//                    pathfinder.SetDestination(target.position);
+//                    currentPath = CalculatePath(myTransform.position, currentCover.transform.position);
+
+//                    anim.SetBool("move", true);
+
+//                    state = ai_states.moveToCover;
+//                }
+//                else
+//                {
+//                    state = ai_states.combat;
 //                }
 //            }
-//            yield return new WaitForSeconds(refreshRate);
+//            else
+//            {
+//                if (Vector3.Distance(myTransform.position, curTarget.transform.position) <= maxAttackDistance 
+//                    && Vector3.Distance(myTransform.position, curTarget.transform.position) >= minAttackDistance)
+//                {
+//                    state = ai_states.combat;
+//                }
+//            }
 //        }
+//        else
+//        {
+//            //find new target
+//            Soldier bestTarget = GetNewTarget();
+
+//            if (bestTarget != null)
+//            {
+//                curTarget = bestTarget;
+//            }
+//        }
+//    }
+//    void stateMoveToCover()
+//    {
+//        if (curTarget != null 
+//            && currentCover != null 
+//            && currentCover.AmICoveredFrom(curTarget.transform.position))
+//        {
+//            if (currentPath != null)
+//            {
+//                Soldier alternativeTarget = GetNewTarget();
+
+//                if (alternativeTarget != null && alternativeTarget != curTarget)
+//                {
+//                    float distanceToCurTarget = Vector3.Distance(myTransform.position, curTarget.transform.position);
+//                    float distanceToAlternativeTarget = Vector3.Distance(myTransform.position, alternativeTarget.transform.position);
+//                    float distanceBetweenTargets = Vector3.Distance(curTarget.transform.position, alternativeTarget.transform.position);
+
+//                    if (Mathf.Abs(distanceToAlternativeTarget - distanceToCurTarget) > 5 && distanceBetweenTargets > 5)
+//                    {
+//                        curTarget = alternativeTarget;
+//                        coverManager.ExitCover(currentCover);
+//                        currentCover = coverManager.GetCoverTowardsTarget(this, curTarget.transform.position, maxAttackDistance, minAttackDistance, currentCover);
+//                        currentPath = CalculatePath(myTransform.position, currentCover.transform.position);
+//                        return;
+//                    }
+//                }
+
+//                if (currentPath.ReachedEndNode())
+//                { //if we reached the end, we'll start looking for a target
+//                    anim.SetBool("move", false);
+
+//                    currentPath = null;
+
+//                    state = ai_states.combat;
+//                    return;
+//                }
+
+//                Vector3 nodePosition = currentPath.GetNextNode();
+
+//                if (Vector3.Distance(myTransform.position, nodePosition) < 1)
+//                {
+//                    //if we reached the current node, then we'll begin going towards the next node
+//                    currentPath.currentPathIndex++;
+//                }
+//                else
+//                {
+//                    //else we'll move towards current node
+//                    myTransform.LookAt(nodePosition);
+//                    myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+//                }
+
+//            }
+//            else
+//            {
+//                //if we don't have a path, we'll look for a target
+//                anim.SetBool("move", false);
+
+//                state = ai_states.idle;
+//            }
+//        }
+//        else
+//        {
+//            anim.SetBool("move", false);
+
+//            state = ai_states.idle;
+//        }
+//    }
+
+//    void stateCombat()
+//    {
+//        if (curTarget != null && curTarget.GetComponent<Vitals>().getCurHealth() > 0)
+//        {
+//            //if the target escapes during combat
+//            if (!canISeeTheTarget(curTarget))
+//            {
+//                Soldier alternativeTarget = GetNewTarget();
+
+//                if (alternativeTarget == null)
+//                {
+//                    //If I can't see the target anymore, I'll need to Investigate last known position
+//                    targetLastKnownPosition = curTarget.transform.position;
+
+//                    //we'll need to calculate a path towards the target's last known position and we'll do so using the Unity NavMesh combined with some custom code
+//                    currentPath = CalculatePath(myTransform.position, targetLastKnownPosition);
+//                    anim.SetBool("move", true);
+
+//                    if (currentCover != null)
+//                    {
+//                        coverManager.ExitCover(currentCover);
+//                    }
+//                    state = ai_states.investigate;
+//                }
+//                else
+//                {
+//                    curTarget = alternativeTarget;
+//                }
+//                return;
+//            }
+
+//            myTransform.LookAt(curTarget.transform);
+
+//            if (Vector3.Distance(myTransform.position, curTarget.transform.position) <= maxAttackDistance
+//                && Vector3.Distance(myTransform.position, curTarget.transform.position) >= minAttackDistance)
+//            {
+//                //attack
+//                if (curFireCooldown <= 0)
+//                {
+//                    anim.SetTrigger("fire");
+
+//                    curTarget.GetComponent<Vitals>().getHit(damageDealt);
+
+//                    curFireCooldown = fireCooldown;
+//                }
+//                else
+//                {
+//                    curFireCooldown -= 1 * Time.deltaTime;
+//                }
+//            }
+//            else
+//            {
+//                if (curCoverChangeCooldown <= 0)
+//                {
+//                    curCoverChangeCooldown = coverChangeCooldown;
+//                    anim.SetBool("move", false);
+
+//                    state = ai_states.idle;
+//                }
+//                else
+//                {
+//                    curCoverChangeCooldown -= 1 * Time.deltaTime;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            state = ai_states.idle;
+//        }
+//    }
+
+//    void stateInvestigate()
+//    {
+//        if (currentPath != null)
+//        {
+//            Soldier alternativeTarget = GetNewTarget();
+
+//            if (currentPath.ReachedEndNode() || alternativeTarget != null)
+//            { //if we reached the end, we'll start looking for a target
+//                anim.SetBool("move", false);
+
+//                currentPath = null;
+//                curTarget = alternativeTarget;
+
+//                state = ai_states.idle;
+//                return;
+//            }
+
+//            Vector3 nodePosition = currentPath.GetNextNode();
+
+//            if (Vector3.Distance(myTransform.position, nodePosition) < 1)
+//            {
+//                //if we reached the current node, then we'll begin going towards the next node
+//                currentPath.currentPathIndex++;
+//            }
+//            else
+//            {
+//                //else we'll move towards current node
+//                myTransform.LookAt(nodePosition);
+//                myTransform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+//            }
+
+//        }
+//        else
+//        {
+//            //if we don't have a path, we'll look for a target
+//            anim.SetBool("move", false);
+
+//            currentPath = null;
+//            curTarget = null;
+
+//            state = ai_states.idle;
+//        }
+//    }
+
+//    Soldier GetNewTarget()
+//    {
+//        Soldier[] allSoldiers = GameObject.FindObjectsOfType<Soldier>();
+//        Soldier bestTarget = null;
+//        for (int i = 0; i < allSoldiers.Length; i++)
+//        {
+//            Soldier curSoldier = allSoldiers[i];
+
+//            //only select current soldier as target, if we are not on the same team and if it got health left
+//            if (curSoldier.GetComponent<Team>().getTeamNumber() != myTeam.getTeamNumber() && curSoldier.GetComponent<Vitals>().getCurHealth() > 0)
+//            {
+//                //if the raycast hit the target, then we know that we can see it
+//                if (canISeeTheTarget(curSoldier))
+//                {
+//                    if (bestTarget == null)
+//                    {
+//                        bestTarget = curSoldier;
+//                    }
+//                    else
+//                    {
+//                        //if current soldier is closer than best target, then choose current soldier as best target
+//                        if (Vector3.Distance(curSoldier.transform.position, myTransform.position) < Vector3.Distance(bestTarget.transform.position, myTransform.position))
+//                        {
+//                            bestTarget = curSoldier;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+//        return bestTarget;
+//    }
+
+//    bool canISeeTheTarget(Soldier target)
+//    {
+//        bool canSeeIt = false;
+
+//        //Can I see the Target Soldier?
+
+//        Vector3 enemyPosition = target.eyes.position;
+
+//        Vector3 directionTowardsEnemy = enemyPosition - eyes.position;
+
+//        RaycastHit hit; //record of what we hit with the raycast
+
+//        //cast ray towards current soldier, make the raycast line infinity in length
+//        if (Physics.Raycast(eyes.position, directionTowardsEnemy, out hit, Mathf.Infinity))
+//        {
+//            //if the raycast hit the target, then we know that we can see it
+//            if (hit.transform == target.transform)
+//            {
+//                canSeeIt = true;
+//            }
+//        }
+
+//        return canSeeIt;
+//    }
+
+//    Path CalculatePath(Vector3 source, Vector3 destination)
+//    {
+//        NavMeshPath nvPath = new NavMeshPath();
+//        NavMesh.CalculatePath(source, destination, NavMesh.AllAreas, nvPath); //calculates a path using the Unity NavMesh
+
+//        Path path = new Path(nvPath.corners);
+
+//        return path;
 //    }
 //}

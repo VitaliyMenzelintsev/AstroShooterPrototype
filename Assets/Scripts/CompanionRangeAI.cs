@@ -9,29 +9,51 @@ public class CompanionRangeAI : CharacterBase
     public GameObject[] BadEntities;
     [HideInInspector]
     public GameObject[] CoverSpots;
-    [HideInInspector]
+    //[HideInInspector]
     public Transform FollowDestination;
+    //[HideInInspector]
+    public GameObject NearestEnemy;
+    //[HideInInspector]
+    public GameObject NearestCoverSpot;
+
     public Transform FollowPoint;    // в инспекторе задать точку около игрока
     public Transform Player;
+    public Transform Eyes;
 
-    public GameObject NearestEnemy;
-    public GameObject NearestCoverSpot;
-    public NavMeshAgent NavMeshAI;
+    public Vitals MyVitals;
+    [SerializeField]
+    private float _minAttackDistance = 7f;
+    [SerializeField]
+    private float _maxAttackDistance = 13f;
+    [SerializeField]
+    private float _damageDealt = 15f;
+    [SerializeField]
+    private float _fireCooldown = 1f;
+    [SerializeField]
+    private float _coverChangeCooldown = 5f;
+    private float _currentCoverChangeCooldown;
+    private float _currentFireCooldown = 0f;
 
 
-    public enum State { Idle, Move, Attack /* Attack = Cover, атакуем только из укрытия */ }
-    private State _currentState;
-
+    private NavMeshAgent _navMeshAI;
+    private Animator _characterAnimator;
     private CharacterBase _targetEntity;
+    private Transform _myTransform;
     private bool _hasEnemy;
 
+    public enum State { Idle, Move, Attack, Death }
+    public State _currentState;
 
-    // ДОБАВИТЬ СОСТОЯНИЕ АТАКИ И СДЕЛАТЬ НОРМАЛЬНЫЙ АНИМАТОР СЮДА
+    // СДЕЛАТЬ АНИМАТОР 
 
 
     private void Awake()
     {
-        NavMeshAI = GetComponent<NavMeshAgent>();
+        _myTransform = transform;
+
+        _navMeshAI = GetComponent<NavMeshAgent>();
+
+        _characterAnimator = GetComponent<Animator>();
 
         FollowDestination = FollowPoint;
 
@@ -43,130 +65,164 @@ public class CompanionRangeAI : CharacterBase
     {
         base.Start();
 
-        StateMove();     // не должен быть здесь
-
         StartCoroutine(FindEnemy());
 
         StartCoroutine(FindCover());
 
+        StartCoroutine(TargetChanger());
+
+        //_characterAnimator.SetBool("Move", true);
         _currentState = State.Move;
 
-        _targetEntity.OnDeath += OnTargetDeath;
+        _currentCoverChangeCooldown = _coverChangeCooldown;
+
     }
 
 
     private void Update()
     {
-        TargetChanger();
-
-        // смотреть за курсором
-    }
-
-
-    private void OnTargetDeath()
-    {
-        _hasEnemy = false;
-        _currentState = State.Idle;
-    }
-
-
-    private void TargetChanger()
-    {
-        if (_hasEnemy)
+        if (MyVitals.GetCurrentHealth() > 0)
         {
-            FollowDestination = NearestCoverSpot.transform; // для милишника цель - враг
+            switch (_currentState)
+            {
+                case State.Idle:
+                    StateIdle();
+                    break;
+                case State.Move:
+                    StateMove();
+                    break;
+                case State.Attack:
+                    StateAttack();
+                    break;
+                default:
+                    break;
+            }
         }
         else
         {
-            FollowDestination = FollowPoint;
+            _characterAnimator.SetBool("move", false);
+
+            Destroy(GetComponent<CapsuleCollider>());
+
+            _characterAnimator.SetBool("dead", true);
+
+            //if (_currentCover != null)
+            //{
+            //    _coverManager.ExitCover(_currentCover);
+            //}
+
+            _currentState = State.Death;
+
+            Destroy(gameObject, 25f);
         }
     }
 
 
-    //private void StateAttack()
-    //{
-    //    if (NearestEnemy != null
-    //&& NearestEnemy.GetComponent<Vitals>().GetCurrentHealth() > 0)
-    //    {
-    //        //if the target escapes during combat
-    //        if (!CanSeeTarget(NearestEnemy))
-    //        {
-    //            EnemyRangeBehavior _alternativeTarget = GetNewTarget();
-
-    //            NearestEnemy = _alternativeTarget;
-
-    //            return;
-    //        }
-
-    //        _myTransform.LookAt(NearestEnemy.transform);
-
-    //        if (Vector3.Distance(_myTransform.position, NearestEnemy.transform.position) <= _maxAttackDistance
-    //            && Vector3.Distance(_myTransform.position, NearestEnemy.transform.position) >= _minAttackDistance)
-    //        {
-    //            //attack
-    //            if (_currentFireCooldown <= 0)
-    //            {
-    //                _characterAnimator.SetTrigger("fire");
-
-    //                NearestEnemy.GetComponent<Vitals>().GetHit(_damageDealt);
-
-    //                _currentFireCooldown = _fireCooldown;
-    //            }
-    //            else
-    //            {
-    //                _currentFireCooldown -= 1 * Time.deltaTime;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if (_currentCoverChangeCooldown <= 0)    // СМЕНА УКРЫТИЙ ТУТ
-    //            {
-    //                _currentCoverChangeCooldown = _coverChangeCooldown;
-
-    //                _characterAnimator.SetBool("move", false);
-
-    //                _state = AI_States.idle;
-    //            }
-    //            else
-    //            {
-    //                _currentCoverChangeCooldown -= 1 * Time.deltaTime;
-    //            }
-    //        }
-    //    }
-    //    else
-    //    {
-    //        _state = AI_States.idle;
-    //    }
-    //}
-
-
-    private void StateMove()  // в зависимости от условий подставляем сюда либо место ближайшего укрытия, либо точку около игрока
+    private void StateAttack()
     {
-        if (_currentState == State.Move)
+        if (NearestEnemy != null
+            && NearestEnemy.GetComponent<Vitals>().GetCurrentHealth() > 0)
         {
-            //Vector3 directionToTarget = (Target.position - transform.position).normalized;
-            //Vector3 targetPosition = Target.position - directionToTarget * (_myCollisionRadius * _targetCollisionRadius + _attackDistance / 2);
-
-            if (!dead)
+            if (!CanSeeEnemy(NearestEnemy))
             {
-                NavMeshAI.SetDestination(FollowDestination.position);
-                if (Vector3.Distance(FollowDestination.position, transform.position) < 0.2f)
+                GameObject _alternativeTarget = NearestEnemy;
+
+                NearestEnemy = _alternativeTarget;
+
+                return;
+            }
+
+            _myTransform.LookAt(NearestEnemy.transform);
+
+            if (Vector3.Distance(_myTransform.position, NearestEnemy.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(_myTransform.position, NearestEnemy.transform.position) >= _minAttackDistance)
+            {
+                //attack
+                if (_currentFireCooldown <= 0)
                 {
-                    if (_hasEnemy == true)
-                    {
-                        _currentState = State.Attack;
-                        StateAttack();
-                    }
-                    else
-                    {
-                        _currentState = State.Idle;
-                    }
+                    _characterAnimator.SetBool("Move", false);
+
+                    _characterAnimator.SetTrigger("Fire");
+
+                    NearestEnemy.GetComponent<Vitals>().GetHit(_damageDealt);
+
+                    _currentFireCooldown = _fireCooldown;
+                }
+                else
+                {
+                    _currentFireCooldown -= 1 * Time.deltaTime;
+                }
+            }
+            else
+            {
+                if (_currentCoverChangeCooldown <= 0)    // Смена укрытий
+                {
+                    _currentCoverChangeCooldown = _coverChangeCooldown;
+
+                    _characterAnimator.SetBool("Move", false);
+                    _currentState = State.Idle;
+                }
+                else
+                {
+                    _currentCoverChangeCooldown -= 1 * Time.deltaTime;
+                }
+            }
+        }
+        else
+        {
+            _characterAnimator.SetBool("Move", false);
+            _currentState = State.Idle;
+        }
+    }
+
+
+    private void StateMove()  
+    {
+        _characterAnimator.SetBool("Move", true);
+        _navMeshAI.SetDestination(FollowDestination.position);
+
+        if (Vector3.Distance(FollowDestination.position, _myTransform.position) < 1.4f)
+        {
+            if (_hasEnemy == true)
+            {
+                _currentState = State.Attack;
+            }
+            else
+            {
+                if (Vector3.Distance(Player.position, _myTransform.position) > 3f)
+                {
+                    _navMeshAI.SetDestination(FollowDestination.position);
+                }
+
+                else
+                {
+                    _characterAnimator.SetBool("Move", false);
+                    _currentState = State.Idle;
                 }
             }
         }
     }
 
-    IEnumerator FindCover()
+
+    private void StateIdle()
+    {
+        if(Vector3.Distance(Player.position, transform.position) > 3f)
+        {
+            //_characterAnimator.SetBool("Move", true);
+            _currentState = State.Move;
+        }
+
+        if(_hasEnemy == true)
+        {
+            _characterAnimator.SetBool("Move", false);
+            //_characterAnimator.SetTrigger("Fire");
+            _currentState = State.Attack;
+        }
+        
+    }
+
+
+    IEnumerator FindCover() // НЕ РАБОТАЕТ
     {
         float _refreshRate = .5f;
 
@@ -174,21 +230,21 @@ public class CompanionRangeAI : CharacterBase
 
         if (CoverSpots != null)
         {
-            GameObject _nearestCoverSpot = CoverSpots[0];
+            GameObject _nearestCoverSpot = null;
 
-            for (int i = 1; i < CoverSpots.Length; i++)
+            for (int i = 0; i < CoverSpots.Length; i++)
             {
-                float _distance = Vector3.Distance(_nearestCoverSpot.transform.position, transform.position);
+                float _minDistance = Vector3.Distance(CoverSpots[i].transform.position, transform.position);
 
-                float _anotherDistance = Vector3.Distance(CoverSpots[i].transform.position, transform.position);
+                float _alternativeDistance = Vector3.Distance(CoverSpots[i+1].transform.position, transform.position);
 
-                if (_anotherDistance < _distance)
+                if (_alternativeDistance < _minDistance)
                 {
-                    _nearestCoverSpot = CoverSpots[i];
+                    _nearestCoverSpot = CoverSpots[i+1];
                 }
                 else
                 {
-                    _nearestCoverSpot = CoverSpots[0];
+                    _nearestCoverSpot = CoverSpots[i];
                 }
                 NearestCoverSpot = _nearestCoverSpot;
             }
@@ -227,6 +283,7 @@ public class CompanionRangeAI : CharacterBase
                     _nearestBadEntity = BadEntities[0];
                 }
             }
+
             NearestEnemy = _nearestBadEntity;
 
             _hasEnemy = true;
@@ -241,5 +298,42 @@ public class CompanionRangeAI : CharacterBase
         yield return new WaitForSeconds(_refreshRate);
     }
 
+
+    IEnumerator TargetChanger()
+    {
+        float _refreshRate = .5f;
+
+        if (_hasEnemy)
+        {
+            FollowDestination = NearestCoverSpot.transform; // для милишника цель - враг
+        }
+        else
+        {
+            FollowDestination = FollowPoint;
+        }
+        yield return new WaitForSeconds(_refreshRate);
+    }
+
+
+    private bool CanSeeEnemy(GameObject _target) // если NPC из глаз видит ближайшего противника, то true
+    {
+        bool _canSeeIt = false;
+
+        Vector3 _enemyPosition = _target.transform.position;
+
+        Vector3 _directionTowardsEnemy = _enemyPosition - Eyes.position;
+
+        RaycastHit _hit;
+
+        if (Physics.Raycast(Eyes.position, _directionTowardsEnemy, out _hit, Mathf.Infinity))
+        {
+            if (_hit.transform == _target.transform)
+            {
+                _canSeeIt = true;
+            }
+        }
+
+        return _canSeeIt;
+    }
 }
 
