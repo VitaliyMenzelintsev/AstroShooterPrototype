@@ -16,11 +16,12 @@ public class CompanionRangeBehavior : MonoBehaviour
     public Transform FollowPoint;
     public Transform Player;
 
+    private Camera _viewCamera;
     private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
-    public EnemyRangeBehavior _currentTarget;
+    public EnemyRangeBehavior _currentTarget; // паблик для тестов
 
     [SerializeField]
     private float _minAttackDistance = 5;
@@ -55,6 +56,8 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void Start()
     {
+        _viewCamera = Camera.main;
+
         _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
@@ -117,44 +120,38 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateFollowThePlayer()
     {
-        //_currentPath = CalculatePath(_myTransform.position, FollowPoint.position);
-
-        //Vector3 _nodePosition = _currentPath.GetNextNode();
-
-        //if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f)  // !!
-        //{
-        //    //если мы достигли текущего узла, то мы начнем двигаться к следующему узлу
-        //    _currentPath._currentPathIndex++;
-        //}
-        //else
-        //{
-        //    //иначе мы будем двигаться к текущему узлу
-        //    _myTransform.LookAt(_nodePosition);
-
-        //    _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
-        //}
-
         if (_currentCover != null)
         {
             _coverManager.ExitCover(_currentCover);
         }
 
-        // смотреть в сторону курсора
-        
-        if(Vector3.Distance(transform.position, Player.position) > 3f)
+        _currentTarget = GetNewTarget();
+
+        if (_currentTarget == null)
         {
-            _navMeshAgent.SetDestination(FollowPoint.position);
-            _characterAnimator.SetBool("Move", true);
+            if (Vector3.Distance(transform.position, Player.position) > 3f)
+            {
+                _myTransform.LookAt(Player);
+                _characterAnimator.SetBool("Move", true);
+                _navMeshAgent.SetDestination(FollowPoint.position);
+            }
+            else
+            {
+                _characterAnimator.SetBool("Move", false);
+
+                // смотреть за проекцией курсора на поверхность уровня на высоте 1.8 м
+
+                if (Vector3.Distance(FollowPoint.position, _myTransform.position) < 0.3f)
+                {
+                    _characterAnimator.SetBool("Move", false);
+                    _state = AI_States.idle;
+                }
+            }
         }
         else
         {
             _characterAnimator.SetBool("Move", false);
-
-            if (Vector3.Distance(FollowPoint.position, _myTransform.position) < 2f)
-            {
-                _characterAnimator.SetBool("Move", false);
-                _state = AI_States.idle;
-            }
+            _state = AI_States.idle;
         }
     }
 
@@ -435,19 +432,9 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-
             _characterAnimator.SetBool("Move", true); //!
             _characterAnimator.SetBool("HasEnemy", false); //!!
             _state = AI_States.followThePlayer;
-
-            // ПРЕЖНИЙ ВАРИАНт
-            ////если у нас нет пути, мы будем искать цель
-            //_characterAnimator.SetBool("Move", false);
-
-            //_currentPath = null;
-            //_currentTarget = null;
-
-            //_state = AI_States.idle;
         }
     }
 
