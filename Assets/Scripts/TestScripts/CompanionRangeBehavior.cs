@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
+//[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
@@ -14,12 +14,13 @@ public class CompanionRangeBehavior : MonoBehaviour
     public Vitals MyVitals;
     public Transform Eyes;
     public Transform FollowPoint;
+    public Transform Player;
 
     private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
-    private EnemyRangeBehavior _currentTarget; 
+    public EnemyRangeBehavior _currentTarget;
 
     [SerializeField]
     private float _minAttackDistance = 5;
@@ -116,216 +117,284 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateFollowThePlayer()
     {
-        _navMeshAgent.SetDestination(FollowPoint.position);
-        if (Vector3.Distance(FollowPoint.position, _myTransform.position) < 0.1f)
+        //_currentPath = CalculatePath(_myTransform.position, FollowPoint.position);
+
+        //Vector3 _nodePosition = _currentPath.GetNextNode();
+
+        //if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f)  // !!
+        //{
+        //    //если мы достигли текущего узла, то мы начнем двигаться к следующему узлу
+        //    _currentPath._currentPathIndex++;
+        //}
+        //else
+        //{
+        //    //иначе мы будем двигаться к текущему узлу
+        //    _myTransform.LookAt(_nodePosition);
+
+        //    _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
+        //}
+
+        if (_currentCover != null)
         {
-            _characterAnimator.SetBool("move", false);
-            _state = AI_States.idle;
+            _coverManager.ExitCover(_currentCover);
+        }
+
+        // смотреть в сторону курсора
+        
+        if(Vector3.Distance(transform.position, Player.position) > 3f)
+        {
+            _navMeshAgent.SetDestination(FollowPoint.position);
+            _characterAnimator.SetBool("Move", true);
+        }
+        else
+        {
+            _characterAnimator.SetBool("Move", false);
+
+            if (Vector3.Distance(FollowPoint.position, _myTransform.position) < 2f)
+            {
+                _characterAnimator.SetBool("Move", false);
+                _state = AI_States.idle;
+            }
         }
     }
 
 
     private void StateIdle()
     {
-        if (_currentTarget != null && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+        _currentTarget = GetNewTarget(); // !!
+
+        if (_currentTarget != null)
         {
-            if (_currentCover != null)
+            if (_currentTarget != null && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
             {
-                _coverManager.ExitCover(_currentCover); // Что делает?
-            }
-
-            _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
-
-            if (_currentCover != null)
-            {
-                if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
+                if (_currentCover != null)
                 {
-                    _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
+                    _coverManager.ExitCover(_currentCover); 
+                }
 
-                    _characterAnimator.SetBool("move", true);
+                _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
 
-                    _state = AI_States.moveToCover;
+                if (_currentCover != null)
+                {
+                    if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
+                    {
+                        _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
+
+                        _characterAnimator.SetBool("Move", true);
+                        _characterAnimator.SetBool("HasEnemy", true);  // !!
+                        _state = AI_States.moveToCover;
+                    }
+                    else
+                    {
+                        _state = AI_States.combat; // !! можно добавить передачу анимации Fire
+                    }
                 }
                 else
                 {
-                    _state = AI_States.combat;
+                    if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                        && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+                    {
+                        _state = AI_States.combat; // !! можно добавить передачу анимации Fire
+                    }
                 }
             }
             else
             {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+                //ищем новую цель
+                EnemyRangeBehavior _bestTarget = GetNewTarget();
+
+                if (_bestTarget != null)
                 {
-                    _state = AI_States.combat;
+                    _currentTarget = _bestTarget;
                 }
             }
         }
         else
         {
-            //ищем новую цель
-            EnemyRangeBehavior _bestTarget = GetNewTarget();
-
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
+            _characterAnimator.SetBool("Move", true); // !!
+            _characterAnimator.SetBool("HasEnemy", false); // !!
+            _state = AI_States.followThePlayer;
         }
     }
 
 
     private void StateMoveToCover()
     {
-        if (_currentTarget != null
+        //в каждый метод из старых ввожу ещё 1 if, который проверяет, наличие цели и, если её нет, то переводит 
+        // спутника в состояние следования за игроком. В аниматоре это выглядит как 
+
+        if (_currentTarget != null)
+        {
+            if (_currentTarget != null
             && _currentCover != null
             && _currentCover.AmICoveredFrom(_currentTarget.transform.position))
-        {
-            if (_currentPath != null)
             {
-                EnemyRangeBehavior _alternativeTarget = GetNewTarget();
-
-                if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
+                if (_currentPath != null)
                 {
-                    float _distanceToCurrentTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
+                    EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
-                    float _distanceToAlternativeTarget = Vector3.Distance(_myTransform.position, _alternativeTarget.transform.position);
-
-                    float _distanceBetweenTargets = Vector3.Distance(_currentTarget.transform.position, _alternativeTarget.transform.position);
-
-                    if (Mathf.Abs(_distanceToAlternativeTarget - _distanceToCurrentTarget) > 5 && _distanceBetweenTargets > 5)
+                    if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
                     {
-                        _currentTarget = _alternativeTarget;
+                        float _distanceToCurrentTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
 
-                        _coverManager.ExitCover(_currentCover);
+                        float _distanceToAlternativeTarget = Vector3.Distance(_myTransform.position, _alternativeTarget.transform.position);
 
-                        _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
+                        float _distanceBetweenTargets = Vector3.Distance(_currentTarget.transform.position, _alternativeTarget.transform.position);
 
-                        _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
+                        if (Mathf.Abs(_distanceToAlternativeTarget - _distanceToCurrentTarget) > 5 && _distanceBetweenTargets > 5)
+                        {
+                            _currentTarget = _alternativeTarget;
+
+                            _coverManager.ExitCover(_currentCover);
+
+                            _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
+
+                            _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
+
+                            return;
+                        }
+                    }
+
+                    if (_currentPath.ReachedEndNode())
+                    { //если мы дошли до конца, мы начнем искать цель
+                        _characterAnimator.SetBool("Move", false);
+
+                        _currentPath = null;
+
+                        _state = AI_States.combat;
 
                         return;
                     }
-                }
 
-                if (_currentPath.ReachedEndNode())
-                { //если мы дошли до конца, мы начнем искать цель
-                    _characterAnimator.SetBool("move", false);
+                    Vector3 _nodePosition = _currentPath.GetNextNode();
 
-                    _currentPath = null;
+                    if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f)
+                    {
+                        //если мы достигли текущего узла, то мы начнем двигаться к следующему узлу
+                        _currentPath._currentPathIndex++;
+                    }
+                    else
+                    {
+                        //иначе мы будем двигаться к текущему узлу
+                        _myTransform.LookAt(_nodePosition);
 
-                    _state = AI_States.combat;
-
-                    return;
-                }
-
-                Vector3 _nodePosition = _currentPath.GetNextNode();
-
-                if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f) 
-                {
-                    //if we reached the current node, then we'll begin going towards the next node
-                    _currentPath._currentPathIndex++;
+                        _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
+                    }
                 }
                 else
                 {
-                    //else we'll move towards current node
-                    _myTransform.LookAt(_nodePosition);  // ЗАМЕНИТЬ НА НАВ МЕШ АГЕНТА???
+                    //если у нас нет пути, мы будем искать цель
+                    _characterAnimator.SetBool("Move", false);
 
-                    _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
+                    _state = AI_States.idle;
                 }
             }
             else
             {
-                //if we don't have a path, we'll look for a target
-                _characterAnimator.SetBool("move", false);
+                //_characterAnimator.SetBool("Move", true);
+                //_state = AI_States.followThePlayer;
 
+                // если нет цели, нет укрытия или укрытие не защищает, то:
+                _characterAnimator.SetBool("Move", false);
                 _state = AI_States.idle;
             }
+
         }
         else
         {
-            if (_currentCover != null)
-                _coverManager.ExitCover(_currentCover);
-            _characterAnimator.SetBool("move", true);
+            _characterAnimator.SetBool("Move", true); // !!
+            _characterAnimator.SetBool("HasEnemy", false); // !!
             _state = AI_States.followThePlayer;
-
-            //anim.SetBool("move", false);
-            ////в исходнике только это 
-            //state = ai_states.idle;
         }
     }
 
 
     private void StateCombat()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+        if (_currentTarget != null)
         {
-            //если цель убегает во время боя
-            if (!CanSeeTarget(_currentTarget))
+
+            if (_currentTarget != null
+            && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
             {
-                EnemyRangeBehavior _alternativeTarget = GetNewTarget();
-
-                if(_alternativeTarget == null)
+                //если цель убегает во время боя
+                if (!CanSeeTarget(_currentTarget))
                 {
-                    _targetLastKnownPosition = _currentTarget.transform.position;
+                    EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
-                    _currentPath = CalculatePath(_myTransform.position, _targetLastKnownPosition);
-                    _characterAnimator.SetBool("Move", true);
-
-                    if(_currentCover != null)
+                    if (_alternativeTarget == null)
                     {
-                        _coverManager.ExitCover(_currentCover);
+                        _targetLastKnownPosition = _currentTarget.transform.position;
+
+                        _currentPath = CalculatePath(_myTransform.position, _targetLastKnownPosition);  // идём к последнему известному месту врага
+                        _characterAnimator.SetBool("Move", true);
+
+                        if (_currentCover != null)
+                        {
+                            _coverManager.ExitCover(_currentCover);
+                        }
+
+                        _characterAnimator.SetBool("Move", true); //!!
+                        _characterAnimator.SetBool("HasEnemy", true); //!!
+                        _state = AI_States.investigate; // не понимаю, как реализовать переход в аниматоре 
                     }
+                    else
+                    {
+                        _currentTarget = _alternativeTarget;
+                    }
+                    return;
+                }
 
-                    _state = AI_States.investigate;
+                _myTransform.LookAt(_currentTarget.transform);
+
+                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+                {
+                    // Атака
+                    if (_currentFireCooldown <= 0)
+                    {
+                        _characterAnimator.SetTrigger("Fire");
+
+                        _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
+
+                        _currentFireCooldown = _fireCooldown;
+                    }
+                    else
+                    {
+                        _currentFireCooldown -= 1 * Time.deltaTime;
+                    }
                 }
                 else
                 {
-                    _currentTarget = _alternativeTarget;
-                }
-                return;
-            }
+                    if (_currentCoverChangeCooldown <= 0)    // СМЕНА УКРЫТИЙ ТУТ
+                    {
+                        _currentCoverChangeCooldown = _coverChangeCooldown;
 
-            _myTransform.LookAt(_currentTarget.transform);
+                        _characterAnimator.SetBool("Move", false);
 
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
-            {
-                // Атака
-                if (_currentFireCooldown <= 0)
-                {
-                    _characterAnimator.SetTrigger("Fire");
-
-                    _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
-
-                    _currentFireCooldown = _fireCooldown;
-                }
-                else
-                {
-                    _currentFireCooldown -= 1 * Time.deltaTime;
+                        _state = AI_States.idle;
+                    }
+                    else
+                    {
+                        _currentCoverChangeCooldown -= 1 * Time.deltaTime;
+                    }
                 }
             }
             else
             {
-                if (_currentCoverChangeCooldown <= 0)    // СМЕНА УКРЫТИЙ ТУТ
-                {
-                    _currentCoverChangeCooldown = _coverChangeCooldown;
+                _characterAnimator.SetBool("Move", false); // !!
+                _state = AI_States.idle;  // из прежней версии
 
-                    _characterAnimator.SetBool("Move", false);
-
-                    _state = AI_States.idle;
-                }
-                else
-                {
-                    _currentCoverChangeCooldown -= 1 * Time.deltaTime;
-                }
+                //if (_currentCover != null)
+                //    _coverManager.ExitCover(_currentCover);
+                //_characterAnimator.SetBool("Move", true);
+                //_state = AI_States.followThePlayer;
             }
         }
         else
         {
-            //_state = AI_States.idle;  // из прежней версии
-
-            if (_currentCover != null)
-                _coverManager.ExitCover(_currentCover);
-            _characterAnimator.SetBool("move", true);
+            _characterAnimator.SetBool("Move", true);
+            _characterAnimator.SetBool("HasEnemy", false);
             _state = AI_States.followThePlayer;
         }
     }
@@ -333,17 +402,18 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateInvestigate()
     {
-        if (_currentPath != null)
+        if (_currentPath != null) // эта штука уже была
         {
             EnemyRangeBehavior _alternativeTarget = GetNewTarget();
 
             if (_currentPath.ReachedEndNode() || _alternativeTarget != null)
-            { //если мы дошли до конца, мы начнем искать цель
-                _characterAnimator.SetBool("Move", false);
-
+            { 
                 _currentPath = null;
                 _currentTarget = _alternativeTarget;
 
+                //если мы дошли до конца, мы начнем искать цель
+                _characterAnimator.SetBool("Move", false);
+                _characterAnimator.SetBool("HasEnemy", false); //!!
                 _state = AI_States.idle;
                 return;
             }
@@ -365,13 +435,19 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-            //если у нас нет пути, мы будем искать цель
-            _characterAnimator.SetBool("Move", false);
 
-            _currentPath = null;
-            _currentTarget = null;
+            _characterAnimator.SetBool("Move", true); //!
+            _characterAnimator.SetBool("HasEnemy", false); //!!
+            _state = AI_States.followThePlayer;
 
-            _state = AI_States.idle;
+            // ПРЕЖНИЙ ВАРИАНт
+            ////если у нас нет пути, мы будем искать цель
+            //_characterAnimator.SetBool("Move", false);
+
+            //_currentPath = null;
+            //_currentTarget = null;
+
+            //_state = AI_States.idle;
         }
     }
 
@@ -437,7 +513,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     }
 
 
-    private Path CalculatePath(Vector3 _source, Vector3 _destination)
+    private Path CalculatePath(Vector3 _source, Vector3 _destination) // высчитывание пути
     {
         NavMeshPath _navMeshPath = new NavMeshPath();
 

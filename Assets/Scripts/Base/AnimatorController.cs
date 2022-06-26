@@ -14,6 +14,7 @@ public class AnimatorController : MonoBehaviour
     [HideInInspector] public int WALK_BACKWARD;
     [HideInInspector] public int WALKLEFT;
     [HideInInspector] public int WALKRIGHT;
+    [HideInInspector] public int KNEEL;
 
     // Не реализованные анимации
     //const string IDLE_SHOOT = "Idle_Shot";
@@ -33,6 +34,7 @@ public class AnimatorController : MonoBehaviour
         WALK_BACKWARD = _animationBase.WalkBackwardHash;
         WALKLEFT = _animationBase.WalkLeftHash;
         WALKRIGHT = _animationBase.WalkRightHash;
+        KNEEL = _animationBase.KneelHash;
 
         ChangeState(IDLE);
     }
@@ -51,16 +53,18 @@ public class AnimatorController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
             ChangeState(WALK_FORWARD);
-        
+
         else if (Input.GetKey(KeyCode.A))
             ChangeState(WALKLEFT);
-        
+
         else if (Input.GetKey(KeyCode.D))
             ChangeState(WALKRIGHT);
-        
+
         else if (Input.GetKey(KeyCode.S))
             ChangeState(WALK_BACKWARD);
-   
+
+        else if (Input.GetKey(KeyCode.LeftControl))
+            ChangeState(KNEEL);
         else
             ChangeState(IDLE);
     }

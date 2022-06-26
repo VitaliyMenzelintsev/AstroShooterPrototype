@@ -91,7 +91,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  Opponent: {fileID: 0}
+  Target: {fileID: 0}
+  FollowPoint: {fileID: 0}
+  GoodEntities: []
+  BadEntiies: []
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
@@ -243,7 +246,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  Opponent: {fileID: 0}
+  Target: {fileID: 0}
+  FollowPoint: {fileID: 0}
+  GoodEntities: []
+  BadEntiies: []
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
@@ -288,7 +294,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NPC: {fileID: 0}
-  Opponent: {fileID: 0}
+  Target: {fileID: 0}
+  FollowPoint: {fileID: 0}
+  GoodEntities: []
+  BadEntiies: []
   Speed: 3
   RotationSpeed: 2
   Accuracy: 1
