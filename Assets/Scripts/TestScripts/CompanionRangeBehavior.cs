@@ -24,7 +24,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     public EnemyRangeBehavior _currentTarget; // паблик для тестов
 
     [SerializeField]
-    private float _minAttackDistance = 5;
+    private float _minAttackDistance = 7;
     [SerializeField]
     private float _maxAttackDistance = 13;
     [SerializeField]
