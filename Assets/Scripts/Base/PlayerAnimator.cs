@@ -169,8 +169,29 @@ public class PlayerAnimator : MonoBehaviour
             case Player_States.CROUCH_IDLE:
                 ChangeState(CROUCH_IDLE);
                 break;
+            case Player_States.CROUCH_FORWARD:
+                ChangeState(CROUCH_FORWARD);
+                break;
+            case Player_States.CROUCH_FORWARD_LEFT:
+                ChangeState(CROUCH_FORWARD_LEFT);
+                break;
+            case Player_States.CROUCH_FORWARD_RIGHT:
+                ChangeState(CROUCH_FORWARD_RIGHT);
+                break;
+            case Player_States.CROUCH_BACKWARD:
+                ChangeState(CROUCH_BACKWARD);
+                break;
+            case Player_States.CROUCH_BACKWARD_LEFT:
+                ChangeState(CROUCH_BACKWARD_LEFT);
+                break;
+            case Player_States.CROUCH_BACKWARD_RIGHT:
+                ChangeState(CROUCH_BACKWARD_RIGHT);
+                break;
             case Player_States.CROUCH_LEFT:
                 ChangeState(CROUCH_LEFT);
+                break;
+            case Player_States.CROUCH_RIGHT:
+                ChangeState(CROUCH_RIGHT);
                 break;
             default:
                 ChangeState(IDLE);
