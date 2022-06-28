@@ -5,7 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class EnemyRangeBehavior : MonoBehaviour
+public class EnemyMeleeBehavior : MonoBehaviour
 {
     [HideInInspector]
     public Team MyTeam;
@@ -15,34 +15,33 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private Transform _myTransform;
     private Animator _characterAnimator;
-    private EnemyCoverManager _coverManager;
+    private EnemyCoverManager _coverManager; //!
     private CompanionRangeBehavior _currentTarget;
 
     [SerializeField]
-    private float _minAttackDistance = 5;
+    private float _minAttackDistance = 0;
     [SerializeField]
-    private float _maxAttackDistance = 13;
+    private float _maxAttackDistance = 2;
     [SerializeField]
-    private float _moveSpeed = 3.2f;
+    private float _moveSpeed = 3.6f;
     [SerializeField]
-    private float _damageDealt = 17F;
+    private float _damageDealt = 70F;
     [SerializeField]
-    private float _fireCooldown = 1F;
+    private float _fireCooldown = 2.667F; 
     private float _currentFireCooldown = 0;
 
     private Path _currentPath = null;
-    private EnemyCoverSpot _currentCover = null;
-    private float _coverChangeCooldown = 5;
-    private float _currentCoverChangeCooldown;
+    private EnemyCoverSpot _currentCover = null;   //!
+    private float _coverChangeCooldown = 5;        //!
+    private float _currentCoverChangeCooldown;     //!
 
     private Vector3 _targetLastKnownPosition;
 
     public enum AI_States
     {
         idle,
-        moveToCover,
-        combat,
         investigate,
+        combat,
         death
     }
 
@@ -58,9 +57,9 @@ public class EnemyRangeBehavior : MonoBehaviour
 
         _characterAnimator = GetComponent<Animator>();
 
-        _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>();
+        _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>(); //!
 
-        _currentCoverChangeCooldown = _coverChangeCooldown;
+        _currentCoverChangeCooldown = _coverChangeCooldown; //!
     }
 
     private void Update()
@@ -74,9 +73,6 @@ public class EnemyRangeBehavior : MonoBehaviour
                     break;
                 case AI_States.investigate:
                     StateInvestigate();
-                    break;
-                case AI_States.moveToCover:
-                    StateMoveToCover();
                     break;
                 case AI_States.combat:
                     StateCombat();
@@ -206,7 +202,7 @@ public class EnemyRangeBehavior : MonoBehaviour
                 else
                 {
                     //else we'll move towards current node
-                    _myTransform.LookAt(_nodePosition); 
+                    _myTransform.LookAt(_nodePosition);
 
                     _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
                 }
@@ -280,7 +276,7 @@ public class EnemyRangeBehavior : MonoBehaviour
             }
             else
             {
-                if (_currentCoverChangeCooldown <= 0)    // ÑÌÅÍÀ ÓÊÐÛÒÈÉ ÒÓÒ
+                if (_currentCoverChangeCooldown <= 0)    
                 {
                     _currentCoverChangeCooldown = _coverChangeCooldown;
 
@@ -296,7 +292,7 @@ public class EnemyRangeBehavior : MonoBehaviour
         }
         else
         {
-            _state = AI_States.idle;  // èç ïðåæíåé âåðñèè
+            _state = AI_States.idle;  
 
         }
     }
