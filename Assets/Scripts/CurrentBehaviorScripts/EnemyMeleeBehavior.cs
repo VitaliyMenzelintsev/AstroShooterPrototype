@@ -18,18 +18,13 @@ public class EnemyMeleeBehavior : MonoBehaviour
     private Animator _characterAnimator;
     public Team _currentTarget = null;
 
-    //[SerializeField]
-    //private float _minAttackDistance = 0.5f;
-    [SerializeField]
-    private float _maxAttackDistance = 2f;
-    [SerializeField]
-    private float _moveSpeed = 3.2f;
-    [SerializeField]
+    
+    private float _minAttackDistance = 0.5f;
+    private float _maxAttackDistance = 2.5f;
     private float _damageDealt = 70f;
-    [SerializeField]
     private float _fireCooldown = 2.667f;
     private float _currentFireCooldown = 0;
-    
+
 
     public enum AI_States
     {
@@ -63,11 +58,11 @@ public class EnemyMeleeBehavior : MonoBehaviour
                 case AI_States.idle:
                     StateIdle();
                     break;
-                case AI_States.investigate:
-                    StateInvestigate();
-                    break;
                 case AI_States.combat:
                     StateCombat();
+                    break;
+                case AI_States.investigate:
+                    StateInvestigate();
                     break;
                 default:
                     StateIdle();
@@ -91,24 +86,16 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
-        _characterAnimator.SetBool("Move", false);
-
-        if (_currentTarget != null 
+        if (_currentTarget != null
             && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
         {
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                /*&& Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance*/)
+                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
-                //_characterAnimator.SetTrigger("Fire");
-
-                //_characterAnimator.SetBool("Move", false);
-                
                 _state = AI_States.combat;
             }
             else
             {
-                //_characterAnimator.SetBool("Move", true);
-                
                 _state = AI_States.investigate;
             }
         }
@@ -126,15 +113,13 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
     private void StateCombat()
     {
-        _currentTarget = GetNewTarget();
-
         if (_currentTarget != null
             && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
         {
             _myTransform.LookAt(_currentTarget.transform);
 
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-               /* && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance*/)
+                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
                 // Атака
                 if (_currentFireCooldown <= 0)
@@ -150,13 +135,16 @@ public class EnemyMeleeBehavior : MonoBehaviour
                     _currentFireCooldown -= 1 * Time.deltaTime;
                 }
             }
-            else
+
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
             {
                 _state = AI_States.investigate;
             }
         }
         else
         {
+            _characterAnimator.SetBool("Move", false);
+
             _state = AI_States.idle;
         }
     }
@@ -164,22 +152,19 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
     private void StateInvestigate()
     {
-        if (_currentTarget != null)
+        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= 2.5f)
         {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) < 1.5f)
-            {
-                _characterAnimator.SetTrigger("Fire");
-                _state = AI_States.combat;
-            }
-            else
-            {
-                _characterAnimator.SetBool("Move", true);
-                _myNavMeshAgent.SetDestination(_currentTarget.transform.position);
-            }
+            _state = AI_States.combat;
         }
         else
         {
-            //если у нас нет цели, то переходим в режим ожидания
+            _characterAnimator.SetBool("Move", true);
+
+            _myNavMeshAgent.SetDestination(_currentTarget.transform.position);
+        }
+
+        if (_currentTarget == null)
+        {
             _characterAnimator.SetBool("Move", false);
 
             _state = AI_States.idle;

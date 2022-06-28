@@ -21,7 +21,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     private Transform _myTransform;
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
-    public EnemyRangeBehavior _currentTarget; // паблик для тестов
+    public Team _currentTarget; // паблик для тестов
 
     [SerializeField]
     private float _minAttackDistance = 7;
@@ -64,7 +64,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
         MyVitals = GetComponent<Vitals>();
 
-        _navMeshAgent = GetComponent<NavMeshAgent>();  // нет
+        _navMeshAgent = GetComponent<NavMeshAgent>();  
 
         _characterAnimator = GetComponent<Animator>();
 
@@ -198,7 +198,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             else
             {
                 //ищем новую цель
-                EnemyRangeBehavior _bestTarget = GetNewTarget();
+                Team _bestTarget = GetNewTarget();
 
                 if (_bestTarget != null)
                 {
@@ -228,7 +228,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             {
                 if (_currentPath != null)
                 {
-                    EnemyRangeBehavior _alternativeTarget = GetNewTarget();
+                    Team _alternativeTarget = GetNewTarget();
 
                     if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
                     {
@@ -317,7 +317,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                 //если цель убегает во время боя
                 if (!CanSeeTarget(_currentTarget))
                 {
-                    EnemyRangeBehavior _alternativeTarget = GetNewTarget();
+                    Team _alternativeTarget = GetNewTarget();
 
                     if (_alternativeTarget == null)
                     {
@@ -401,7 +401,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     {
         if (_currentPath != null) // эта штука уже была
         {
-            EnemyRangeBehavior _alternativeTarget = GetNewTarget();
+            Team _alternativeTarget = GetNewTarget();
 
             if (_currentPath.ReachedEndNode() || _alternativeTarget != null)
             { 
@@ -439,15 +439,15 @@ public class CompanionRangeBehavior : MonoBehaviour
     }
 
 
-    private EnemyRangeBehavior GetNewTarget()
+    private Team GetNewTarget()
     {
-        EnemyRangeBehavior[] _allCharacters = GameObject.FindObjectsOfType<EnemyRangeBehavior>();
+        Team[] _allCharacters = GameObject.FindObjectsOfType<Team>();
 
-        EnemyRangeBehavior _bestTarget = null;
+        Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)
         {
-            EnemyRangeBehavior _currentCharacter = _allCharacters[i];
+            Team _currentCharacter = _allCharacters[i];
 
             //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
@@ -476,7 +476,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     }
 
 
-    private bool CanSeeTarget(EnemyRangeBehavior _target)
+    private bool CanSeeTarget(Team _target)
     {
         bool _canSeeIt = false;
 
