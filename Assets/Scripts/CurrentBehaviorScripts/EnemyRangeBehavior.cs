@@ -5,7 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class EnemyMeleeBehavior : MonoBehaviour
+public class EnemyRangeBehavior : MonoBehaviour
 {
     [HideInInspector]
     public Team MyTeam;
@@ -15,33 +15,34 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
     private Transform _myTransform;
     private Animator _characterAnimator;
-    private EnemyCoverManager _coverManager; //!
-    private CompanionRangeBehavior _currentTarget;
+    private EnemyCoverManager _coverManager;
+    public Team _currentTarget;       
 
     [SerializeField]
-    private float _minAttackDistance = 0;
+    private float _minAttackDistance = 5;
     [SerializeField]
-    private float _maxAttackDistance = 2;
+    private float _maxAttackDistance = 13;
     [SerializeField]
-    private float _moveSpeed = 3.6f;
+    private float _moveSpeed = 3.2f;
     [SerializeField]
-    private float _damageDealt = 70F;
+    private float _damageDealt = 17F;
     [SerializeField]
-    private float _fireCooldown = 2.667F; 
+    private float _fireCooldown = 1F;
     private float _currentFireCooldown = 0;
 
     private Path _currentPath = null;
-    private EnemyCoverSpot _currentCover = null;   //!
-    private float _coverChangeCooldown = 5;        //!
-    private float _currentCoverChangeCooldown;     //!
+    private EnemyCoverSpot _currentCover = null;
+    private float _coverChangeCooldown = 5;
+    private float _currentCoverChangeCooldown;
 
     private Vector3 _targetLastKnownPosition;
 
     public enum AI_States
     {
         idle,
-        investigate,
+        moveToCover,
         combat,
+        investigate,
         death
     }
 
@@ -57,9 +58,9 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
         _characterAnimator = GetComponent<Animator>();
 
-        _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>(); //!
+        _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>();
 
-        _currentCoverChangeCooldown = _coverChangeCooldown; //!
+        _currentCoverChangeCooldown = _coverChangeCooldown;
     }
 
     private void Update()
@@ -73,6 +74,9 @@ public class EnemyMeleeBehavior : MonoBehaviour
                     break;
                 case AI_States.investigate:
                     StateInvestigate();
+                    break;
+                case AI_States.moveToCover:
+                    StateMoveToCover();
                     break;
                 case AI_States.combat:
                     StateCombat();
@@ -139,7 +143,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
         else
         {
             //ищем новую цель
-            CompanionRangeBehavior _bestTarget = GetNewTarget();
+            Team _bestTarget = GetNewTarget();
 
             if (_bestTarget != null)
             {
@@ -157,7 +161,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
         {
             if (_currentPath != null)
             {
-                CompanionRangeBehavior _alternativeTarget = GetNewTarget();
+                Team _alternativeTarget = GetNewTarget();
 
                 if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
                 {
@@ -202,7 +206,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
                 else
                 {
                     //else we'll move towards current node
-                    _myTransform.LookAt(_nodePosition);
+                    _myTransform.LookAt(_nodePosition); 
 
                     _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
                 }
@@ -232,7 +236,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
             //если цель убегает во время боя
             if (!CanSeeTarget(_currentTarget))
             {
-                CompanionRangeBehavior _alternativeTarget = GetNewTarget();
+                Team _alternativeTarget = GetNewTarget();
 
                 if (_alternativeTarget == null)
                 {
@@ -276,7 +280,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
             }
             else
             {
-                if (_currentCoverChangeCooldown <= 0)    
+                if (_currentCoverChangeCooldown <= 0) 
                 {
                     _currentCoverChangeCooldown = _coverChangeCooldown;
 
@@ -302,7 +306,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
     {
         if (_currentPath != null)
         {
-            CompanionRangeBehavior _alternativeTarget = GetNewTarget();
+            Team _alternativeTarget = GetNewTarget();
 
             if (_currentPath.ReachedEndNode() || _alternativeTarget != null)
             { //если мы дошли до конца, мы начнем искать цель
@@ -343,21 +347,21 @@ public class EnemyMeleeBehavior : MonoBehaviour
     }
 
 
-    private CompanionRangeBehavior GetNewTarget()
+    private Team GetNewTarget()
     {
-        CompanionRangeBehavior[] _allCharacters = GameObject.FindObjectsOfType<CompanionRangeBehavior>();
+        Team[] _allCharacters = GameObject.FindObjectsOfType<Team>();
 
-        CompanionRangeBehavior _bestTarget = null;
+        Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)
         {
-            CompanionRangeBehavior _currentCharacter = _allCharacters[i];
+            Team _currentCharacter = _allCharacters[i];
 
-            //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
+            //выбирать текущего противника в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
                 && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
             {
-                //если рейкаст попал в цель, то мы знаем, что можем его увидеть
+                //если рейкаст попал в цель, мы знаем, что видим её
                 if (CanSeeTarget(_currentCharacter))
                 {
                     if (_bestTarget == null)
@@ -366,7 +370,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
                     }
                     else
                     {
-                        //если текущий враг ближе, чем лучшая цель, то выбрать текущего солдата в качестве лучшей цели
+                        //если текущий враг ближе, чем лучшая цель, то выбрать текущего врага в качестве лучшей цели
                         if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
                         {
                             _bestTarget = _currentCharacter;
@@ -380,11 +384,11 @@ public class EnemyMeleeBehavior : MonoBehaviour
     }
 
 
-    private bool CanSeeTarget(CompanionRangeBehavior _target)
+    private bool CanSeeTarget(Team _target)
     {
         bool _canSeeIt = false;
 
-        Vector3 _enemyPosition = _target.Eyes.position;
+        Vector3 _enemyPosition = _target.Eyes.position; ;    // _target.Eyes.position; убрал про глаза
 
         Vector3 _directionTowardsEnemy = _enemyPosition - Eyes.position;
 
