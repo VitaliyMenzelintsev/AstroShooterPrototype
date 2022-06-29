@@ -5,8 +5,8 @@ public class PlayerAnimator : MonoBehaviour
 {
     private Animator _characterAnimator;
     private int _currentState;
-    //[SerializeField]
-    //private NewGunScript _gun;
+    [SerializeField]
+    private Gun _gun;
 
 
     protected HashAnimationNames _animationBase = new HashAnimationNames();
@@ -58,7 +58,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Start()
     {
-        //_characterAnimator = GetComponent<Animator>();
+        _characterAnimator = GetComponent<Animator>();
        
         // инициализация хэшированных анимаций 
         IDLE = _animationBase.IdleHash;
@@ -85,8 +85,8 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetKey(KeyCode.Return))
-        //    _gun.Shoot();
+        if (Input.GetKey(KeyCode.Return))
+            _gun.Shoot();
 
         if (Input.GetKey(KeyCode.W))
             _state = Player_States.WALK_FORWARD;

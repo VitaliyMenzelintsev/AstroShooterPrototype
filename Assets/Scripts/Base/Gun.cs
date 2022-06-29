@@ -21,6 +21,10 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private float _shootDelay = 0.05f;
     [SerializeField]
+    private LayerMask _mask;
+    [SerializeField]
+    private float _bulletSpeed = 100;
+    [SerializeField]
     private float _range = 30f;
     [SerializeField]
     private bool _addBulletSpread = true;
@@ -52,7 +56,7 @@ public class Gun : MonoBehaviour
             Reload();
     }
 
-    private void Shoot()
+    public void Shoot()
     {
         _bulletsInMagazine--;
         _nextShotTime = Time.time + _msBetweenShots / 1000;
@@ -61,16 +65,24 @@ public class Gun : MonoBehaviour
         {
             // Make shot
             _animator.SetBool("Fire", true);     // trigger? переключаем аниматор в режим стрельбы
+
             _shootingParticle.Play();            // включаем партикл систем
+
             Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-            RaycastHit _hit;
-
-            if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out _hit, _range/*, Mask*/))   // если попали во что-то
+            if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
             {
                 TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);  // делаем след
 
-                StartCoroutine(SpawnTrail(_trail, _hit));
+                StartCoroutine(SpawnTrail(_trail, _hit.point, _hit.normal));
+
+                _lastShootTime = Time.time;
+            }
+            else
+            {
+                TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
+
+                StartCoroutine(SpawnTrail(_trail, transform.forward * 100, Vector3.zero));
 
                 _lastShootTime = Time.time;
             }
@@ -94,20 +106,24 @@ public class Gun : MonoBehaviour
         return _direction;
     }
 
-    private IEnumerator SpawnTrail(TrailRenderer _trail, RaycastHit _hit)
+    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint, Vector3 _hitNormal)
     {
-        float time = 0;
         Vector3 _startPosition = _trail.transform.position;
+        float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);
+        float _remainingDistance = _distance;
 
-        while (time < 1)
+        while (_remainingDistance > 0)
         {
-            _trail.transform.position = Vector3.Lerp(_startPosition, _hit.point, time);
-            time += Time.deltaTime / _trail.time;
+            _trail.transform.position = Vector3.Lerp(_startPosition, _hitPoint, 1 - (_remainingDistance / _distance));
+
+            _remainingDistance -= _bulletSpeed * Time.deltaTime;
 
             yield return null;
         }
+
         _animator.SetBool("Fire", false);
-        _trail.transform.position = _hit.point;
+
+        _trail.transform.position = _hitPoint;
 
         Destroy(_trail.gameObject, _trail.time);
     }
