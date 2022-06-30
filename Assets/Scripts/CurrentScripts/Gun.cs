@@ -23,7 +23,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private LayerMask _mask;
     [SerializeField]
-    private float _bulletSpeed = 100;
+    private float _bulletSpeed = 200;
     [SerializeField]
     private float _range = 30f;
     [SerializeField]
@@ -36,8 +36,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private TrailRenderer _bulletTrail;
 
-    private Animator _animator;
-    private float _lastShootTime; // ?
+    private float _lastShootTime = 0; // ?
 
     private bool _isReloading;
     private float _nextShotTime;
@@ -46,7 +45,6 @@ public class Gun : MonoBehaviour
 
     private void Start()
     {
-        _animator = GetComponent<Animator>();
         _bulletsInMagazine = _magazineCapacity;
     }
 
@@ -56,15 +54,15 @@ public class Gun : MonoBehaviour
             Reload();
     }
 
-    public void Shoot()
+    public void Shoot(Vector3 _point)
     {
         _bulletsInMagazine--;
         _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-        if (_lastShootTime + _shootDelay < Time.deltaTime)  // если по КД можно стрелять
+        if (_lastShootTime + _shootDelay < Time.time)  // если по КД можно стрелять
         {
             // Make shot
-            _animator.SetBool("Fire", true);     // trigger? переключаем аниматор в режим стрельбы
+            //_animator.SetBool("Fire", true);  перенести активацию анимации стрельбы в скрипт Плеер
 
             _shootingParticle.Play();            // включаем партикл систем
 
@@ -74,7 +72,7 @@ public class Gun : MonoBehaviour
             {
                 TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);  // делаем след
 
-                StartCoroutine(SpawnTrail(_trail, _hit.point, _hit.normal));
+                StartCoroutine(SpawnTrail(_trail, _hit.point));
 
                 _lastShootTime = Time.time;
             }
@@ -82,7 +80,9 @@ public class Gun : MonoBehaviour
             {
                 TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
 
-                StartCoroutine(SpawnTrail(_trail, transform.forward * 100, Vector3.zero));
+                Vector3 _mousePosition = Input.mousePosition;
+
+                StartCoroutine(SpawnTrail(_trail, _point));
 
                 _lastShootTime = Time.time;
             }
@@ -106,7 +106,7 @@ public class Gun : MonoBehaviour
         return _direction;
     }
 
-    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint, Vector3 _hitNormal)
+    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {
         Vector3 _startPosition = _trail.transform.position;
         float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);
@@ -120,8 +120,6 @@ public class Gun : MonoBehaviour
 
             yield return null;
         }
-
-        _animator.SetBool("Fire", false);
 
         _trail.transform.position = _hitPoint;
 
@@ -164,9 +162,9 @@ public class Gun : MonoBehaviour
             transform.LookAt(_aimPoint);
     }
 
-    public void OnTriggerHold()
+    public void OnTriggerHold(Vector3 _point)
     {
-        Shoot();
+        Shoot(_point);
         _triggerReleasedSinceLastShot = false;
     }
 

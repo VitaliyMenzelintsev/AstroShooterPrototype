@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
 
-// висит на игроке
-public class PlayerAnimator : MonoBehaviour
+// Висит на игроке
+public class PlayerInput : MonoBehaviour
 {
-    private Animator _characterAnimator;
-    private int _currentState;
     [SerializeField]
-    private Gun _gun;
+    private Gun _currentGun;
+    [SerializeField]
+    private Transform _crosshair;
+    [SerializeField]
+    private Transform _eyes;
+    private Camera _viewCamera;
+    private PlayerController _controller;
+    private HashAnimationNames _animationBase;
+    private Animator _characterAnimator;
+    [SerializeField]
+    private float _moveSpeed = 3.4f;
+    
+    private Vector3 _point;
 
+    private Player_States _state;
+    private int _currentState;
 
-    protected HashAnimationNames _animationBase = new HashAnimationNames();
-
-    // Хэшированные анимации
     private int IDLE;
     private int WALK_FORWARD;
     private int WALK_FORWARD_LEFT;
@@ -54,12 +63,15 @@ public class PlayerAnimator : MonoBehaviour
         CROUCH_RIGHT
     }
 
-    private Player_States _state;
 
-    private void Start()
+    private void Awake()
     {
+        _animationBase = new HashAnimationNames();
         _characterAnimator = GetComponent<Animator>();
-       
+        _controller = GetComponent<PlayerController>();
+
+        _viewCamera = Camera.main;
+
         // инициализация хэшированных анимаций 
         IDLE = _animationBase.IdleHash;
         WALK_FORWARD = _animationBase.WalkForwardHash;
@@ -79,65 +91,121 @@ public class PlayerAnimator : MonoBehaviour
         CROUCH_BACKWARD_RIGHT = _animationBase.CrouchBackwardRightHash;
         CROUCH_LEFT = _animationBase.CrouchLeftHash;
         CROUCH_RIGHT = _animationBase.CrouchRightHash;
-
-        //ChangeState(IDLE);
     }
+
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Return))
-            _gun.Shoot();
+        Vector3 _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")); 
+        Vector3 _moveVelocity = _moveInput.normalized * _moveSpeed;
+        _controller.Move(_moveVelocity);
+        
+        Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);     
+        Plane _groundPlane = new Plane(Vector3.up, Vector3.up * _eyes.position.y);
+        float _rayDistance;                                             
+
+        if (_groundPlane.Raycast(_ray, out _rayDistance))                            
+        {
+            //Vector3 _point = _ray.GetPoint(_rayDistance);
+            _point = _ray.GetPoint(_rayDistance);
+            _controller.LookAt(_point);
+            _crosshair.position = _point;
+            
+
+
+            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
+                Aim(_point);
+        }
+
+
+        if (Input.GetMouseButton(0))  
+            _currentGun.OnTriggerHold(_point);
+        
+        
+        if (Input.GetMouseButtonUp(0))
+            _currentGun.OnTriggerRelease();
+        
+
+        if (Input.GetKeyDown(KeyCode.R))
+            _currentGun.Reload();
+
 
         if (Input.GetKey(KeyCode.W))
             _state = Player_States.WALK_FORWARD;
 
+
         if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
             _state = Player_States.WALK_FORWARD_LEFT;
+
 
         if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
             _state = Player_States.WALK_FORWARD_RIGHT;
 
+
         if (Input.GetKey(KeyCode.S))
             _state = Player_States.WALK_BACKWARD;
+
 
         if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
             _state = Player_States.WALK_BACKWARD_LEFT;
 
+
         if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
             _state = Player_States.WALK_BACKWARD_RIGHT;
+
 
         if (Input.GetKey(KeyCode.A))
             _state = Player_States.WALK_LEFT;
 
+
         if (Input.GetKey(KeyCode.D))
             _state = Player_States.WALK_RIGHT;
 
+
         if (Input.GetKey(KeyCode.LeftControl))
+        {
             _state = Player_States.CROUCH_IDLE;
+            _moveSpeed = 2.2f;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            _moveSpeed = 3.4f;
+        }
+
+
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
             _state = Player_States.CROUCH_FORWARD;
 
+
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
             _state = Player_States.CROUCH_FORWARD_LEFT;
+
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
             _state = Player_States.CROUCH_FORWARD_RIGHT;
 
+
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.S))
             _state = Player_States.CROUCH_BACKWARD;
+
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
             _state = Player_States.CROUCH_BACKWARD_LEFT;
 
+
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
             _state = Player_States.CROUCH_BACKWARD_RIGHT;
+
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.A))
             _state = Player_States.CROUCH_LEFT;
 
+
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.D))
             _state = Player_States.CROUCH_RIGHT;
+
 
         if (!Input.anyKey)
             _state = Player_States.IDLE;
@@ -205,6 +273,11 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
+    public void Aim(Vector3 _aimPoint)
+    {
+        _currentGun.Aim(_aimPoint);
+    }
+
     private void ChangeState(int _newState)
     {
         if (_currentState == _newState)
@@ -214,29 +287,4 @@ public class PlayerAnimator : MonoBehaviour
 
         _currentState = _newState;
     }
-
-
-    //private void FixedUpdate()
-    //{
-    //    if (Input.GetKey(KeyCode.W))
-    //        ChangeState(WALK_FORWARD);
-
-    //     if (Input.GetKey(KeyCode.A))
-    //        ChangeState(WALKLEFT);
-
-    //     if (Input.GetKey(KeyCode.D))
-    //        ChangeState(WALKRIGHT);
-
-    //     if (Input.GetKey(KeyCode.S))
-    //        ChangeState(WALK_BACKWARD);
-
-    //     if (Input.GetKey(KeyCode.LeftControl))
-    //        ChangeState(KNEEL);
-
-    //     //if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.A))
-    //     //   ChangeState(CROUCH_LEFT);
-
-    //     if(!Input.anyKey)
-    //     ChangeState(IDLE);
-    //}
 }

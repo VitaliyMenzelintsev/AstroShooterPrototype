@@ -6,7 +6,7 @@ public class Vitals : MonoBehaviour
     private float _health = 100;
     private float _currentHealth = 100;
 
-    // Start is called before the first frame update
+
     private void Start()
     {
         _currentHealth = _health;
