@@ -104,6 +104,8 @@ public class CompanionRangeBehavior : MonoBehaviour
 
             Destroy(GetComponent<CapsuleCollider>());
 
+            Destroy(GetComponent<NavMeshAgent>());
+
             _characterAnimator.SetBool("Dead", true);
 
             if (_currentCover != null)

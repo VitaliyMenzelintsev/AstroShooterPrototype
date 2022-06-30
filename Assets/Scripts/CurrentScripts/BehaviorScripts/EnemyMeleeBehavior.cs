@@ -21,7 +21,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
     
     private float _minAttackDistance = 0.5f;
     private float _maxAttackDistance = 2.5f;
-    private float _damageDealt = 70f;
+    private float _damageDealt = 200f;
     private float _fireCooldown = 2.667f;
     private float _currentFireCooldown = 0;
 
@@ -63,6 +63,9 @@ public class EnemyMeleeBehavior : MonoBehaviour
                     break;
                 case AI_States.investigate:
                     StateInvestigate();
+                    break;
+                case AI_States.death:
+
                     break;
                 default:
                     StateIdle();
