@@ -1,108 +1,138 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿//using System.Collections;
+//using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
-public class TestScript : MonoBehaviour
-{
-    [SerializeField]
-    private bool AddBulletSpread = true;
-    [SerializeField]
-    private Vector3 BulletSpreadVariance = new Vector3(0.1f, 0.1f, 0.1f);
-    [SerializeField]
-    private ParticleSystem ShootingSystem;
-    [SerializeField]
-    private Transform BulletSpawnPoint;
-    [SerializeField]
-    private ParticleSystem ImpactParticleSystem;
-    [SerializeField]
-    private TrailRenderer BulletTrail;
-    [SerializeField]
-    private float ShootDelay = 0.5f;
-    [SerializeField]
-    private LayerMask Mask;
-    [SerializeField]
-    private float BulletSpeed = 100;
+//public class TestScript : MonoBehaviour
+//{
+//    public enum FireMode { Auto, Burst, Single }
+//    public FireMode fireMode;
 
-    private Animator Animator;
-    private float LastShootTime;
+//    public Transform[] projectileSpawnPoint;
+//    public Projectile projectile;
 
-    private void Awake()
-    {
-        Animator = GetComponent<Animator>();
-    }
+//    public float msBetweenShots = 100;
+//    public float muzzleVelocity = 35;
+//    public int burstCount;
+//    public int projectilesPerMagazine;
+//    bool isReloading;
+//    public float reloadTime = 0.3f;
 
-    public void Shoot()
-    {
-        if (LastShootTime + ShootDelay < Time.time)
-        {
-            // Use an object pool instead for these! To keep this tutorial focused, we'll skip implementing one.
-            // For more details you can see: https://youtu.be/fsDE_mO4RZM or if using Unity 2021+: https://youtu.be/zyzqA_CPz2E
+//    [Header("Recoil")]
+//    public Vector2 kickMinMax = new Vector2(0.05f, 2f);
+//    public Vector2 recoilAngleMinMax = new Vector2(3, 5);
+//    public float timeOfReturnToPosition = 0.1f;
+//    Vector3 recoilSmoothDampVelocity;
+//    private float recoilRotSmoothDampVelocity;
+//    private float recoilAngle;
 
-            Animator.SetBool("IsShooting", true);
-            ShootingSystem.Play();
-            Vector3 direction = GetDirection();
+//    private float nextShotTime;
 
-            if (Physics.Raycast(BulletSpawnPoint.position, direction, out RaycastHit hit, float.MaxValue, Mask))
-            {
-                TrailRenderer trail = Instantiate(BulletTrail, BulletSpawnPoint.position, Quaternion.identity);
+//    private bool triggerReleasedSinceLastShot;
+//    private int shotsRemainingInBurst;
+//    private int projectilesRemainingInMagazine;
 
-                StartCoroutine(SpawnTrail(trail, hit.point, hit.normal, true));
+//    void Start()
+//    {
+//        shotsRemainingInBurst = burstCount;
+//        projectilesRemainingInMagazine = projectilesPerMagazine;
+//    }
 
-                LastShootTime = Time.time;
-            }
-            // this has been updated to fix a commonly reported problem that you cannot fire if you would not hit anything
-            else
-            {
-                TrailRenderer trail = Instantiate(BulletTrail, BulletSpawnPoint.position, Quaternion.identity);
+//    void LateUpdate()
+//    {
+//        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, Vector3.zero, ref recoilSmoothDampVelocity, timeOfReturnToPosition);
+//        recoilAngle = Mathf.SmoothDamp(recoilAngle, 0, ref recoilRotSmoothDampVelocity, timeOfReturnToPosition);
+//        transform.localEulerAngles = transform.localEulerAngles + Vector3.left * recoilAngle;
 
-                StartCoroutine(SpawnTrail(trail, transform.forward * 100, Vector3.zero, false));
+//        if (!isReloading && projectilesRemainingInMagazine == 0)
+//        {
+//            Reload();
+//        }
+//    }
 
-                LastShootTime = Time.time;
-            }
-        }
-    }
+//    void Shoot()
+//    {
+//        if (!isReloading && Time.time > nextShotTime && projectilesRemainingInMagazine > 0)
+//        {
+//            if (fireMode == FireMode.Burst)
+//            {
+//                if (shotsRemainingInBurst == 0)
+//                {
+//                    return;
+//                }
+//                shotsRemainingInBurst--;
+//            }
+//            else if (fireMode == FireMode.Single)
+//            {
+//                if (!triggerReleasedSinceLastShot)
+//                {
+//                    return;
+//                }
+//            }
+//            for (int i = 0; i < projectileSpawnPoint.Length; i++)
+//            {
+//                if (projectilesRemainingInMagazine == 0)
+//                {
+//                    break;
+//                }
+//                projectilesRemainingInMagazine--;
+//                nextShotTime = Time.time + msBetweenShots;
+//                Projectile newProjectile = Instantiate(projectile, projectileSpawnPoint[i].position, projectileSpawnPoint[i].rotation) as Projectile;
+//                newProjectile.SetSpeed(muzzleVelocity);
+//            }
+//            transform.localPosition -= Vector3.forward * Random.Range(kickMinMax.x, kickMinMax.y);
+//            recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
+//            recoilAngle = Mathf.Clamp(recoilAngle, 0, 25);
+//        }
+//    }
 
-    private Vector3 GetDirection()
-    {
-        Vector3 direction = transform.forward;
+//    public void Reload()
+//    {
+//        if (!isReloading && projectilesRemainingInMagazine != projectilesPerMagazine)
+//        {
+//            StartCoroutine(AnimateReload());
+//        }
+//    }
 
-        if (AddBulletSpread)
-        {
-            direction += new Vector3(
-                Random.Range(-BulletSpreadVariance.x, BulletSpreadVariance.x),
-                Random.Range(-BulletSpreadVariance.y, BulletSpreadVariance.y),
-                Random.Range(-BulletSpreadVariance.z, BulletSpreadVariance.z)
-            );
+//    IEnumerator AnimateReload()
+//    {
+//        isReloading = true;
+//        yield return new WaitForSeconds(0.2f);
 
-            direction.Normalize();
-        }
+//        float reloadSpeed = 1f / reloadTime;
+//        float percent = 0;
+//        Vector3 initialRot = transform.localEulerAngles;
+//        float maxReloadAngle = 30;
 
-        return direction;
-    }
+//        while (percent < 1)
+//        {
+//            percent += Time.deltaTime * reloadSpeed;
+//            float interpolation = (-Mathf.Pow(percent, 2) + percent) * 4;
+//            float reloadAngle = Mathf.Lerp(0, maxReloadAngle, interpolation);
+//            transform.localEulerAngles = initialRot + Vector3.left * reloadAngle;
 
-    private IEnumerator SpawnTrail(TrailRenderer Trail, Vector3 HitPoint, Vector3 HitNormal, bool MadeImpact)
-    {
-        // This has been updated from the video implementation to fix a commonly raised issue about the bullet trails
-        // moving slowly when hitting something close, and not
-        Vector3 startPosition = Trail.transform.position;
-        float distance = Vector3.Distance(Trail.transform.position, HitPoint);
-        float remainingDistance = distance;
+//            yield return null;
+//        }
 
-        while (remainingDistance > 0)
-        {
-            Trail.transform.position = Vector3.Lerp(startPosition, HitPoint, 1 - (remainingDistance / distance));
+//        isReloading = false;
+//        projectilesRemainingInMagazine = projectilesPerMagazine;
+//    }
 
-            remainingDistance -= BulletSpeed * Time.deltaTime;
+//    public void Aim(Vector3 aimPoint)
+//    {
+//        if (!isReloading)
+//        {
+//            transform.LookAt(aimPoint);
+//        }
+//    }
 
-            yield return null;
-        }
-        Animator.SetBool("IsShooting", false);
-        Trail.transform.position = HitPoint;
-        if (MadeImpact)
-        {
-            Instantiate(ImpactParticleSystem, HitPoint, Quaternion.LookRotation(HitNormal));
-        }
+//    public void OnTriggerHold()
+//    {
+//        Shoot();
+//        triggerReleasedSinceLastShot = false;
+//    }
 
-        Destroy(Trail.gameObject, Trail.time);
-    }
-}
+//    public void OnTriggerRelease()
+//    {
+//        triggerReleasedSinceLastShot = true;
+//        shotsRemainingInBurst = burstCount;
+//    }
+//}

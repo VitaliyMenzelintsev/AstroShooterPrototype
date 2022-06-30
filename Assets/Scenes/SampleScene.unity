@@ -21726,7 +21726,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1127271901
 Transform:
   m_ObjectHideFlags: 0
@@ -49001,7 +49001,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &517377937908173064
 GameObject:
   m_ObjectHideFlags: 0
@@ -51879,7 +51879,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &2141171190601775894
 GameObject:
   m_ObjectHideFlags: 0
@@ -54172,6 +54172,7 @@ MonoBehaviour:
   _reloadTime: 0.3
   _msBetweenShots: 100
   _muzzleVelocity: 35
+  _damage: 35
   _shootDelay: 0.05
   _mask:
     serializedVersion: 2
@@ -66136,6 +66137,7 @@ MonoBehaviour:
   _reloadTime: 0.9
   _msBetweenShots: 100
   _muzzleVelocity: 35
+  _damage: 35
   _shootDelay: 0.05
   _mask:
     serializedVersion: 2

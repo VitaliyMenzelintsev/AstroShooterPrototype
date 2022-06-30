@@ -94,7 +94,7 @@ public class PlayerInput : MonoBehaviour
     }
 
 
-    private void Update()
+    private void FixedUpdate()
     {
         Vector3 _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")); 
         Vector3 _moveVelocity = _moveInput.normalized * _moveSpeed;
@@ -111,8 +111,6 @@ public class PlayerInput : MonoBehaviour
             _controller.LookAt(_point);
             _crosshair.position = _point;
             
-
-
             if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
                 Aim(_point);
         }
@@ -126,8 +124,12 @@ public class PlayerInput : MonoBehaviour
             _currentGun.OnTriggerRelease();
         
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKey(KeyCode.R))
+        {
             _currentGun.Reload();
+            Debug.Log("R");
+        }
+            
 
 
         if (Input.GetKey(KeyCode.W))

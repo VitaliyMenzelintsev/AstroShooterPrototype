@@ -12,11 +12,13 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private int _magazineCapacity;
     [SerializeField]
-    private float _reloadTime = 0.3f;
+    private float _reloadTime = 0.9f;
     [SerializeField]
     private float _msBetweenShots = 100;
     [SerializeField]
     private float _muzzleVelocity = 35;
+    [SerializeField]
+    private float _damage = 35;
 
     [SerializeField]
     private float _shootDelay = 0.05f;
@@ -36,7 +38,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private TrailRenderer _bulletTrail;
 
-    private float _lastShootTime = 0; // ?
+    private float _lastShootTime = 0;
 
     private bool _isReloading;
     private float _nextShotTime;
@@ -56,35 +58,38 @@ public class Gun : MonoBehaviour
 
     public void Shoot(Vector3 _point)
     {
-        _bulletsInMagazine--;
-        _nextShotTime = Time.time + _msBetweenShots / 1000;
-
-        if (_lastShootTime + _shootDelay < Time.time)  // если по КД можно стрелять
+        if (!_isReloading && Time.time > _nextShotTime && _bulletsInMagazine > 0)
         {
-            // Make shot
-            //_animator.SetBool("Fire", true);  перенести активацию анимации стрельбы в скрипт Плеер
+            _bulletsInMagazine--;
+            _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-            _shootingParticle.Play();            // включаем партикл систем
-
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
-
-            if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
+            if (_lastShootTime + _shootDelay < Time.time)  // если по КД можно стрелять
             {
-                TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);  // делаем след
+                //_animator.SetBool("Fire", true);  перенести активацию анимации стрельбы в скрипт Плеер
 
-                StartCoroutine(SpawnTrail(_trail, _hit.point));
+                _shootingParticle.Play();            // включаем партикл систем
 
-                _lastShootTime = Time.time;
-            }
-            else
-            {
-                TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
+                Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-                Vector3 _mousePosition = Input.mousePosition;
+                if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
+                {
+                    TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);  // делаем след
 
-                StartCoroutine(SpawnTrail(_trail, _point));
+                    StartCoroutine(SpawnTrail(_trail, _hit.point));
 
-                _lastShootTime = Time.time;
+                    _lastShootTime = Time.time;
+
+                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+
+                }
+                else
+                {
+                    TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
+
+                    StartCoroutine(SpawnTrail(_trail, _point));
+
+                    _lastShootTime = Time.time;
+                }
             }
         }
     }
@@ -140,7 +145,7 @@ public class Gun : MonoBehaviour
         float _reloadSpeed = 1f / _reloadTime;
         float _percent = 0;
         Vector3 _initialRot = transform.localEulerAngles;
-        float _maxReloadAngle = 20;
+        float _maxReloadAngle = 35;
 
         while (_percent < 1)
         {
