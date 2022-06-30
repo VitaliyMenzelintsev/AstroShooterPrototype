@@ -26,8 +26,8 @@ public class EnemyRangeBehavior : MonoBehaviour
     private float _maxAttackDistance = 13;
     [SerializeField]
     private float _moveSpeed = 3.2f;
-    [SerializeField]
-    private float _damageDealt = 17F;
+    //[SerializeField]
+    //private float _damageDealt = 17F;
     [SerializeField]
     private float _fireCooldown = 0F;
     private float _currentFireCooldown = 0;
@@ -271,9 +271,9 @@ public class EnemyRangeBehavior : MonoBehaviour
                 {
                     _characterAnimator.SetTrigger("Fire");
 
-                    _currentGun.Shoot(_currentTarget.Eyes.transform);
+                    _currentGun.Aim(_currentTarget.Eyes.position);
 
-                    /*_currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);*/ // Процесс "стрельбы"
+                    _currentGun.Shoot(_currentTarget.Eyes.position); 
 
                     _currentFireCooldown = _fireCooldown;
                 }

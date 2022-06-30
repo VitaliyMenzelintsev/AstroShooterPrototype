@@ -21,8 +21,8 @@ public class Gun : MonoBehaviour
     private float _shootDelay = 0.05f;
     [SerializeField]
     private float _bulletSpeed = 200;
-    [SerializeField]
-    private float _range = 30f;
+    //[SerializeField]
+    //private float _range = 30f;
     [SerializeField]
     private bool _addBulletSpread = true;
     [SerializeField]
@@ -59,11 +59,13 @@ public class Gun : MonoBehaviour
             _bulletsInMagazine--;
             _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-            if (_lastShootTime + _shootDelay < Time.time)  // если по КД можно стрелять
+            if (_lastShootTime + _shootDelay < Time.time)  
             {
                 _shootingParticle.Play();            // включаем партикл систем
 
-                Vector3 _direction = GetDirection(); // определяем направление стрельбы
+                //Vector3 _direction = _point;
+
+                Vector3 _direction = GetDirection(/*_point*/); // определяем направление стрельбы
 
                 if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
                 {
@@ -75,9 +77,13 @@ public class Gun : MonoBehaviour
 
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
 
+                    Debug.Log("УРОН");
+
                 }
                 else
                 {
+                    Debug.Log("ПРОМАХ");
+
                     TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
 
                     StartCoroutine(SpawnTrail(_trail, _point));
@@ -88,50 +94,9 @@ public class Gun : MonoBehaviour
         }
     }
 
+    
 
-    public void Shoot(Transform _targetPosition)
-    {
-        if (!_isReloading && Time.time > _nextShotTime && _bulletsInMagazine > 0)
-        {
-            _bulletsInMagazine--;
-            _nextShotTime = Time.time + _msBetweenShots / 1000;
-
-            if (_lastShootTime + _shootDelay < Time.time)  // если по КД можно стрелять
-            {
-                _shootingParticle.Play();            // включаем партикл систем
-
-                Vector3 _direction = GetDirection(); // определяем направление стрельбы
-
-                if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
-                {
-                    TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);  // делаем след
-
-                    StartCoroutine(SpawnTrail(_trail, _hit.point));
-
-                    Debug.Log("робот попадает");
-
-                    _lastShootTime = Time.time;
-
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
-
-                }
-                else
-                {
-                    TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
-
-                    StartCoroutine(SpawnTrail(_trail, _targetPosition.position));
-
-
-                    Debug.Log("робот не попадает");
-
-                    _lastShootTime = Time.time;
-                }
-            }
-        }
-    }
-
-
-    private Vector3 GetDirection()
+    private Vector3 GetDirection(/*Vector3 _direction*/)
     {
         Vector3 _direction = transform.forward;
 
@@ -146,6 +111,7 @@ public class Gun : MonoBehaviour
         }
         return _direction;
     }
+
 
     private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {

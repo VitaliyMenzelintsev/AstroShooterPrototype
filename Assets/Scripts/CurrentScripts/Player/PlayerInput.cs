@@ -106,12 +106,11 @@ public class PlayerInput : MonoBehaviour
 
         if (_groundPlane.Raycast(_ray, out _rayDistance))                            
         {
-            //Vector3 _point = _ray.GetPoint(_rayDistance);
             _point = _ray.GetPoint(_rayDistance);
             _controller.LookAt(_point);
             _crosshair.position = _point;
             
-            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
+            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1) // протестировать в трёхмерном варианте
                 Aim(_point);
         }
 

@@ -24,15 +24,15 @@ public class CompanionRangeBehavior : MonoBehaviour
     public Team _currentTarget; // паблик для тестов
 
     [SerializeField]
+    private Gun _currentGun;
+    [SerializeField]
     private float _minAttackDistance = 7;
     [SerializeField]
     private float _maxAttackDistance = 13;
     [SerializeField]
     private float _moveSpeed = 3.4f;
     [SerializeField]
-    private float _damageDealt = 20F;
-    [SerializeField]
-    private float _fireCooldown = 1F;
+    private float _fireCooldown = 0f;
     private float _currentFireCooldown = 0;
 
     private Path _currentPath = null;
@@ -352,7 +352,9 @@ public class CompanionRangeBehavior : MonoBehaviour
                     {
                         _characterAnimator.SetTrigger("Fire");
 
-                        _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
+                        _currentGun.Aim(_currentTarget.Eyes.position);
+
+                        _currentGun.Shoot(_currentTarget.Eyes.position);
 
                         _currentFireCooldown = _fireCooldown;
                     }
