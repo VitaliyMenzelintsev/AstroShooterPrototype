@@ -125,10 +125,7 @@ public class PlayerInput : MonoBehaviour
         
 
         if (Input.GetKey(KeyCode.R))
-        {
             _currentGun.Reload();
-            Debug.Log("R");
-        }
             
 
 
@@ -169,6 +166,7 @@ public class PlayerInput : MonoBehaviour
             _state = Player_States.CROUCH_IDLE;
             _moveSpeed = 2.2f;
         }
+
 
         if (Input.GetKeyUp(KeyCode.LeftControl))
         {

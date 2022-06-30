@@ -16,8 +16,10 @@ public class EnemyRangeBehavior : MonoBehaviour
     private Transform _myTransform;
     private Animator _characterAnimator;
     private EnemyCoverManager _coverManager;
-    public Team _currentTarget;       
+    public Team _currentTarget;
 
+    [SerializeField]
+    private Gun _currentGun;
     [SerializeField]
     private float _minAttackDistance = 5;
     [SerializeField]
@@ -27,7 +29,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     [SerializeField]
     private float _damageDealt = 17F;
     [SerializeField]
-    private float _fireCooldown = 1F;
+    private float _fireCooldown = 0F;
     private float _currentFireCooldown = 0;
 
     private Path _currentPath = null;
@@ -259,7 +261,7 @@ public class EnemyRangeBehavior : MonoBehaviour
                 return;
             }
 
-            _myTransform.LookAt(_currentTarget.transform);
+            _myTransform.LookAt(_currentTarget.Eyes.transform);
 
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
@@ -269,7 +271,9 @@ public class EnemyRangeBehavior : MonoBehaviour
                 {
                     _characterAnimator.SetTrigger("Fire");
 
-                    _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
+                    _currentGun.Shoot(_currentTarget.Eyes.transform);
+
+                    /*_currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);*/ // Процесс "стрельбы"
 
                     _currentFireCooldown = _fireCooldown;
                 }

@@ -73,9 +73,11 @@ public class EnemyMeleeBehavior : MonoBehaviour
         {
             _characterAnimator.SetBool("Move", false);
 
+            _characterAnimator.SetBool("Dead", true);
+
             Destroy(GetComponent<CapsuleCollider>());
 
-            _characterAnimator.SetBool("Dead", true);
+            Destroy(GetComponent<NavMeshAgent>());
 
             _state = AI_States.death;
 

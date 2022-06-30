@@ -105,7 +105,6 @@ GameObject:
   m_Component:
   - component: {fileID: 731791430557752255}
   - component: {fileID: 827936437992413537}
-  - component: {fileID: 7582162125725425516}
   - component: {fileID: 731791430557752259}
   - component: {fileID: 5670476661241415339}
   - component: {fileID: 731791430557752256}
@@ -156,20 +155,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7582162125725425516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732581478642936559}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 916a8485a46086248a610ef7b752524e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WeaponHold: {fileID: 1530932994823667568}
-  StartingGun: {fileID: 5751372409037884093, guid: dacfca88f09471e468c43f848b62c964, type: 3}
 --- !u!195 &731791430557752259
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2019,6 +2004,37 @@ Transform:
   m_Father: {fileID: 731791430557752255}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7595041908332447867
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7300043444247201151}
+  m_Layer: 0
+  m_Name: BulletSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7300043444247201151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7595041908332447867}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 0.071, z: 0.231}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8573330693373908891}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8570396792805637667
 GameObject:
   m_ObjectHideFlags: 0
@@ -2051,7 +2067,7 @@ Transform:
   m_Children:
   - {fileID: 5897566624686651888}
   m_Father: {fileID: 8573330693373908891}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8539892285214362297
 MeshFilter:
@@ -2114,6 +2130,7 @@ GameObject:
   - component: {fileID: 8573330693373908891}
   - component: {fileID: 8539936233622039723}
   - component: {fileID: 8549975385094211917}
+  - component: {fileID: 8160830524110161369}
   m_Layer: 0
   m_Name: RobotPistol
   m_TagString: Untagged
@@ -2133,6 +2150,7 @@ Transform:
   m_LocalScale: {x: 1.1111113, y: 1.1111108, z: 1.1111109}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7300043444247201151}
   - {fileID: 8567492187806092655}
   m_Father: {fileID: 736797074024407771}
   m_RootOrder: 3
@@ -2187,3 +2205,30 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8160830524110161369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8572047216805904689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91d085f784934b84f9c68dfe16d18a16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletSpawnPoint: {fileID: 7300043444247201151}
+  _magazineCapacity: 14
+  _reloadTime: 0.6
+  _msBetweenShots: 100
+  _damage: 25
+  _shootDelay: 0.05
+  _bulletSpeed: 200
+  _range: 30
+  _addBulletSpread: 1
+  _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
+  _mask:
+    serializedVersion: 2
+    m_Bits: 1
+  _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
+  _bulletTrail: {fileID: 1921083361938323580, guid: 434dc2a8b152dcf41aff1e13876fc714, type: 3}
