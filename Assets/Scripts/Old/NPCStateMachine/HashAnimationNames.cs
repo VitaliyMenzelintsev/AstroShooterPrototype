@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HashAnimationNames 
+public class HashAnimationNames
 {
     protected HashAnimationNames _animationBase;
 
@@ -22,4 +22,5 @@ public class HashAnimationNames
     public int WalkBackwardLeftHash = Animator.StringToHash("Walk_Backward_Left");
     public int WalkForwardRightHash = Animator.StringToHash("Walk_Forward_Right");
     public int WalkForwardLeftHash = Animator.StringToHash("Walk_Forward_Left");
+    public int SprintForwardHash = Animator.StringToHash("Sprint_Forward");
 }

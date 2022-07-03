@@ -15,7 +15,7 @@ public class PlayerInput : MonoBehaviour
     private Animator _characterAnimator;
     [SerializeField]
     private float _moveSpeed = 3.4f;
-    
+
     private Vector3 _point;
 
     private Player_States _state;
@@ -39,6 +39,10 @@ public class PlayerInput : MonoBehaviour
     private int CROUCH_BACKWARD_RIGHT;
     private int CROUCH_LEFT;
     private int CROUCH_RIGHT;
+    private int SPRINT_FORWARD;
+    private int SPRINT_BACKWARD;
+    private int SPRINT_LEFT;
+    private int SPRINT_RIGHT;
 
 
     public enum Player_States
@@ -60,7 +64,11 @@ public class PlayerInput : MonoBehaviour
         CROUCH_BACKWARD_LEFT,
         CROUCH_BACKWARD_RIGHT,
         CROUCH_LEFT,
-        CROUCH_RIGHT
+        CROUCH_RIGHT,
+        SPRINT_FORWARD,
+        SPRINT_BACKWARD,
+        SPRINT_LEFT,
+        SPRINT_RIGHT
     }
 
 
@@ -91,41 +99,41 @@ public class PlayerInput : MonoBehaviour
         CROUCH_BACKWARD_RIGHT = _animationBase.CrouchBackwardRightHash;
         CROUCH_LEFT = _animationBase.CrouchLeftHash;
         CROUCH_RIGHT = _animationBase.CrouchRightHash;
+        SPRINT_FORWARD = _animationBase.SprintForwardHash;
     }
 
 
     private void FixedUpdate()
     {
-        Vector3 _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")); 
+        Vector3 _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 _moveVelocity = _moveInput.normalized * _moveSpeed;
         _controller.Move(_moveVelocity);
-        
-        Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);     
-        Plane _groundPlane = new Plane(Vector3.up, Vector3.up * _eyes.position.y);
-        float _rayDistance;                                             
 
-        if (_groundPlane.Raycast(_ray, out _rayDistance))                            
+        Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);
+        Plane _groundPlane = new Plane(Vector3.up, Vector3.up * _eyes.position.y);
+        float _rayDistance;
+
+        if (_groundPlane.Raycast(_ray, out _rayDistance))
         {
             _point = _ray.GetPoint(_rayDistance);
             _controller.LookAt(_point);
             _crosshair.position = _point;
-            
+
             if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1) // протестировать в трёхмерном варианте
                 Aim(_point);
         }
 
 
-        if (Input.GetMouseButton(0))  
+        if (Input.GetMouseButton(0))
             _currentGun.OnTriggerHold(_point);
-        
-        
+
+
         if (Input.GetMouseButtonUp(0))
             _currentGun.OnTriggerRelease();
-        
+
 
         if (Input.GetKey(KeyCode.R))
             _currentGun.Reload();
-            
 
 
         if (Input.GetKey(KeyCode.W))
@@ -163,15 +171,13 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftControl))
         {
             _state = Player_States.CROUCH_IDLE;
-            _moveSpeed = 2.2f;
+            _moveSpeed = 2.4f;
         }
 
-
-        if (Input.GetKeyUp(KeyCode.LeftControl))
+        else if (!Input.GetKey(KeyCode.LeftControl))
         {
-            _moveSpeed = 3.4f;
+            _moveSpeed = 3f;
         }
-
 
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
@@ -204,6 +210,20 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.D))
             _state = Player_States.CROUCH_RIGHT;
+
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            _moveSpeed = 3.6f;
+        }
+        else
+        {
+            _moveSpeed = 2.8f;
+        }
+
+
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && !Input.GetMouseButton(0))
+            _state = Player_States.SPRINT_FORWARD;
 
 
         if (!Input.anyKey)
@@ -265,6 +285,9 @@ public class PlayerInput : MonoBehaviour
                 break;
             case Player_States.CROUCH_RIGHT:
                 ChangeState(CROUCH_RIGHT);
+                break;
+            case Player_States.SPRINT_FORWARD:
+                ChangeState(SPRINT_FORWARD);
                 break;
             default:
                 ChangeState(IDLE);
