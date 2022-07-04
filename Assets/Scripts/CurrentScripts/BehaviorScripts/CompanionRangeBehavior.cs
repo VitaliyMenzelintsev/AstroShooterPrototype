@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-//[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
@@ -16,7 +16,6 @@ public class CompanionRangeBehavior : MonoBehaviour
     public Transform FollowPoint;
     public Transform Player;
 
-    private Camera _viewCamera;
     private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
     private Animator _characterAnimator;
@@ -30,7 +29,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     [SerializeField]
     private float _maxAttackDistance = 13;
     [SerializeField]
-    private float _moveSpeed = 3.4f;
+    private float _moveSpeed = 3f;
     [SerializeField]
     private float _fireCooldown = 0f;
     private float _currentFireCooldown = 0;
@@ -56,8 +55,6 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void Start()
     {
-        _viewCamera = Camera.main;
-
         _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
@@ -160,7 +157,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
-        _currentTarget = GetNewTarget(); // !!
+        //_currentTarget = GetNewTarget(); // !!
 
         if (_currentTarget != null)
         {
@@ -219,13 +216,9 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateMoveToCover()
     {
-        //в каждый метод из старых ввожу ещё 1 if, который проверяет, наличие цели и, если её нет, то переводит 
-        // спутника в состояние следования за игроком. В аниматоре это выглядит как 
-
         if (_currentTarget != null)
         {
-            if (_currentTarget != null
-            && _currentCover != null
+            if (_currentCover != null
             && _currentCover.AmICoveredFrom(_currentTarget.transform.position))
             {
                 if (_currentPath != null)
@@ -290,9 +283,6 @@ public class CompanionRangeBehavior : MonoBehaviour
             }
             else
             {
-                //_characterAnimator.SetBool("Move", true);
-                //_state = AI_States.followThePlayer;
-
                 // если нет цели, нет укрытия или укрытие не защищает, то:
                 _characterAnimator.SetBool("Move", false);
                 _state = AI_States.idle;
@@ -384,12 +374,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             else
             {
                 _characterAnimator.SetBool("Move", false); // !!
-                _state = AI_States.idle;  // из прежней версии
-
-                //if (_currentCover != null)
-                //    _coverManager.ExitCover(_currentCover);
-                //_characterAnimator.SetBool("Move", true);
-                //_state = AI_States.followThePlayer;
+                _state = AI_States.idle;  
             }
         }
         else

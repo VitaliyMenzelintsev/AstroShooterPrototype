@@ -100,6 +100,9 @@ public class PlayerInput : MonoBehaviour
         CROUCH_LEFT = _animationBase.CrouchLeftHash;
         CROUCH_RIGHT = _animationBase.CrouchRightHash;
         SPRINT_FORWARD = _animationBase.SprintForwardHash;
+        SPRINT_BACKWARD = _animationBase.SprintBackwardHash;
+        SPRINT_LEFT = _animationBase.SprintLeftHash;
+        SPRINT_RIGHT = _animationBase.SprintRightHash;
     }
 
 
@@ -125,8 +128,11 @@ public class PlayerInput : MonoBehaviour
 
 
         if (Input.GetMouseButton(0))
+        {
             _currentGun.OnTriggerHold(_point);
-
+            _moveSpeed = 3.2f;
+        }
+            
 
         if (Input.GetMouseButtonUp(0))
             _currentGun.OnTriggerRelease();
@@ -174,10 +180,10 @@ public class PlayerInput : MonoBehaviour
             _moveSpeed = 2.4f;
         }
 
-        else if (!Input.GetKey(KeyCode.LeftControl))
-        {
-            _moveSpeed = 3f;
-        }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+            _moveSpeed = 3.2f;
+        
 
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
@@ -213,17 +219,27 @@ public class PlayerInput : MonoBehaviour
 
 
         if (Input.GetKey(KeyCode.LeftShift))
-        {
-            _moveSpeed = 3.6f;
-        }
-        else
-        {
-            _moveSpeed = 2.8f;
-        }
-
+            _moveSpeed = 4.0f;
+        
+        
+        if(Input.GetKeyUp(KeyCode.LeftShift))
+            _moveSpeed = 3.2f;
+        
 
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && !Input.GetMouseButton(0))
             _state = Player_States.SPRINT_FORWARD;
+
+
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.A) && !Input.GetMouseButton(0))
+            _state = Player_States.SPRINT_LEFT;
+
+
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.D) && !Input.GetMouseButton(0))
+            _state = Player_States.SPRINT_RIGHT;
+
+
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.S) && !Input.GetMouseButton(0))
+            _state = Player_States.SPRINT_BACKWARD;
 
 
         if (!Input.anyKey)
@@ -288,6 +304,15 @@ public class PlayerInput : MonoBehaviour
                 break;
             case Player_States.SPRINT_FORWARD:
                 ChangeState(SPRINT_FORWARD);
+                break;
+            case Player_States.SPRINT_BACKWARD:
+                ChangeState(SPRINT_BACKWARD);
+                break;
+            case Player_States.SPRINT_LEFT:
+                ChangeState(SPRINT_LEFT);
+                break;
+            case Player_States.SPRINT_RIGHT:
+                ChangeState(SPRINT_RIGHT);
                 break;
             default:
                 ChangeState(IDLE);

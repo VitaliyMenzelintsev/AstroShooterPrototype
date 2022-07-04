@@ -23,4 +23,8 @@ public class HashAnimationNames
     public int WalkForwardRightHash = Animator.StringToHash("Walk_Forward_Right");
     public int WalkForwardLeftHash = Animator.StringToHash("Walk_Forward_Left");
     public int SprintForwardHash = Animator.StringToHash("Sprint_Forward");
+    public int SprintBackwardHash = Animator.StringToHash("Sprint_Backward");
+    public int SprintLeftHash = Animator.StringToHash("Sprint_Left");
+    public int SprintRightHash = Animator.StringToHash("Sprint_Right");
+
 }
