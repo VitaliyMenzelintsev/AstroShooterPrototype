@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Team))]
@@ -31,14 +32,13 @@ public class CompanionRangeBehavior : MonoBehaviour
     [SerializeField]
     private float _moveSpeed = 3f;
     [SerializeField]
-    private float _fireCooldown = 0f;
+    private float _fireCooldown = 0.5f;
     private float _currentFireCooldown = 0;
 
     private Path _currentPath = null;
     private CompanionCoverSpot _currentCover = null;
-    private float _coverChangeCooldown = 5;
+    private float _coverChangeCooldown = 50;
     private float _currentCoverChangeCooldown;
-
     private Vector3 _targetLastKnownPosition;
 
     public enum AI_States
@@ -70,7 +70,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         _currentCoverChangeCooldown = _coverChangeCooldown;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (MyVitals.GetCurrentHealth() > 0)
         {
@@ -91,6 +91,9 @@ public class CompanionRangeBehavior : MonoBehaviour
                 case AI_States.combat:
                     StateCombat();
                     break;
+                case AI_States.death:
+                    StateDeath();
+                    break;
                 default:
                     break;
             }
@@ -99,21 +102,38 @@ public class CompanionRangeBehavior : MonoBehaviour
         {
             _characterAnimator.SetBool("Move", false);
 
-            Destroy(GetComponent<CapsuleCollider>());
-
-            Destroy(GetComponent<NavMeshAgent>());
 
             _characterAnimator.SetBool("Dead", true);
 
+
             if (_currentCover != null)
-            {
                 _coverManager.ExitCover(_currentCover);
-            }
+          
 
             _state = AI_States.death;
-
-            Destroy(gameObject, 7f);
         }
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        GetNewTarget();
+
+        if (_currentTarget == null)
+        {
+            MyVitals.GetRessurect();
+
+            _state = AI_States.idle;
+
+            _characterAnimator.SetBool("Dead", false);
+
+            _characterAnimator.SetBool("HasEnemy", false);
+        }
+    }
+
+    private void StateDeath()
+    {
+        
     }
 
 
@@ -157,8 +177,6 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
-        //_currentTarget = GetNewTarget(); // !!
-
         if (_currentTarget != null)
         {
             if (_currentTarget != null && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
@@ -426,6 +444,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             _state = AI_States.followThePlayer;
         }
     }
+
 
 
     private Team GetNewTarget()

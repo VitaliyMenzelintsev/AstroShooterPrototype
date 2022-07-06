@@ -14,12 +14,14 @@ public class PlayerInput : MonoBehaviour
     private HashAnimationNames _animationBase;
     private Animator _characterAnimator;
     [SerializeField]
-    private float _moveSpeed = 3.4f;
+    private float _moveSpeed = 3.2f;
+    private float _crouchSpeed = 2.6f;
+    private float _sprintSpeed = 4.0f;
 
     private Vector3 _point;
 
-    private Player_States _state;
-    private int _currentState;
+    public Player_States _state;
+    public int _currentState;
 
     private int IDLE;
     private int WALK_FORWARD;
@@ -132,7 +134,7 @@ public class PlayerInput : MonoBehaviour
             _currentGun.OnTriggerHold(_point);
             _moveSpeed = 3.2f;
         }
-            
+
 
         if (Input.GetMouseButtonUp(0))
             _currentGun.OnTriggerRelease();
@@ -176,15 +178,10 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftControl))
         {
+            _moveSpeed = _crouchSpeed;
             _state = Player_States.CROUCH_IDLE;
-            _moveSpeed = 2.4f;
         }
-
-
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-            _moveSpeed = 3.2f;
-        
-
+    
 
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W))
             _state = Player_States.CROUCH_FORWARD;
@@ -219,12 +216,15 @@ public class PlayerInput : MonoBehaviour
 
 
         if (Input.GetKey(KeyCode.LeftShift))
-            _moveSpeed = 4.0f;
-        
-        
-        if(Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _moveSpeed = _sprintSpeed;
+        }
+        else
+        {
             _moveSpeed = 3.2f;
-        
+        }
+
+
 
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.W) && !Input.GetMouseButton(0))
             _state = Player_States.SPRINT_FORWARD;
@@ -243,7 +243,11 @@ public class PlayerInput : MonoBehaviour
 
 
         if (!Input.anyKey)
+        {
             _state = Player_States.IDLE;
+            _moveSpeed = 3.2f;
+        }
+           
 
 
         switch (_state)

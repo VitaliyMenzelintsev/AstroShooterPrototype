@@ -217,6 +217,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _health: 100
+  _currentHealth: 100
+  _ressurectHealth: 60
 --- !u!114 &3046223761091314764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -996,7 +998,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 97cf9ca3cf862684c958b179365d553a, type: 2}
+  - {fileID: 2100000, guid: c9f78900e335d5e4f8850b49bbeb4520, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

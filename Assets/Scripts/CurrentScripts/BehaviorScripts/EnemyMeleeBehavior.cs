@@ -18,10 +18,13 @@ public class EnemyMeleeBehavior : MonoBehaviour
     private Animator _characterAnimator;
     public Team _currentTarget = null;
 
-    
+    [SerializeField]
     private float _minAttackDistance = 0.5f;
+    [SerializeField]
     private float _maxAttackDistance = 2.5f;
-    private float _damageDealt = 200f;
+    [SerializeField]
+    private float _damageDealt = 100f;
+    [SerializeField]
     private float _fireCooldown = 2.667f;
     private float _currentFireCooldown = 0;
 
@@ -141,7 +144,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
                 }
             }
 
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
+            else if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
             {
                 _state = AI_States.investigate;
             }
@@ -157,7 +160,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
     private void StateInvestigate()
     {
-        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= 2.5f)
+        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance)
         {
             _state = AI_States.combat;
         }

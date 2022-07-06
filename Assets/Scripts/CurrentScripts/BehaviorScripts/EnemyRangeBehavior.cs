@@ -65,7 +65,7 @@ public class EnemyRangeBehavior : MonoBehaviour
         _currentCoverChangeCooldown = _coverChangeCooldown;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (MyVitals.GetCurrentHealth() > 0)
         {
@@ -102,7 +102,7 @@ public class EnemyRangeBehavior : MonoBehaviour
 
             _state = AI_States.death;
 
-            Destroy(gameObject, 7f);
+            Destroy(gameObject, 1f);
         }
     }
 

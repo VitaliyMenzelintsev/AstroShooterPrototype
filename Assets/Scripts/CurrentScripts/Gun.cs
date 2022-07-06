@@ -21,8 +21,6 @@ public class Gun : MonoBehaviour
     private float _shootDelay = 0.05f;
     [SerializeField]
     private float _bulletSpeed = 200;
-    //[SerializeField]
-    //private float _range = 30f;
     [SerializeField]
     private bool _addBulletSpread = true;
     [SerializeField]
@@ -61,11 +59,10 @@ public class Gun : MonoBehaviour
 
             if (_lastShootTime + _shootDelay < Time.time)  
             {
-                _shootingParticle.Play();            // включаем партикл систем
 
-                //Vector3 _direction = _point;
+                _shootingParticle.Play();
 
-                Vector3 _direction = GetDirection(/*_point*/); // определяем направление стрельбы
+                Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
                 if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
                 {
@@ -92,9 +89,11 @@ public class Gun : MonoBehaviour
                 }
             }
         }
+
+        _shootingParticle.Stop();
     }
 
-    
+
 
     private Vector3 GetDirection(/*Vector3 _direction*/)
     {
@@ -172,6 +171,7 @@ public class Gun : MonoBehaviour
     public void OnTriggerHold(Vector3 _point)
     {
         Shoot(_point);
+  
         _triggerReleasedSinceLastShot = false;
     }
 

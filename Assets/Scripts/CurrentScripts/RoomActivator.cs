@@ -8,9 +8,11 @@ public class RoomActivator : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
-        for (int i = 0; i < Enemies.Length; i++)
-            Enemies[i].SetActive(true);
+        if (other.CompareTag("Player"))
+        {
+            for (int i = 0; i < Enemies.Length; i++)
+                Enemies[i].SetActive(true);
+        }
 
         this.gameObject.SetActive(false);
 
