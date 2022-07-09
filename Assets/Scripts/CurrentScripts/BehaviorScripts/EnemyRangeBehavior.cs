@@ -33,7 +33,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     private float _currentFireCooldown = 0;
 
     private Path _currentPath = null;
-    private EnemyCoverSpot _currentCover = null;
+    public EnemyCoverSpot _currentCover = null;
     private float _coverChangeCooldown = 5;
     private float _currentCoverChangeCooldown;
 

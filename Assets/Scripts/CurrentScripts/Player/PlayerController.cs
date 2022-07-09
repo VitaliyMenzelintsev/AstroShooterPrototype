@@ -3,28 +3,41 @@
 // Висит на игроке
 public class PlayerController : MonoBehaviour
 {
-    private Vector3 _velocity;
-    private Rigidbody _myRigidbody;
-
+    private CharacterController controller;
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
+    private float playerSpeed = 2.0f;
+    private float jumpHeight = 1.0f;
+    private float gravityValue = -9.81f;
 
     private void Start()
     {
-        _myRigidbody = GetComponent<Rigidbody>();
+        controller = gameObject.AddComponent<CharacterController>();
     }
 
-    public void Move(Vector3 _moveVelocity)
+    void Update()
     {
-        this._velocity = _moveVelocity;
-    }
+        groundedPlayer = controller.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
+        }
 
-    public void LookAt(Vector3 _lookPoint)       
-    {
-        Vector3 _heightCorrectedPoint = new Vector3(_lookPoint.x, transform.position.y, _lookPoint.z); 
-        transform.LookAt(_heightCorrectedPoint);
-    }
+        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        controller.Move(move * Time.deltaTime * playerSpeed);
 
-    private void FixedUpdate()
-    {
-        _myRigidbody.MovePosition(_myRigidbody.position + _velocity * Time.deltaTime);
+        if (move != Vector3.zero)
+        {
+            gameObject.transform.forward = move;
+        }
+
+        // Changes the height position of the player..
+        if (Input.GetButtonDown("Jump") && groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        }
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
     }
 }

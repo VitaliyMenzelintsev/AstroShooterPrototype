@@ -112,7 +112,7 @@ public class PlayerInput : MonoBehaviour
     {
         Vector3 _moveInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 _moveVelocity = _moveInput.normalized * _moveSpeed;
-        _controller.Move(_moveVelocity);
+        //_controller.Move(_moveVelocity);
 
         Ray _ray = _viewCamera.ScreenPointToRay(Input.mousePosition);
         Plane _groundPlane = new Plane(Vector3.up, Vector3.up * _eyes.position.y);
@@ -121,10 +121,10 @@ public class PlayerInput : MonoBehaviour
         if (_groundPlane.Raycast(_ray, out _rayDistance))
         {
             _point = _ray.GetPoint(_rayDistance);
-            _controller.LookAt(_point);
+            //_controller.LookAt(_point);
             _crosshair.position = _point;
 
-            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1) // протестировать в трёхмерном варианте
+            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1) 
                 Aim(_point);
         }
 
