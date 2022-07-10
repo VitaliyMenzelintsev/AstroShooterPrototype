@@ -28,7 +28,6 @@ public class Aiming : MonoBehaviour
             // Calculate the direction
             var direction = position - transform.position;
 
-            // You might want to delete this line.
             // Ignore the height difference.
             direction.y = 0;
 
@@ -52,5 +51,4 @@ public class Aiming : MonoBehaviour
             return (success: false, position: Vector3.zero);
         }
     }
-
 }

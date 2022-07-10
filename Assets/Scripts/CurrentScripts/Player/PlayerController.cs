@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
     private Transform cameraTransform;
     [SerializeField]
     private Gun _currentGun;
-    private Camera _viewCamera;
+    [SerializeField]
+    private float animationSmoothTime = 0.1f;  // смягчение скорости для анимации
+
 
     private CharacterController controller;
     private PlayerInput playerInput;
@@ -25,43 +27,27 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 _point;
 
+    private Animator animator;
+    private int moveXAnimationParameterID;
+    private int moveZAnimationParameterID;
+
+    private Vector2 currentAnimationBlendVector;
+    private Vector2 animationVelocity;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         cameraTransform = Camera.main.transform;
-        _viewCamera = Camera.main;
+
+        //_viewCamera = Camera.main;
         moveAction = playerInput.actions["Move"];
         crouchAction = playerInput.actions["Crouch"];
         shootAction = playerInput.actions["Shoot"];
-    }
 
-    private void OnEnable()
-    {
-        shootAction.performed += _ => ShootGun();
-    }
-
-    private void OnDisable()
-    {
-        shootAction.performed -= _ => ShootGun();
-    }
-
-    private void ShootGun()
-    {
-        _currentGun.OnTriggerHold(_point);
-
-        //RaycastHit _hit;
-        //Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
-        //if (Physics.Raycast(_ray, out _hit, Mathf.Infinity))
-        //{
-        //    _point = _ray.GetPoint(Mathf.Infinity);
-        //}
-        //_currentGun.Shoot(_point);
-    }
-
-    public void Aim(Vector3 _aimPoint)
-    {
-        _currentGun.Aim(_aimPoint);
+        animator = GetComponent<Animator>();
+        moveXAnimationParameterID = Animator.StringToHash("MoveX");
+        moveZAnimationParameterID = Animator.StringToHash("MoveZ");
     }
 
     private void Update()
@@ -85,10 +71,16 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector2 input = moveAction.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, 0, input.y);
+        // "смягчение" данных input, чтобы анимации были плавнее
+        currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, input, ref animationVelocity, animationSmoothTime);
+        Vector3 move = new Vector3(currentAnimationBlendVector.x, 0, currentAnimationBlendVector.y);
+
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;  // движение игрока относительно камеры
         move.y = 0f;
         controller.Move(move * Time.deltaTime * playerSpeed);
+
+        animator.SetFloat(moveXAnimationParameterID, currentAnimationBlendVector.x);
+        animator.SetFloat(moveZAnimationParameterID, currentAnimationBlendVector.y);
 
         controller.Move(playerVelocity * Time.deltaTime);
 
@@ -96,5 +88,25 @@ public class PlayerController : MonoBehaviour
         float targetAngle = cameraTransform.eulerAngles.y;
         Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    private void OnEnable()
+    {
+        shootAction.performed += _ => ShootGun();
+    }
+
+    private void OnDisable()
+    {
+        shootAction.performed -= _ => ShootGun();
+    }
+
+    private void ShootGun()
+    {
+        _currentGun.OnTriggerHold(_point);
+    }
+
+    public void Aim(Vector3 _aimPoint)
+    {
+        _currentGun.Aim(_aimPoint);
     }
 }
