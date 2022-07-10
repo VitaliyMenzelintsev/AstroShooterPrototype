@@ -7,14 +7,19 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float playerSpeed = 2.0f;
+    private float basicSpeed = 3.4f;
+    [SerializeField]
+    private float currentSpeed;
+    private float crouchSpeed = 2.6f;
     [SerializeField]
     private float rotationSpeed = 5f;
     private Transform cameraTransform;
     [SerializeField]
     private Gun _currentGun;
     [SerializeField]
-    private float animationSmoothTime = 0.1f;  // смягчение скорости для анимации
+    private float animationSmoothTime = 0.2f;  // смягчение скорости для анимации
+    [SerializeField]
+    private float animationPlayTransition = 0.2f;
 
 
     private CharacterController controller;
@@ -30,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private int moveXAnimationParameterID;
     private int moveZAnimationParameterID;
+    private int crouchAnimation;
 
     private Vector2 currentAnimationBlendVector;
     private Vector2 animationVelocity;
@@ -48,10 +54,12 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         moveXAnimationParameterID = Animator.StringToHash("MoveX");
         moveZAnimationParameterID = Animator.StringToHash("MoveZ");
+        crouchAnimation = Animator.StringToHash("Crouch");
     }
 
     private void Update()
     {
+        // Стрельба
         Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
         Plane _groundPlane = new Plane(Vector3.up, Vector3.up * 1.8f);
         float _rayDistance;
@@ -70,6 +78,18 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
+        // Присед вкл/выкл
+        if (crouchAction.inProgress)
+        {
+            animator.SetBool("Crouch", true);
+            currentSpeed = crouchSpeed;
+        }
+        else
+        {
+            animator.SetBool("Crouch", false);
+            currentSpeed = basicSpeed;
+        }
+
         Vector2 input = moveAction.ReadValue<Vector2>();
         // "смягчение" данных input, чтобы анимации были плавнее
         currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, input, ref animationVelocity, animationSmoothTime);
@@ -77,7 +97,7 @@ public class PlayerController : MonoBehaviour
 
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;  // движение игрока относительно камеры
         move.y = 0f;
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        controller.Move(move * Time.deltaTime * currentSpeed);
 
         animator.SetFloat(moveXAnimationParameterID, currentAnimationBlendVector.x);
         animator.SetFloat(moveZAnimationParameterID, currentAnimationBlendVector.y);
