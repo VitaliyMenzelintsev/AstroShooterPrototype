@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-
 // Висит на каждом оружии. Характеристики настраиваются индивидуально
 public class Gun : MonoBehaviour
 {

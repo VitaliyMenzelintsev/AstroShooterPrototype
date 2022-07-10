@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Aiming : MonoBehaviour
 {
-
+    // чужой скрипт для Top Down стрельбы
     [SerializeField] 
     private LayerMask groundMask;
 

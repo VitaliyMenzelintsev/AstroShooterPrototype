@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
-// Висит на игроке
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController controller;
     private PlayerInput playerInput;
-    private Vector3 playerVelocity;
+    //private Vector3 playerVelocity;
 
     private InputAction moveAction;
     private InputAction crouchAction;
@@ -56,23 +56,20 @@ public class PlayerController : MonoBehaviour
         moveXAnimationParameterID = Animator.StringToHash("MoveX");
         moveZAnimationParameterID = Animator.StringToHash("MoveZ");
         crouchAnimation = Animator.StringToHash("Crouch");
+
+        // выключение курсора во время игры и лок его на центре
+        Cursor.lockState = CursorLockMode.Locked; 
     }
 
     private void Update()
     {
-        // вообще отсюда нужно только запускать сам процессс стрельбы. Рассчитывать его лучше в Gun
-
+        // определение точки для стрельбы
         Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
-
         float _rayDistance = 100f;
-
         _aimPoint = _ray.GetPoint(_rayDistance);
 
-
-        if (playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }
+        // прицеливание оружия в точку
+        Aim(_aimPoint);
 
         // Присед вкл/выкл
         if (crouchAction.inProgress)
@@ -86,19 +83,24 @@ public class PlayerController : MonoBehaviour
             currentSpeed = walkSpeed;
         }
 
+        // чтение инпута в виде вектора
         Vector2 input = moveAction.ReadValue<Vector2>();
+
         // "смягчение" данных input, чтобы анимации были плавнее
         currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, input, ref animationVelocity, animationSmoothTime);
         Vector3 move = new Vector3(currentAnimationBlendVector.x, 0, currentAnimationBlendVector.y);
 
-        move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;  // движение игрока относительно камеры
+        // движение игрока относительно камеры
+        move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;  
         move.y = 0f;
         controller.Move(move * Time.deltaTime * currentSpeed);
 
+        // передача в аниматор данных инпута
         animator.SetFloat(moveXAnimationParameterID, currentAnimationBlendVector.x);
         animator.SetFloat(moveZAnimationParameterID, currentAnimationBlendVector.y);
 
-        controller.Move(playerVelocity * Time.deltaTime);
+        //// отключил и всё работает ????
+        //controller.Move(playerVelocity * Time.deltaTime);
 
         // поворот в сторону курсора
         float targetAngle = cameraTransform.eulerAngles.y;
@@ -118,12 +120,6 @@ public class PlayerController : MonoBehaviour
 
     private void ShootGun()
     {
-        RaycastHit hit;
-        if(Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
-        {
-
-        }
-
         _currentGun.OnTriggerHold(_aimPoint);
     }
 
