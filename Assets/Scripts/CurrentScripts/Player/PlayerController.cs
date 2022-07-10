@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     private float walkSpeed = 3.4f;
     [SerializeField]
     private float crouchSpeed = 2.6f;
+    [SerializeField]
+    private float sprintSpeed = 4.0f;
+    [SerializeField]
     private float currentSpeed;
     [SerializeField]
     private float rotationSpeed = 5f;
@@ -18,10 +21,10 @@ public class PlayerController : MonoBehaviour
     private Gun _currentGun;
     [SerializeField]
     private float animationSmoothTime = 0.2f;  // смягчение скорости для анимации
-    [SerializeField]
-    private float animationPlayTransition = 0.2f;
-    [SerializeField]
-    private Transform aimTarget;
+    //[SerializeField]
+    //private float animationPlayTransition = 0.2f;
+    //[SerializeField]
+    //private Transform aimTarget;
 
 
     private CharacterController controller;
@@ -29,7 +32,8 @@ public class PlayerController : MonoBehaviour
     //private Vector3 playerVelocity;
 
     private InputAction moveAction;
-    private InputAction crouchAction;
+    private InputAction crouchAction; // ?
+    private InputAction sprintAction; // ?
     private InputAction shootAction;
 
     private Vector3 _aimPoint;
@@ -37,25 +41,30 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private int moveXAnimationParameterID;
     private int moveZAnimationParameterID;
-    private int crouchAnimation;
+    private int shootAnimation;
+    //private int crouchAnimation;
 
     private Vector2 currentAnimationBlendVector;
     private Vector2 animationVelocity;
 
     private void Awake()
     {
+        currentSpeed = walkSpeed; // возможно лишнее, работало и без этого
+
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         cameraTransform = Camera.main.transform;
 
         moveAction = playerInput.actions["Move"];
         crouchAction = playerInput.actions["Crouch"];
+        sprintAction = playerInput.actions["Sprint"];
         shootAction = playerInput.actions["Shoot"];
 
         animator = GetComponent<Animator>();
+        shootAnimation = Animator.StringToHash("Rifle_Shooting");
         moveXAnimationParameterID = Animator.StringToHash("MoveX");
         moveZAnimationParameterID = Animator.StringToHash("MoveZ");
-        crouchAnimation = Animator.StringToHash("Crouch");
+        //crouchAnimation = Animator.StringToHash("Crouch");
 
         // выключение курсора во время игры и лок его на центре
         Cursor.lockState = CursorLockMode.Locked; 
@@ -67,6 +76,10 @@ public class PlayerController : MonoBehaviour
         Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
         float _rayDistance = 100f;
         _aimPoint = _ray.GetPoint(_rayDistance);
+
+        // ???
+        //aimTarget.position = cameraTransform.position + cameraTransform.forward * _rayDistance;
+
 
         // прицеливание оружия в точку
         Aim(_aimPoint);
@@ -82,6 +95,19 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("Crouch", false);
             currentSpeed = walkSpeed;
         }
+
+        // Спринт вкл/выкл
+        if (sprintAction.inProgress)
+        {
+            animator.SetBool("Sprint", true);
+            currentSpeed = sprintSpeed;
+        }
+        else
+        {
+            animator.SetBool("Sprint", false);
+            currentSpeed = walkSpeed;
+        }
+
 
         // чтение инпута в виде вектора
         Vector2 input = moveAction.ReadValue<Vector2>();
@@ -120,6 +146,7 @@ public class PlayerController : MonoBehaviour
 
     private void ShootGun()
     {
+        animator.CrossFade(shootAnimation, animationSmoothTime);
         _currentGun.OnTriggerHold(_aimPoint);
     }
 
