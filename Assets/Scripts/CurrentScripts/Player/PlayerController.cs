@@ -9,35 +9,77 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float playerSpeed = 2.0f;
     [SerializeField]
-    private float jumpHeight = 1.0f;
-    [SerializeField]
-    private float gravityValue = -9.81f;
-    [SerializeField]
     private float rotationSpeed = 5f;
     private Transform cameraTransform;
+    [SerializeField]
+    private Gun _currentGun;
+    private Camera _viewCamera;
 
     private CharacterController controller;
     private PlayerInput playerInput;
     private Vector3 playerVelocity;
-    private bool groundedPlayer;
 
     private InputAction moveAction;
     private InputAction crouchAction;
+    private InputAction shootAction;
 
+    private Vector3 _point;
 
-    private void Start()
+    private void Awake()
     {
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         cameraTransform = Camera.main.transform;
+        _viewCamera = Camera.main;
         moveAction = playerInput.actions["Move"];
         crouchAction = playerInput.actions["Crouch"];
+        shootAction = playerInput.actions["Shoot"];
+    }
+
+    private void OnEnable()
+    {
+        shootAction.performed += _ => ShootGun();
+    }
+
+    private void OnDisable()
+    {
+        shootAction.performed -= _ => ShootGun();
+    }
+
+    private void ShootGun()
+    {
+        _currentGun.OnTriggerHold(_point);
+
+        //RaycastHit _hit;
+        //Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        //if (Physics.Raycast(_ray, out _hit, Mathf.Infinity))
+        //{
+        //    _point = _ray.GetPoint(Mathf.Infinity);
+        //}
+        //_currentGun.Shoot(_point);
+    }
+
+    public void Aim(Vector3 _aimPoint)
+    {
+        _currentGun.Aim(_aimPoint);
     }
 
     private void Update()
     {
-        groundedPlayer = controller.isGrounded;
-        if (groundedPlayer && playerVelocity.y < 0)
+        Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        Plane _groundPlane = new Plane(Vector3.up, Vector3.up * 1.8f);
+        float _rayDistance;
+
+        if (_groundPlane.Raycast(_ray, out _rayDistance))
+        {
+            _point = _ray.GetPoint(_rayDistance);
+
+            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
+                Aim(_point);
+        }
+
+       
+        if (playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
@@ -48,7 +90,6 @@ public class PlayerController : MonoBehaviour
         move.y = 0f;
         controller.Move(move * Time.deltaTime * playerSpeed);
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
 
         // поворот в сторону курсора

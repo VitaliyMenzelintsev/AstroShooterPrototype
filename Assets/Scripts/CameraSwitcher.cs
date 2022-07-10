@@ -8,6 +8,10 @@ public class CameraSwitcher : MonoBehaviour
     private PlayerInput PlayerInput;
     [SerializeField]
     private int priorityBoostAmount = 2;
+    [SerializeField]
+    private Canvas thirdPersonCanvas;
+    [SerializeField]
+    private Canvas aimCanvas;
 
     private CinemachineVirtualCamera virtualCamera;
     private InputAction aimAction;
@@ -33,10 +37,14 @@ public class CameraSwitcher : MonoBehaviour
     private void StartAim() // прицеливание повышает приоритет вторичной камеры
     {
         virtualCamera.Priority += priorityBoostAmount;
+        aimCanvas.enabled = true;
+        thirdPersonCanvas.enabled = false;
     }
 
     private void CancelAim() // отмена прицеливания понижает приоритет
     {
         virtualCamera.Priority -= priorityBoostAmount;
+        aimCanvas.enabled = false;
+        thirdPersonCanvas.enabled = true;
     }
 }

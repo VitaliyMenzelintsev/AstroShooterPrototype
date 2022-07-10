@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - GoodEntity
   - BadEntity
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Floor
   - Enemy
   - LineOfSight
-  - 
+  - Environment
   - 
   - 
   - 
