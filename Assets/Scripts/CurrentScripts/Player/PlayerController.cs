@@ -2,15 +2,15 @@
 using UnityEngine.InputSystem;
 
 
-[RequireComponent(typeof(CharacterController), typeof(PlayerInputOld))]
+[RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 // Висит на игроке
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float basicSpeed = 3.4f;
+    private float walkSpeed = 3.4f;
     [SerializeField]
-    private float currentSpeed;
     private float crouchSpeed = 2.6f;
+    private float currentSpeed;
     [SerializeField]
     private float rotationSpeed = 5f;
     private Transform cameraTransform;
@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     private float animationSmoothTime = 0.2f;  // смягчение скорости для анимации
     [SerializeField]
     private float animationPlayTransition = 0.2f;
+    [SerializeField]
+    private Transform aimTarget;
 
 
     private CharacterController controller;
@@ -30,7 +32,7 @@ public class PlayerController : MonoBehaviour
     private InputAction crouchAction;
     private InputAction shootAction;
 
-    private Vector3 _point;
+    private Vector3 _aimPoint;
 
     private Animator animator;
     private int moveXAnimationParameterID;
@@ -46,7 +48,6 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         cameraTransform = Camera.main.transform;
 
-        //_viewCamera = Camera.main;
         moveAction = playerInput.actions["Move"];
         crouchAction = playerInput.actions["Crouch"];
         shootAction = playerInput.actions["Shoot"];
@@ -59,20 +60,15 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Стрельба
+        // вообще отсюда нужно только запускать сам процессс стрельбы. Рассчитывать его лучше в Gun
+
         Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
-        Plane _groundPlane = new Plane(Vector3.up, Vector3.up * 1.8f);
-        float _rayDistance;
 
-        if (_groundPlane.Raycast(_ray, out _rayDistance))
-        {
-            _point = _ray.GetPoint(_rayDistance);
+        float _rayDistance = 100f;
 
-            if ((new Vector2(_point.x, _point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
-                Aim(_point);
-        }
+        _aimPoint = _ray.GetPoint(_rayDistance);
 
-       
+
         if (playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
@@ -87,7 +83,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             animator.SetBool("Crouch", false);
-            currentSpeed = basicSpeed;
+            currentSpeed = walkSpeed;
         }
 
         Vector2 input = moveAction.ReadValue<Vector2>();
@@ -122,7 +118,13 @@ public class PlayerController : MonoBehaviour
 
     private void ShootGun()
     {
-        _currentGun.OnTriggerHold(_point);
+        RaycastHit hit;
+        if(Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
+        {
+
+        }
+
+        _currentGun.OnTriggerHold(_aimPoint);
     }
 
     public void Aim(Vector3 _aimPoint)

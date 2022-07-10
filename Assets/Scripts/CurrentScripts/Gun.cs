@@ -50,7 +50,7 @@ public class Gun : MonoBehaviour
             Reload();
     }
 
-    public void Shoot(Vector3 _point)
+    public void Shoot(Vector3 _aimPoint)
     {
         if (!_isReloading && Time.time > _nextShotTime && _bulletsInMagazine > 0)
         {
@@ -83,19 +83,18 @@ public class Gun : MonoBehaviour
 
                     TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
 
-                    StartCoroutine(SpawnTrail(_trail, _point));
+                    StartCoroutine(SpawnTrail(_trail, _aimPoint));
 
                     _lastShootTime = Time.time;
                 }
             }
         }
-
         _shootingParticle.Stop();
     }
 
 
 
-    private Vector3 GetDirection(/*Vector3 _direction*/)
+    private Vector3 GetDirection()
     {
         Vector3 _direction = transform.forward;
 
@@ -153,7 +152,7 @@ public class Gun : MonoBehaviour
             _percent += Time.deltaTime * _reloadSpeed;
             float interpolation = (-Mathf.Pow(_percent, 2) + _percent) * 4;
             float reloadAngle = Mathf.Lerp(0, _maxReloadAngle, interpolation);
-            transform.localEulerAngles = _initialRot + Vector3.up * reloadAngle;
+            transform.localEulerAngles = _initialRot + Vector3.left * reloadAngle;
 
             yield return null;
         }
@@ -164,13 +163,12 @@ public class Gun : MonoBehaviour
 
     public void Aim(Vector3 _aimPoint)
     {
-        if (!_isReloading)
-            transform.LookAt(_aimPoint);
+       transform.LookAt(_aimPoint);
     }
 
-    public void OnTriggerHold(Vector3 _point)
+    public void OnTriggerHold(Vector3 _aimPoint)
     {
-        Shoot(_point);
+        Shoot(_aimPoint);
   
         _triggerReleasedSinceLastShot = false;
     }
