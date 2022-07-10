@@ -42,14 +42,14 @@ public class PlayerController : MonoBehaviour
     private int moveXAnimationParameterID;
     private int moveZAnimationParameterID;
     private int shootAnimation;
-    //private int crouchAnimation;
+    private int crouchAnimation;
 
     private Vector2 currentAnimationBlendVector;
     private Vector2 animationVelocity;
 
     private void Awake()
     {
-        currentSpeed = walkSpeed; // возможно лишнее, работало и без этого
+        /*currentSpeed = walkSpeed; */// возможно лишнее, работало и без этого
 
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
@@ -84,29 +84,47 @@ public class PlayerController : MonoBehaviour
         // прицеливание оружия в точку
         Aim(_aimPoint);
 
-        // Присед вкл/выкл
+        //// Присед вкл/выкл
+        //if (crouchAction.inProgress)
+        //{
+        //    animator.SetBool("Crouch", true);
+        //    currentSpeed = crouchSpeed;
+        //}
+        //else
+        //{
+        //    animator.SetBool("Crouch", false);
+        //    currentSpeed = walkSpeed;
+        //}
+
+        //// Спринт вкл/выкл
+        //if (sprintAction.inProgress)
+        //{
+        //    animator.SetBool("Sprint", true);
+        //    currentSpeed = sprintSpeed;
+        //}
+        //else
+        //{
+        //    animator.SetBool("Sprint", false);
+        //    currentSpeed = walkSpeed;
+        //}
+
         if (crouchAction.inProgress)
         {
-            animator.SetBool("Crouch", true);
+            animator.SetInteger("MoveState", 1);
             currentSpeed = crouchSpeed;
         }
+        //if (sprintAction.inProgress)
+        //{
+        //    animator.SetInteger("MoveState", 2);
+        //    currentSpeed = sprintSpeed;
+        //}
         else
         {
-            animator.SetBool("Crouch", false);
+            animator.SetInteger("MoveState", 0);
             currentSpeed = walkSpeed;
         }
 
-        // Спринт вкл/выкл
-        if (sprintAction.inProgress)
-        {
-            animator.SetBool("Sprint", true);
-            currentSpeed = sprintSpeed;
-        }
-        else
-        {
-            animator.SetBool("Sprint", false);
-            currentSpeed = walkSpeed;
-        }
+
 
 
         // чтение инпута в виде вектора
