@@ -34,7 +34,7 @@ public class CompanionCoverSpot : MonoBehaviour
     {
         return _occupied;
     }
-
+     
     private void OnDrawGizmos()
     {
         if (IsOccupied())
@@ -77,7 +77,7 @@ public class CompanionCoverSpot : MonoBehaviour
             return false;
         }
 
-        if (Vector3.Dot(_characterToTargetDirection, _characterToCoverDirection) < 0.7F)
+        if (Vector3.Dot(_characterToTargetDirection, _characterToCoverDirection) < 0.9F)
         {
             return false;
         }

@@ -50,7 +50,7 @@ public class EnemyCoverManager : MonoBehaviour
 
             if (!_spot.IsOccupied() && _spot.AmICoveredFrom(_targetPosition) 
                 && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance 
-                && !CoverIsPastEnemyLine(_character, _spot))
+                /*&& !CoverIsPastEnemyLine(_character, _spot)*/)
             {
                 if (_bestCover == null)
                 {
@@ -87,21 +87,21 @@ public class EnemyCoverManager : MonoBehaviour
         }
     }
 
-    private bool CoverIsPastEnemyLine(EnemyRangeBehavior _character, EnemyCoverSpot _spot)
-    {
-        bool _isPastEnemyLine = false;
+    //private bool CoverIsPastEnemyLine(EnemyRangeBehavior _character, EnemyCoverSpot _spot)
+    //{
+    //    bool _isPastEnemyLine = false;
 
-        foreach (EnemyRangeBehavior _unit in _allCharacters)
-        {
-            if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
-            {
-                if (_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
-                {
-                    _isPastEnemyLine = true;
-                    break;
-                }
-            }
-        }
-        return _isPastEnemyLine;
-    }
+    //    foreach (EnemyRangeBehavior _unit in _allCharacters)
+    //    {
+    //        if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
+    //        {
+    //            if (_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
+    //            {
+    //                _isPastEnemyLine = true;
+    //                break;
+    //            }
+    //        }
+    //    }
+    //    return _isPastEnemyLine;
+    //}
 }

@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
             animator.SetInteger("MoveState", 1);
             currentSpeed = crouchSpeed;
         }
-        if (sprintAction.inProgress)
+        else if (sprintAction.inProgress)
         {
             animator.SetInteger("MoveState", 2);
             currentSpeed = sprintSpeed;

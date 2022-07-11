@@ -116,7 +116,7 @@ public class EnemyRangeBehavior : MonoBehaviour
                 _coverManager.ExitCover(_currentCover);
             }
 
-            _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
+            //_currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
 
             if (_currentCover != null)
             {
@@ -159,7 +159,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     {
         if (_currentTarget != null
             && _currentCover != null
-            && _currentCover.AmICoveredFrom(_currentTarget.transform.position))
+           /* && _currentCover.AmICoveredFrom(_currentTarget.transform.position)*/)
         {
             if (_currentPath != null)
             {
@@ -179,7 +179,7 @@ public class EnemyRangeBehavior : MonoBehaviour
 
                         _coverManager.ExitCover(_currentCover);
 
-                        _currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
+                        //_currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
 
                         _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
 
@@ -202,12 +202,10 @@ public class EnemyRangeBehavior : MonoBehaviour
 
                 if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f)
                 {
-                    //if we reached the current node, then we'll begin going towards the next node
                     _currentPath._currentPathIndex++;
                 }
                 else
                 {
-                    //else we'll move towards current node
                     _myTransform.LookAt(_nodePosition); 
 
                     _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
@@ -215,7 +213,6 @@ public class EnemyRangeBehavior : MonoBehaviour
             }
             else
             {
-                //if we don't have a path, we'll look for a target
                 _characterAnimator.SetBool("Move", false);
 
                 _state = AI_States.idle;
@@ -392,7 +389,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     {
         bool _canSeeIt = false;
 
-        Vector3 _enemyPosition = _target.Eyes.position; ;    // _target.Eyes.position; убрал про глаза
+        Vector3 _enemyPosition = _target.Eyes.position; ;  
 
         Vector3 _directionTowardsEnemy = _enemyPosition - Eyes.position;
 
