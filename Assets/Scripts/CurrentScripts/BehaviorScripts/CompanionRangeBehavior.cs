@@ -21,8 +21,9 @@ public class CompanionRangeBehavior : MonoBehaviour
     private Transform _myTransform;
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
-    public Team _currentTarget; // паблик для тестов
 
+    [SerializeField] // тест
+    private Team _currentTarget; 
     [SerializeField]
     private Gun _currentGun;
     [SerializeField]
@@ -30,25 +31,22 @@ public class CompanionRangeBehavior : MonoBehaviour
     [SerializeField]
     private float _maxAttackDistance = 13;
     [SerializeField]
+    private float _punchDistance = 1;
+    [SerializeField]
     private float _moveSpeed = 3f;
     [SerializeField]
     private float _fireCooldown = 0.5f;
     private float _currentFireCooldown = 0;
-
-    //private Path _currentPath = null;
     [SerializeField]
     private CompanionCoverSpot _currentCover = null;
-    //private float _coverChangeCooldown = 50;
-    //private float _currentCoverChangeCooldown;
-    //private Vector3 _targetLastKnownPosition;
 
     public enum AI_States
     {
         idle,
         followThePlayer,
         moveToCover,
-        combat,
-        investigate,
+        rangeCombat,
+        meleeCombat,
         death
     }
 
@@ -67,8 +65,6 @@ public class CompanionRangeBehavior : MonoBehaviour
         _characterAnimator = GetComponent<Animator>();
 
         _coverManager = GameObject.FindObjectOfType<CompanionCoverManager>();
-
-        //_currentCoverChangeCooldown = _coverChangeCooldown;
     }
 
     private void FixedUpdate()
@@ -86,8 +82,11 @@ public class CompanionRangeBehavior : MonoBehaviour
                 case AI_States.moveToCover:
                     StateMoveToCover();
                     break;
-                case AI_States.combat:
+                case AI_States.rangeCombat:
                     StateRangeCombat();
+                    break;
+                case AI_States.meleeCombat:
+                    StateMeleeCombat();
                     break;
                 case AI_States.death:
                     StateDeath();
@@ -155,7 +154,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                         if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance // проверка на дистанцию ни к чему не ведёт: либо убрать, либо придумать действие
                           && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
                         {
-                            _state = AI_States.combat;
+                            _state = AI_States.rangeCombat;
                         }
                     }
                 }
@@ -229,7 +228,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                 { 
                     _characterAnimator.SetBool("Move", false); // начинаем бой
 
-                    _state = AI_States.combat;
+                    _state = AI_States.rangeCombat;
 
                     return; //??
                 }
@@ -238,7 +237,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             {
                 _characterAnimator.SetBool("Move", false);  // останавливаемся и начинаем бой
 
-                _state = AI_States.combat;
+                _state = AI_States.rangeCombat;
 
                 return;  //??
             }
@@ -326,9 +325,36 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateMeleeCombat()
     {
-        if(Vector3.Distance(this.transform.position, _currentTarget.transform.position) <= 1f)
+        if (_currentTarget != null) // если есть цель
         {
-            _characterAnimator.SetTrigger("Punch");
+            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
+            {
+                _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+
+                // если дистанция для атаки подходящая
+                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _punchDistance)
+                {
+                    // атакуем
+                    if (_currentFireCooldown <= 0)
+                    {
+                        _characterAnimator.SetTrigger("Punch");
+
+                        _currentGun.Punch();
+
+                        _currentFireCooldown = _fireCooldown;
+                    }
+                    else
+                    {
+                        _currentFireCooldown -= 1 * Time.deltaTime;
+                    }
+                }
+                else // если дистанция не подходящая, возвращаемся в состояние атаки
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.rangeCombat;
+                }
+            }
         }
     }
 

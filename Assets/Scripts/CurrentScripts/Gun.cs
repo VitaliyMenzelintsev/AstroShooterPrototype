@@ -16,6 +16,7 @@ public class Gun : MonoBehaviour
     private float _msBetweenShots = 100;
     [SerializeField]
     private float _damage = 15;
+    private float _punchDamage;
     [SerializeField]
     private float _shootDelay = 0.05f;
     [SerializeField]
@@ -24,7 +25,7 @@ public class Gun : MonoBehaviour
     private bool _addBulletSpread = true;
     [SerializeField]
     private Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
-    
+
     [SerializeField]
     private LayerMask _mask;
     [SerializeField]
@@ -41,6 +42,7 @@ public class Gun : MonoBehaviour
     private void Start()
     {
         _bulletsInMagazine = _magazineCapacity;
+        _punchDamage = _damage / 2;
     }
 
     private void LateUpdate()
@@ -56,7 +58,7 @@ public class Gun : MonoBehaviour
             _bulletsInMagazine--;
             _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-            if (_lastShootTime + _shootDelay < Time.time)  
+            if (_lastShootTime + _shootDelay < Time.time)
             {
 
                 _shootingParticle.Play();
@@ -89,6 +91,31 @@ public class Gun : MonoBehaviour
             }
         }
         _shootingParticle.Stop();
+    }
+
+
+    public void Punch()
+    {
+        if (Time.time > _nextShotTime)
+        {
+            _nextShotTime = Time.time + _msBetweenShots / 1000;
+
+            if (_lastShootTime + _shootDelay < Time.time)
+            {
+                Vector3 _direction = GetDirection(); // определяем направление удара
+
+                if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали 
+                {
+                    _lastShootTime = Time.time;
+
+                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_punchDamage);
+                }
+                else
+                {
+                    _lastShootTime = Time.time;
+                }
+            }
+        }
     }
 
 
@@ -162,13 +189,13 @@ public class Gun : MonoBehaviour
 
     public void Aim(Vector3 _aimPoint)
     {
-       transform.LookAt(_aimPoint);
+        transform.LookAt(_aimPoint);
     }
 
     public void OnTriggerHold(Vector3 _aimPoint)
     {
         Shoot(_aimPoint);
-  
+
         _triggerReleasedSinceLastShot = false;
     }
 
