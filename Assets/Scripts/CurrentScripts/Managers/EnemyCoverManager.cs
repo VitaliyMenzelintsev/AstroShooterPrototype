@@ -5,13 +5,10 @@ public class EnemyCoverManager : MonoBehaviour
 {
     List<EnemyCoverSpot> _unOccupiedCoverSpots = new List<EnemyCoverSpot>();
     List<EnemyCoverSpot> _occupiedCoverSpots = new List<EnemyCoverSpot>();
-    List<EnemyRangeBehavior> _allCharacters = new List<EnemyRangeBehavior>();
 
     private void Awake()
     {
         _unOccupiedCoverSpots = new List<EnemyCoverSpot>(GameObject.FindObjectsOfType<EnemyCoverSpot>());
-
-        _allCharacters = new List<EnemyRangeBehavior>(GameObject.FindObjectsOfType<EnemyRangeBehavior>());
     }
 
     private void AddToOccupied(EnemyCoverSpot _spot)
@@ -37,9 +34,10 @@ public class EnemyCoverManager : MonoBehaviour
         }
     }
 
-    public EnemyCoverSpot GetCoverTowardsTarget(EnemyRangeBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, EnemyCoverSpot _prevCoverSpot)
+    public EnemyCoverSpot GetCover(EnemyRangeBehavior _character)
     {
         EnemyCoverSpot _bestCover = null;
+
         Vector3 _characterPosition = _character.transform.position;
 
         EnemyCoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
@@ -48,22 +46,12 @@ public class EnemyCoverManager : MonoBehaviour
         {
             EnemyCoverSpot _spot = _possibleCoverSpots[i];
 
-            if (!_spot.IsOccupied() && _spot.AmICoveredFrom(_targetPosition) 
-                && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance 
-                /*&& !CoverIsPastEnemyLine(_character, _spot)*/)
+            if (!_spot.IsOccupied() // если спот свободен
+                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 5f) // если дистанция до спота менее 5 метров
             {
                 if (_bestCover == null)
                 {
                     _bestCover = _spot;
-                }
-                else if (_prevCoverSpot != _spot 
-                    && Vector3.Distance(_bestCover.transform.position, _characterPosition) > Vector3.Distance(_spot.transform.position, _characterPosition) 
-                    && Vector3.Distance(_spot.transform.position, _targetPosition) < Vector3.Distance(_characterPosition, _targetPosition))
-                {
-                    if (Vector3.Distance(_spot.transform.position, _characterPosition) < Vector3.Distance(_targetPosition, _characterPosition))
-                    {
-                        _bestCover = _spot;
-                    }
                 }
             }
         }
@@ -76,7 +64,6 @@ public class EnemyCoverManager : MonoBehaviour
 
         return _bestCover;
     }
-
     public void ExitCover(EnemyCoverSpot _spot)
     {
         if (_spot != null)
@@ -86,22 +73,4 @@ public class EnemyCoverManager : MonoBehaviour
             AddToUnoccupied(_spot);
         }
     }
-
-    //private bool CoverIsPastEnemyLine(EnemyRangeBehavior _character, EnemyCoverSpot _spot)
-    //{
-    //    bool _isPastEnemyLine = false;
-
-    //    foreach (EnemyRangeBehavior _unit in _allCharacters)
-    //    {
-    //        if (_character.MyTeam.GetTeamNumber() != _unit.MyTeam.GetTeamNumber() && _unit.MyVitals.GetCurrentHealth() > 0)
-    //        {
-    //            if (_spot.AmIBehindTargetPosition(_character.transform.position, _unit.transform.position))
-    //            {
-    //                _isPastEnemyLine = true;
-    //                break;
-    //            }
-    //        }
-    //    }
-    //    return _isPastEnemyLine;
-    //}
 }
