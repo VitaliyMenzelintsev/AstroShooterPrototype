@@ -74,14 +74,9 @@ public class Gun : MonoBehaviour
                     _lastShootTime = Time.time;
 
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
-
-                    Debug.Log("УРОН");
-
                 }
                 else
                 {
-                    Debug.Log("ПРОМАХ");
-
                     TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
 
                     StartCoroutine(SpawnTrail(_trail, _aimPoint));

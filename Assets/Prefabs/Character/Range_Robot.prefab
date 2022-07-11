@@ -161,7 +161,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3047567832375686497}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
   m_Speed: 3.5
@@ -238,6 +238,7 @@ MonoBehaviour:
   _currentGun: {fileID: 5845844035090143831}
   _minAttackDistance: 0
   _maxAttackDistance: 16
+  _punchDistance: 1
   _moveSpeed: 3
   _fireCooldown: 0.5
   _currentCover: {fileID: 0}

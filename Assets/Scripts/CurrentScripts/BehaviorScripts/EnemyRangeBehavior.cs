@@ -92,6 +92,8 @@ public class EnemyRangeBehavior : MonoBehaviour
 
             Destroy(GetComponent<CapsuleCollider>());
 
+            Destroy(GetComponent<Team>());
+
             _characterAnimator.SetBool("Dead", true);
 
             if (_currentCover != null)
@@ -101,7 +103,7 @@ public class EnemyRangeBehavior : MonoBehaviour
 
             _state = AI_States.death;
 
-            Destroy(gameObject, 1f);
+            Destroy(gameObject, 10f);
         }
     }
 

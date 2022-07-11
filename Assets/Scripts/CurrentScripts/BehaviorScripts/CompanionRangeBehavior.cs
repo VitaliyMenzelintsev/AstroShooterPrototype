@@ -22,7 +22,7 @@ public class CompanionRangeBehavior : MonoBehaviour
     private CompanionCoverManager _coverManager;
 
     [SerializeField] // тест
-    private Team _currentTarget; 
+    private Team _currentTarget;
     [SerializeField]
     private Gun _currentGun;
     [SerializeField]
@@ -33,9 +33,9 @@ public class CompanionRangeBehavior : MonoBehaviour
     private float _punchDistance = 1;
     [SerializeField]
     private float _moveSpeed = 3f;
-    [SerializeField]
-    private float _fireCooldown = 0.5f;
-    private float _currentFireCooldown = 0;
+    //[SerializeField]
+    //private float _fireCooldown = 0.5f;
+    //private float _currentFireCooldown = 0;
     [SerializeField]
     private CompanionCoverSpot _currentCover = null;
 
@@ -107,8 +107,6 @@ public class CompanionRangeBehavior : MonoBehaviour
 
             if (_currentCover != null)
                 _coverManager.ExitCover(_currentCover);
-
-
         }
     }
 
@@ -131,7 +129,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateDeath()
     {
-        // в будущем: блок способностей
+        // в будущем: блокирование способностей
     }
 
 
@@ -225,7 +223,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                 _navMeshAgent.SetDestination(_currentCover.transform.position); // идём к укрытию
 
                 if (Vector3.Distance(this.transform.position, _currentCover.transform.position) <= 0.2f) //если дошли до укрытия
-                { 
+                {
                     _characterAnimator.SetBool("Move", false); // начинаем бой
 
                     _state = AI_States.rangeCombat;
@@ -256,70 +254,57 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateRangeCombat()
     {
-        if (_currentTarget != null) // если есть цель
+        if (_currentTarget != null
+            && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
         {
-            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
+            if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
             {
-                if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
+                Team _alternativeTarget = GetNewTarget(); // ищем альтернативную цель
+
+                if (_alternativeTarget == null) // если альтернативной цели нет
                 {
-                    Team _alternativeTarget = GetNewTarget(); // ищем альтернативную цель
-
-                    if (_alternativeTarget == null) // если альтернативной цели нет
-                    {
-                        _characterAnimator.SetBool("Move", false);  // переходим в ожидание
-
-                        _state = AI_States.idle;
-
-                    }
-                    else // если альтернативная цель есть - она становится основной
-                    {
-                        _currentTarget = _alternativeTarget;
-                    }
-                    return;
-                }
-
-                _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
-
-                // если дистанция для атаки подходящая
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
-                {
-                    // атакуем
-                    if (_currentFireCooldown <= 0)
-                    {
-                        _characterAnimator.SetTrigger("Fire");
-
-                        _currentGun.Aim(_currentTarget.Eyes.position);
-
-                        _currentGun.Shoot(_currentTarget.Eyes.position);
-
-                        _currentFireCooldown = _fireCooldown;
-                    }
-                    else
-                    {
-                        _currentFireCooldown -= 1 * Time.deltaTime;
-                    }
-                }
-                else if(Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _minAttackDistance)
-                {
-                    _characterAnimator.SetTrigger("Punch");
-
-                    _state = AI_States.meleeCombat;
-                }
-                else // если дистанция не подходящая, начинаем стоять 
-                {
-                    _characterAnimator.SetBool("Move", false);
+                    _characterAnimator.SetBool("Move", false);  // переходим в ожидание
 
                     _state = AI_States.idle;
+
                 }
+                else // если альтернативная цель есть - она становится основной
+                {
+                    _currentTarget = _alternativeTarget;
+                }
+                return;
             }
-            else // если цель мертва, начинаем стоять
+
+            _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+
+            // если дистанция для атаки подходящая
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            {
+                // атакуем
+
+                _characterAnimator.SetTrigger("Fire");
+
+                _currentGun.Aim(_currentTarget.Eyes.position);
+
+                _currentGun.Shoot(_currentTarget.Eyes.position);
+
+
+            }
+            else if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) < _minAttackDistance)
+            {
+                _characterAnimator.SetTrigger("Punch");
+
+                _state = AI_States.meleeCombat;
+            }
+            else // если дистанция не подходящая, начинаем стоять 
             {
                 _characterAnimator.SetBool("Move", false);
 
                 _state = AI_States.idle;
             }
         }
+
         else // если цели нет, начианем стоять
         {
             _characterAnimator.SetBool("Move", false);
@@ -341,18 +326,11 @@ public class CompanionRangeBehavior : MonoBehaviour
                 if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _punchDistance)
                 {
                     // атакуем
-                    if (_currentFireCooldown <= 0)
-                    {
-                        _characterAnimator.SetTrigger("Punch");
 
-                        _currentGun.Punch();
+                    _characterAnimator.SetTrigger("Punch");
 
-                        _currentFireCooldown = _fireCooldown;
-                    }
-                    else
-                    {
-                        _currentFireCooldown -= 1 * Time.deltaTime;
-                    }
+                    _currentGun.Punch();
+
                 }
                 else // если дистанция не подходящая, возвращаемся в состояние атаки
                 {
@@ -361,6 +339,18 @@ public class CompanionRangeBehavior : MonoBehaviour
                     _state = AI_States.rangeCombat;
                 }
             }
+            else // если цель мертва
+            {
+                _characterAnimator.SetBool("Move", false);
+
+                _state = AI_States.idle;
+            }
+        }
+        else // если цели нет
+        {
+            _characterAnimator.SetBool("Move", false);
+
+            _state = AI_States.idle;
         }
     }
 
