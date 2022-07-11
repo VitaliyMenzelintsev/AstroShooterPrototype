@@ -13,11 +13,13 @@ public class EnemyRangeBehavior : MonoBehaviour
     public Vitals MyVitals;
     public Transform Eyes;
 
+    private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
     private Animator _characterAnimator;
     private EnemyCoverManager _coverManager;
-    public Team _currentTarget;
 
+    [SerializeField] // тест
+    private Team _currentTarget;
     [SerializeField]
     private Gun _currentGun;
     [SerializeField]
@@ -25,28 +27,24 @@ public class EnemyRangeBehavior : MonoBehaviour
     [SerializeField]
     private float _maxAttackDistance = 13;
     [SerializeField]
-    private float _moveSpeed = 3.2f;
-    //[SerializeField]
-    //private float _damageDealt = 17F;
+    private float _punchDistance = 1;
     [SerializeField]
-    private float _fireCooldown = 0F;
+    private float _moveSpeed = 3.2f;
+    [SerializeField]
+    private float _fireCooldown = 0.5f;
     private float _currentFireCooldown = 0;
-
-    private Path _currentPath = null;
-    public EnemyCoverSpot _currentCover = null;
-    private float _coverChangeCooldown = 5;
-    private float _currentCoverChangeCooldown;
-
-    private Vector3 _targetLastKnownPosition;
+    [SerializeField]
+    private EnemyCoverSpot _currentCover = null;
 
     public enum AI_States
     {
         idle,
         moveToCover,
-        combat,
-        investigate,
+        rangeCombat,
+        meleeCombat,
         death
     }
+
 
     public AI_States _state = AI_States.idle;
 
@@ -58,12 +56,13 @@ public class EnemyRangeBehavior : MonoBehaviour
 
         MyVitals = GetComponent<Vitals>();
 
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+
         _characterAnimator = GetComponent<Animator>();
 
         _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>();
-
-        _currentCoverChangeCooldown = _coverChangeCooldown;
     }
+
 
     private void FixedUpdate()
     {
@@ -74,14 +73,14 @@ public class EnemyRangeBehavior : MonoBehaviour
                 case AI_States.idle:
                     StateIdle();
                     break;
-                case AI_States.investigate:
-                    StateInvestigate();
-                    break;
                 case AI_States.moveToCover:
                     StateMoveToCover();
                     break;
-                case AI_States.combat:
-                    StateCombat();
+                case AI_States.rangeCombat:
+                    StateRangeCombat();
+                    break;
+                case AI_States.meleeCombat:
+                    StateMeleeCombat();
                     break;
                 default:
                     break;
@@ -89,7 +88,7 @@ public class EnemyRangeBehavior : MonoBehaviour
         }
         else
         {
-            _characterAnimator.SetBool("Move", false);
+            _characterAnimator.SetBool("Move", false); // Переработать состояние смерти
 
             Destroy(GetComponent<CapsuleCollider>());
 
@@ -109,47 +108,58 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
-        if (_currentTarget != null && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+        if (_currentTarget != null) // если есть цель
         {
-            if (_currentCover != null)
+            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
             {
-                _coverManager.ExitCover(_currentCover);
-            }
-
-            //_currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
-
-            if (_currentCover != null)
-            {
-                if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
+                if (_currentCover != null) // если существует укрытие
                 {
-                    _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
-
-                    _characterAnimator.SetBool("Move", true);
-
-                    _state = AI_States.moveToCover;
+                    if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
+                    {
+                        _characterAnimator.SetBool("Move", true);    // двигаемся к нему
+                        _characterAnimator.SetBool("HasEnemy", true);
+                        _state = AI_States.moveToCover;
+                    }
+                    else // если персонаж уже в укрытии (< 0.2f до укрытия)
+                    {
+                        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance // проверка на дистанцию ни к чему не ведёт: либо убрать, либо придумать действие
+                          && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+                        {
+                            _state = AI_States.rangeCombat;
+                        }
+                    }
                 }
-                else
+                else // если нет укрытия
                 {
-                    _state = AI_States.combat;
+                    _currentCover = _coverManager.GetCover(this);  // запрашиваем укрытие
                 }
             }
             else
             {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+                //ищем новую цель
+                Team _bestTarget = GetNewTarget();
+
+                if (_bestTarget != null)
                 {
-                    _state = AI_States.combat;
+                    _currentTarget = _bestTarget;
                 }
             }
         }
-        else
+        else // если цели нет
         {
-            //ищем новую цель
             Team _bestTarget = GetNewTarget();
 
             if (_bestTarget != null)
             {
                 _currentTarget = _bestTarget;
+            }
+            else
+            {
+                _characterAnimator.SetBool("HasEnemy", false);
+
+                _characterAnimator.SetBool("Move", false);
+
+                _state = AI_States.idle;
             }
         }
     }
@@ -157,193 +167,151 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private void StateMoveToCover()
     {
-        if (_currentTarget != null
-            && _currentCover != null
-           /* && _currentCover.AmICoveredFrom(_currentTarget.transform.position)*/)
+        if (_currentTarget != null) // если есть цель
         {
-            if (_currentPath != null)
+            if (_currentCover != null) // если существует укрытие
             {
-                Team _alternativeTarget = GetNewTarget();
+                //_coverManager.ExitCover(_currentCover);
 
-                if (_alternativeTarget != null && _alternativeTarget != _currentTarget)
+                _navMeshAgent.SetDestination(_currentCover.transform.position); // идём к укрытию
+
+                if (Vector3.Distance(this.transform.position, _currentCover.transform.position) <= 0.2f) //если дошли до укрытия
                 {
-                    float _distanceToCurrentTarget = Vector3.Distance(_myTransform.position, _currentTarget.transform.position);
+                    _characterAnimator.SetBool("Move", false); // начинаем бой
 
-                    float _distanceToAlternativeTarget = Vector3.Distance(_myTransform.position, _alternativeTarget.transform.position);
+                    _state = AI_States.rangeCombat;
 
-                    float _distanceBetweenTargets = Vector3.Distance(_currentTarget.transform.position, _alternativeTarget.transform.position);
-
-                    if (Mathf.Abs(_distanceToAlternativeTarget - _distanceToCurrentTarget) > 5 && _distanceBetweenTargets > 5)
-                    {
-                        _currentTarget = _alternativeTarget;
-
-                        _coverManager.ExitCover(_currentCover);
-
-                        //_currentCover = _coverManager.GetCoverTowardsTarget(this, _currentTarget.transform.position, _maxAttackDistance, _minAttackDistance, _currentCover);
-
-                        _currentPath = CalculatePath(_myTransform.position, _currentCover.transform.position);
-
-                        return;
-                    }
-                }
-
-                if (_currentPath.ReachedEndNode())
-                { //если мы дошли до конца, мы начнем искать цель
-                    _characterAnimator.SetBool("Move", false);
-
-                    _currentPath = null;
-
-                    _state = AI_States.combat;
-
-                    return;
-                }
-
-                Vector3 _nodePosition = _currentPath.GetNextNode();
-
-                if (Vector3.Distance(_myTransform.position, _nodePosition) < 0.1f)
-                {
-                    _currentPath._currentPathIndex++;
-                }
-                else
-                {
-                    _myTransform.LookAt(_nodePosition); 
-
-                    _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
+                    return; //??
                 }
             }
-            else
+            else // если укрытия нет
             {
-                _characterAnimator.SetBool("Move", false);
+                _characterAnimator.SetBool("Move", false);  // останавливаемся и начинаем бой
 
-                _state = AI_States.idle;
+                _state = AI_States.rangeCombat;
+
+                return;  //??
             }
+
         }
-        else
+        else // если цели нет, стоим
         {
             _characterAnimator.SetBool("Move", false);
+
+            _characterAnimator.SetBool("HasEnemy", false);
 
             _state = AI_States.idle;
         }
     }
 
 
-    private void StateCombat()
+    private void StateRangeCombat()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+        if (_currentTarget != null) // если есть цель
         {
-            //если цель убегает во время боя
-            if (!CanSeeTarget(_currentTarget))
+            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
             {
-                Team _alternativeTarget = GetNewTarget();
-
-                if (_alternativeTarget == null)
+                if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
                 {
-                    _targetLastKnownPosition = _currentTarget.transform.position;
+                    Team _alternativeTarget = GetNewTarget(); // ищем альтернативную цель
 
-                    _currentPath = CalculatePath(_myTransform.position, _targetLastKnownPosition);
-                    _characterAnimator.SetBool("Move", true);
-
-                    if (_currentCover != null)
+                    if (_alternativeTarget == null) // если альтернативной цели нет
                     {
-                        _coverManager.ExitCover(_currentCover);
+                        _characterAnimator.SetBool("Move", false);  // переходим в ожидание
+
+                        _state = AI_States.idle;
+
                     }
-
-                    _state = AI_States.investigate;
+                    else // если альтернативная цель есть - она становится основной
+                    {
+                        _currentTarget = _alternativeTarget;
+                    }
+                    return;
                 }
-                else
+
+                _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+
+                // если дистанция для атаки подходящая
+                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
                 {
-                    _currentTarget = _alternativeTarget;
+                    // атакуем
+                    if (_currentFireCooldown <= 0)
+                    {
+                        _characterAnimator.SetTrigger("Fire");
+
+                        _currentGun.Aim(_currentTarget.Eyes.position);
+
+                        _currentGun.Shoot(_currentTarget.Eyes.position);
+
+                        _currentFireCooldown = _fireCooldown;
+                    }
+                    else
+                    {
+                        _currentFireCooldown -= 1 * Time.deltaTime;
+                    }
                 }
-                return;
-            }
-
-            _myTransform.LookAt(_currentTarget.Eyes.transform);
-
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
-            {
-                // Атака
-                if (_currentFireCooldown <= 0)
+                else if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _minAttackDistance)
                 {
-                    _characterAnimator.SetTrigger("Fire");
+                    _characterAnimator.SetTrigger("Punch");
 
-                    _currentGun.Aim(_currentTarget.Eyes.position);
-
-                    _currentGun.Shoot(_currentTarget.Eyes.position); 
-
-                    _currentFireCooldown = _fireCooldown;
+                    _state = AI_States.meleeCombat;
                 }
-                else
+                else // если дистанция не подходящая, начинаем стоять 
                 {
-                    _currentFireCooldown -= 1 * Time.deltaTime;
-                }
-            }
-            else
-            {
-                if (_currentCoverChangeCooldown <= 0) 
-                {
-                    _currentCoverChangeCooldown = _coverChangeCooldown;
-
                     _characterAnimator.SetBool("Move", false);
 
                     _state = AI_States.idle;
                 }
-                else
-                {
-                    _currentCoverChangeCooldown -= 1 * Time.deltaTime;
-                }
+            }
+            else // если цель мертва, начинаем стоять
+            {
+                _characterAnimator.SetBool("Move", false);
+
+                _state = AI_States.idle;
             }
         }
-        else
+        else // если цели нет, начианем стоять
         {
-            _state = AI_States.idle;  
+            _characterAnimator.SetBool("Move", false);
 
+            _state = AI_States.idle;
         }
     }
 
 
-    private void StateInvestigate()
+    private void StateMeleeCombat()
     {
-        if (_currentPath != null)
+        if (_currentTarget != null) // если есть цель
         {
-            Team _alternativeTarget = GetNewTarget();
-
-            if (_currentPath.ReachedEndNode() || _alternativeTarget != null)
-            { //если мы дошли до конца, мы начнем искать цель
-                _characterAnimator.SetBool("Move", false);
-
-                _currentPath = null;
-                _currentTarget = _alternativeTarget;
-
-                _state = AI_States.idle;
-                return;
-            }
-
-            Vector3 _nodePosition = _currentPath.GetNextNode();
-
-            if (Vector3.Distance(_myTransform.position, _nodePosition) < 1)
+            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
             {
-                //если мы достигли текущего узла, то мы начнем двигаться к следующему узлу
-                _currentPath._currentPathIndex++;
+                _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+
+                // если дистанция для атаки подходящая
+                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _punchDistance)
+                {
+                    // атакуем
+                    if (_currentFireCooldown <= 0)
+                    {
+                        _characterAnimator.SetTrigger("Punch");
+
+                        _currentGun.Punch();
+
+                        _currentFireCooldown = _fireCooldown;
+                    }
+                    else
+                    {
+                        _currentFireCooldown -= 1 * Time.deltaTime;
+                    }
+                }
+                else // если дистанция не подходящая, возвращаемся в состояние атаки
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.rangeCombat;
+                }
             }
-            else
-            {
-                //иначе мы будем двигаться к текущему узлу
-                _myTransform.LookAt(_nodePosition);
-                _myTransform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
-            }
-
-        }
-        else
-        {
-            //если у нас нет пути, мы будем искать цель
-            _characterAnimator.SetBool("Move", false);
-
-            _currentPath = null;
-            _currentTarget = null;
-
-            _state = AI_States.idle;
         }
     }
 
@@ -358,11 +326,11 @@ public class EnemyRangeBehavior : MonoBehaviour
         {
             Team _currentCharacter = _allCharacters[i];
 
-            //выбирать текущего противника в качестве цели, только если мы не в одной команде и если у него осталось здоровье
+            //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
                 && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
             {
-                //если рейкаст попал в цель, мы знаем, что видим её
+                //если рейкаст попал в цель, то мы знаем, что можем его увидеть
                 if (CanSeeTarget(_currentCharacter))
                 {
                     if (_bestTarget == null)
@@ -371,7 +339,7 @@ public class EnemyRangeBehavior : MonoBehaviour
                     }
                     else
                     {
-                        //если текущий враг ближе, чем лучшая цель, то выбрать текущего врага в качестве лучшей цели
+                        //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
                         if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
                         {
                             _bestTarget = _currentCharacter;
@@ -406,17 +374,5 @@ public class EnemyRangeBehavior : MonoBehaviour
         }
 
         return _canSeeIt;
-    }
-
-
-    private Path CalculatePath(Vector3 _source, Vector3 _destination)
-    {
-        NavMeshPath _navMeshPath = new NavMeshPath();
-
-        NavMesh.CalculatePath(_source, _destination, NavMesh.AllAreas, _navMeshPath);
-
-        Path _path = new Path(_navMeshPath.corners);
-
-        return _path;
     }
 }

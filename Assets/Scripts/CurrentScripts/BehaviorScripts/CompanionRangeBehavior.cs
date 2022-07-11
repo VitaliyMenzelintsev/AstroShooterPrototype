@@ -97,11 +97,23 @@ public class CompanionRangeBehavior : MonoBehaviour
         else
         {
             _state = AI_States.death;
+
+
+            _characterAnimator.SetBool("Move", false);
+
+
+            _characterAnimator.SetBool("Dead", true);
+
+
+            if (_currentCover != null)
+                _coverManager.ExitCover(_currentCover);
+
+
         }
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)  // переработать рессурект/смерть
     {
         GetNewTarget();
 
@@ -120,17 +132,6 @@ public class CompanionRangeBehavior : MonoBehaviour
     private void StateDeath()
     {
         // в будущем: блок способностей
-
-        _characterAnimator.SetBool("Move", false);
-
-
-        _characterAnimator.SetBool("Dead", true);
-
-
-        if (_currentCover != null)
-            _coverManager.ExitCover(_currentCover);
-
-
     }
 
 
@@ -298,6 +299,12 @@ public class CompanionRangeBehavior : MonoBehaviour
                     {
                         _currentFireCooldown -= 1 * Time.deltaTime;
                     }
+                }
+                else if(Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _minAttackDistance)
+                {
+                    _characterAnimator.SetTrigger("Punch");
+
+                    _state = AI_States.meleeCombat;
                 }
                 else // если дистанция не подходящая, начинаем стоять 
                 {
