@@ -35,6 +35,8 @@ public class EnemyRangeBehavior : MonoBehaviour
     private float _currentFireCooldown = 0;
     [SerializeField]
     private EnemyCoverSpot _currentCover = null;
+    private Team[] _allCharacters;
+
 
     public enum AI_States
     {
@@ -50,6 +52,8 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private void Start()
     {
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
+
         _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
@@ -320,8 +324,6 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private Team GetNewTarget()
     {
-        Team[] _allCharacters = GameObject.FindObjectsOfType<Team>();
-
         Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)

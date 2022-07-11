@@ -132,7 +132,7 @@ public class Gun : MonoBehaviour
     }
 
 
-    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
+    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint) // почкму не воид
     {
         Vector3 _startPosition = _trail.transform.position;
         float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);

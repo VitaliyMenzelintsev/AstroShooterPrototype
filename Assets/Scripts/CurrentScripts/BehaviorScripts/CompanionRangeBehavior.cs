@@ -354,6 +354,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
     }
 
+
     private Team GetNewTarget()
     {
         Team[] _allCharacters = GameObject.FindObjectsOfType<Team>();
