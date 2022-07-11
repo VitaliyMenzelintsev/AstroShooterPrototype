@@ -80,7 +80,7 @@ public class CompanionCoverManager : MonoBehaviour
     }
 
 
-    public CompanionCoverSpot GetCover(CompanionRangeBehavior _character, Vector3 _targetPosition)
+    public CompanionCoverSpot GetCover(CompanionRangeBehavior _character)
     {
         CompanionCoverSpot _bestCover = null;
 
