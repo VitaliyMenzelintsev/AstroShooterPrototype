@@ -26,15 +26,20 @@ public class PlayerController : MonoBehaviour
     //[SerializeField]
     //private Transform aimTarget;
 
+    private float gravityValue = -9.81f;
 
     private CharacterController controller;
     private PlayerInput playerInput;
-    //private Vector3 playerVelocity;
+
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
 
     private InputAction moveAction;
     private InputAction crouchAction; // ?
     private InputAction sprintAction; // ?
     private InputAction shootAction;
+    private InputAction reloadAction;
+
 
     private Vector3 _aimPoint;
 
@@ -49,8 +54,6 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        /*currentSpeed = walkSpeed; */// возможно лишнее, работало и без этого
-
         controller = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         cameraTransform = Camera.main.transform;
@@ -59,6 +62,7 @@ public class PlayerController : MonoBehaviour
         crouchAction = playerInput.actions["Crouch"];
         sprintAction = playerInput.actions["Sprint"];
         shootAction = playerInput.actions["Shoot"];
+        reloadAction = playerInput.actions["Reload"];
 
         animator = GetComponent<Animator>();
         shootAnimation = Animator.StringToHash("Rifle_Shooting");
@@ -72,52 +76,16 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // определение точки для стрельбы
-        Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
-        float _rayDistance = 100f;
-        _aimPoint = _ray.GetPoint(_rayDistance);
-
-        // ???
-        //aimTarget.position = cameraTransform.position + cameraTransform.forward * _rayDistance;
-
-
-        // прицеливание оружия в точку
-        Aim(_aimPoint);
-
-        //// Присед вкл/выкл
-        //if (crouchAction.inProgress)
-        //{
-        //    animator.SetBool("Crouch", true);
-        //    currentSpeed = crouchSpeed;
-        //}
-        //else
-        //{
-        //    animator.SetBool("Crouch", false);
-        //    currentSpeed = walkSpeed;
-        //}
-
-        //// Спринт вкл/выкл
-        //if (sprintAction.inProgress)
-        //{
-        //    animator.SetBool("Sprint", true);
-        //    currentSpeed = sprintSpeed;
-        //}
-        //else
-        //{
-        //    animator.SetBool("Sprint", false);
-        //    currentSpeed = walkSpeed;
-        //}
-
         if (crouchAction.inProgress)
         {
             animator.SetInteger("MoveState", 1);
             currentSpeed = crouchSpeed;
         }
-        //if (sprintAction.inProgress)
-        //{
-        //    animator.SetInteger("MoveState", 2);
-        //    currentSpeed = sprintSpeed;
-        //}
+        if (sprintAction.inProgress)
+        {
+            animator.SetInteger("MoveState", 2);
+            currentSpeed = sprintSpeed;
+        }
         else
         {
             animator.SetInteger("MoveState", 0);
@@ -125,41 +93,63 @@ public class PlayerController : MonoBehaviour
         }
 
 
-
-
         // чтение инпута в виде вектора
         Vector2 input = moveAction.ReadValue<Vector2>();
+
 
         // "смягчение" данных input, чтобы анимации были плавнее
         currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, input, ref animationVelocity, animationSmoothTime);
         Vector3 move = new Vector3(currentAnimationBlendVector.x, 0, currentAnimationBlendVector.y);
 
-        // движение игрока относительно камеры
+
+        // воздействие гравитации и модель движения игрока
+        groundedPlayer = controller.isGrounded;
+
+        if (groundedPlayer && playerVelocity.y < 0)
+            playerVelocity.y = 0f;
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
+
+
+        // движение относительно камеры
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;  
         move.y = 0f;
         controller.Move(move * Time.deltaTime * currentSpeed);
+
 
         // передача в аниматор данных инпута
         animator.SetFloat(moveXAnimationParameterID, currentAnimationBlendVector.x);
         animator.SetFloat(moveZAnimationParameterID, currentAnimationBlendVector.y);
 
-        //// отключил и всё работает ????
-        //controller.Move(playerVelocity * Time.deltaTime);
 
         // поворот в сторону курсора
         float targetAngle = cameraTransform.eulerAngles.y;
         Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+
+        // определение точки для стрельбы
+        Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        float _rayDistance = 100f;
+        _aimPoint = _ray.GetPoint(_rayDistance);
+
+
+        // прицеливание оружия в точку
+        Aim(_aimPoint);
+
     }
 
     private void OnEnable()
     {
         shootAction.performed += _ => ShootGun();
+        reloadAction.performed += _ => Reload();
     }
 
     private void OnDisable()
     {
         shootAction.performed -= _ => ShootGun();
+        reloadAction.performed -= _ => Reload();
     }
 
     private void ShootGun()
@@ -168,8 +158,13 @@ public class PlayerController : MonoBehaviour
         _currentGun.OnTriggerHold(_aimPoint);
     }
 
-    public void Aim(Vector3 _aimPoint)
+    private void Aim(Vector3 _aimPoint)
     {
         _currentGun.Aim(_aimPoint);
+    }
+
+    private void Reload()
+    {
+        _currentGun.Reload();
     }
 }
