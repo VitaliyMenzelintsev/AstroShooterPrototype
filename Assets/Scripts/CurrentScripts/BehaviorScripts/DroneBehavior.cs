@@ -77,13 +77,9 @@ public class DroneBehavior : MonoBehaviour
         }
         else
         {
-            Destroy(GetComponent<CapsuleCollider>());
-
-            Destroy(GetComponent<Team>());
-
             _state = AI_States.death;
 
-            Destroy(gameObject, 10f);
+            Destroy(gameObject, 3f);
         }
     }
 

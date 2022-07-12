@@ -6,7 +6,9 @@ public class Gun : MonoBehaviour
 {
     [Header("Gun Settings")]
     [SerializeField]
-    private Transform _bulletSpawnPoint;
+    private bool _isItLaserGun = false;
+    [SerializeField]
+    private Transform _barrelPoint;
     [SerializeField]
     private int _magazineCapacity;
     [SerializeField]
@@ -25,12 +27,14 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
 
-    [SerializeField]
-    private LayerMask _mask;
+    //[SerializeField]
+    //private LayerMask _mask;
     [SerializeField]
     private ParticleSystem _shootingParticle;
     [SerializeField]
     private TrailRenderer _bulletTrail;
+    [SerializeField]
+    private LineRenderer _lineRenderer;
 
     private float _lastShootTime = 0;
     private bool _isReloading;
@@ -39,29 +43,29 @@ public class Gun : MonoBehaviour
     private int _bulletsInMagazine;
 
     [Header("Recoil")]
-    private Vector2 kickMinMax = new Vector2(0.05f, 0.2f);
-    private Vector2 recoilAngleMinMax = new Vector2(1, 3);
+    private Vector2 _kickMinMax = new Vector2(0.05f, 0.2f);
+    private Vector2 _recoilAngleMinMax = new Vector2(5, 8);
     [SerializeField]
-    private float timeOfReturnToPosition = 0.1f;
-    private Vector3 recoilSmoothDampVelocity;    
-    private float recoilRotSmoothDampVelocity;  
-    private float recoilAngle;
-    private Vector3 _gunLocalPosition;
+    private float _recoilBackTime = 0.1f;
+    private Vector3 _recoilSmoothDampVelocity;    
+    private float _recoilRotSmoothDampVelocity;  
+    private float _recoilAngle;
+    private Vector3 _gunOriginPosition;
 
 
     private void Start()
     {
         _bulletsInMagazine = _magazineCapacity;
         _punchDamage = _damage / 2;
-        _gunLocalPosition = transform.localPosition;
+        _gunOriginPosition = transform.localPosition;
     }
 
     private void LateUpdate()
     {
         // Возвращение оружия в нормальное положение после отдачи
-        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, _gunLocalPosition, ref recoilSmoothDampVelocity, timeOfReturnToPosition);
-        recoilAngle = Mathf.SmoothDamp(recoilAngle, 0, ref recoilRotSmoothDampVelocity, timeOfReturnToPosition);
-        transform.localEulerAngles = transform.localEulerAngles + Vector3.left * recoilAngle;
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, _gunOriginPosition, ref _recoilSmoothDampVelocity, _recoilBackTime);
+        _recoilAngle = Mathf.SmoothDamp(_recoilAngle, 0, ref _recoilRotSmoothDampVelocity, _recoilBackTime);
+        transform.localEulerAngles = transform.localEulerAngles + Vector3.left * _recoilAngle;
 
         if (!_isReloading && _bulletsInMagazine == 0)
             Reload();
@@ -78,25 +82,43 @@ public class Gun : MonoBehaviour
             {
                 _shootingParticle.Play();
 
-                Recoil(); // Отдача
-
                 Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-                if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали во что-то
-                {
-                    TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);  // делаем след
+                Ray _ray = new Ray(_barrelPoint.position, _direction);
 
-                    StartCoroutine(SpawnTrail(_trail, _hit.point));
+                RaycastHit _hit;
+
+                if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
+                {
+                    if (_isItLaserGun)
+                    {
+                        LaserRender(_hit.point);
+                    }
+                    else
+                    {
+                        Recoil(); 
+
+                        BulletRender(_hit.point);
+                    }
+
+                    Debug.Log("hit");
 
                     _lastShootTime = Time.time;
-
+                    if(_hit.collider.gameObject.GetComponent<Vitals>())
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
                 }
                 else
                 {
-                    TrailRenderer _trail = Instantiate(_bulletTrail, _bulletSpawnPoint.position, Quaternion.identity);
+                    if (_isItLaserGun)
+                    {
+                        LaserRender(_aimPoint);
+                    }
+                    else
+                    {
+                        Recoil();
 
-                    StartCoroutine(SpawnTrail(_trail, _aimPoint));
+                        BulletRender(_aimPoint);
+                    }
 
                     _lastShootTime = Time.time;
                 }
@@ -116,7 +138,7 @@ public class Gun : MonoBehaviour
             {
                 Vector3 _direction = GetDirection(); // определяем направление удара
 
-                if (Physics.Raycast(_bulletSpawnPoint.position, _direction, out RaycastHit _hit, float.MaxValue, _mask))   // если попали 
+                if (Physics.Raycast(_barrelPoint.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
                 {
                     _lastShootTime = Time.time;
 
@@ -133,15 +155,15 @@ public class Gun : MonoBehaviour
 
     private void Recoil()
     {
-        transform.localPosition -= Vector3.forward * Random.Range(kickMinMax.x, kickMinMax.y);
-        recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
-        recoilAngle = Mathf.Clamp(recoilAngle, 0, 25);
+        transform.localPosition -= Vector3.forward * Random.Range(_kickMinMax.x, _kickMinMax.y);
+        _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
+        _recoilAngle = Mathf.Clamp(_recoilAngle, 0, 25);
     }
 
 
     private Vector3 GetDirection()
     {
-        Vector3 _direction = transform.forward;
+        Vector3 _direction = _barrelPoint.forward;
 
         if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
         {
@@ -156,7 +178,21 @@ public class Gun : MonoBehaviour
     }
 
 
-    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint) // почкму не воид
+    private void BulletRender(Vector3 _aimPoint)
+    {
+        TrailRenderer _trail = Instantiate(_bulletTrail, _barrelPoint.position, Quaternion.identity);
+
+        StartCoroutine(SpawnTrail(_trail, _aimPoint));
+    }
+
+    private void LaserRender(Vector3 _aimPoint)
+    {
+        //_lineRenderer.enabled = true;
+        _lineRenderer.SetPosition(0, _barrelPoint.position);
+        _lineRenderer.SetPosition(1, _aimPoint);
+    }
+
+    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint) // почему не воид
     {
         Vector3 _startPosition = _trail.transform.position;
         float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);

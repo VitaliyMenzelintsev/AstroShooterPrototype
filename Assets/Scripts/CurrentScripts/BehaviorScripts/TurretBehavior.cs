@@ -102,7 +102,6 @@ public class TurretBehavior : MonoBehaviour
         {
             _lineRenderer.SetPosition(1, _firePoint.position + _direction * (_range - 1f));
         }
-        
     }
 
 
