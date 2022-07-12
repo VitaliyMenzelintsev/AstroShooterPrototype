@@ -52,7 +52,7 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private void Start()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
+        _allCharacters = GameObject.FindObjectsOfType<Team>(); // раньше было в GetTarget
 
         _myTransform = transform;
 
