@@ -13,25 +13,27 @@ public class CompanionCoverManager : MonoBehaviour
 
     private void AddToOccupied(CompanionCoverSpot _spot)
     {
-        if (_unOccupiedCoverSpots.Contains(_spot))
+        if (_unOccupiedCoverSpots.Contains(_spot) && !_occupiedCoverSpots.Contains(_spot))
         {
             _unOccupiedCoverSpots.Remove(_spot);
-        }
-        if (!_occupiedCoverSpots.Contains(_spot))
-        {
             _occupiedCoverSpots.Add(_spot);
         }
+        //if (!_occupiedCoverSpots.Contains(_spot))
+        //{
+        //    _occupiedCoverSpots.Add(_spot);
+        //}
     }
     private void AddToUnoccupied(CompanionCoverSpot _spot)
     {
-        if (_occupiedCoverSpots.Contains(_spot))
+        if (_occupiedCoverSpots.Contains(_spot) && !_unOccupiedCoverSpots.Contains(_spot))
         {
             _occupiedCoverSpots.Remove(_spot);
-        }
-        if (!_unOccupiedCoverSpots.Contains(_spot))
-        {
             _unOccupiedCoverSpots.Add(_spot);
         }
+        //if (!_unOccupiedCoverSpots.Contains(_spot))
+        //{
+        //    _unOccupiedCoverSpots.Add(_spot);
+        //}
     }
 
     //прежн€€ верси€ поиска укрытий - не подходит под текущие реалии
@@ -109,13 +111,14 @@ public class CompanionCoverManager : MonoBehaviour
     }
 
 
-    public void ExitCover(CompanionCoverSpot _spot)
+    public void ExitCover(ref CompanionCoverSpot _spot)
     {
         if (_spot != null)
         {
             _spot.SetOccupier(null);
 
             AddToUnoccupied(_spot);
+            _spot = null;
         }
     }
 }

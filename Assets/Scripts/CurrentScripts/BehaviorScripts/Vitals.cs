@@ -7,17 +7,13 @@ public class Vitals : MonoBehaviour
     [SerializeField]
     private float _currentHealth = 100;
     [SerializeField]
-    private float _ressurectHealth = 60;
+    private readonly float _ressurectHealth = 60;
 
     private void Start()
     {
         _currentHealth = _health;
     }
-
-    public float GetCurrentHealth()
-    {
-        return _currentHealth;
-    }
+    public bool IsAlive() => _currentHealth > 0;
 
     public void GetHit(float _damage)
     {

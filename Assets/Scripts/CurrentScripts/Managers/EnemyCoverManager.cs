@@ -64,13 +64,14 @@ public class EnemyCoverManager : MonoBehaviour
 
         return _bestCover;
     }
-    public void ExitCover(EnemyCoverSpot _spot)
+    public void ExitCover(ref EnemyCoverSpot _spot)
     {
         if (_spot != null)
         {
             _spot.SetOccupier(null);
 
             AddToUnoccupied(_spot);
+            _spot = null;
         }
     }
 }

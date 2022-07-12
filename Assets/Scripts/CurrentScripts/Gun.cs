@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Threading;
 using UnityEngine;
 
 // Висит на каждом оружии. Характеристики настраиваются индивидуально
@@ -190,6 +191,7 @@ public class Gun : MonoBehaviour
         //_lineRenderer.enabled = true;
         _lineRenderer.SetPosition(0, _barrelPoint.position);
         _lineRenderer.SetPosition(1, _aimPoint);
+        //_lineRenderer.enabled = false;
     }
 
     private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint) // почему не воид

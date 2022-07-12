@@ -63,7 +63,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private void Update()
     {
-        if (MyVitals.GetCurrentHealth() > 0)
+        if (MyVitals.IsAlive())
         {
             switch (_state)
             {
@@ -133,7 +133,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
     {
         if (_currentTarget != null)
         {
-            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+            if (_currentTarget.GetComponent<Vitals>().IsAlive())
             {
                 if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                     && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
@@ -167,7 +167,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
     private void StateCombat()
     {
         if (_currentTarget != null
-           && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+           && _currentTarget.GetComponent<Vitals>().IsAlive())
         {
             _myTransform.LookAt(_currentTarget.transform);
 
@@ -249,7 +249,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
             //выбирать текущего врага в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
-                && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
+                && _currentCharacter.GetComponent<Vitals>().IsAlive())
             {
                 //если рейкаст попал в цель, то мы знаем, что можем его увидеть
                 if (CanSeeTarget(_currentCharacter))

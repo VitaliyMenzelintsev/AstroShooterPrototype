@@ -37,17 +37,6 @@ public class EnemyRangeBehavior : MonoBehaviour
     private EnemyCoverSpot _currentCover = null;
     private Team[] _allCharacters;
 
-
-    public enum AI_States
-    {
-        idle,
-        moveToCover,
-        rangeCombat,
-        meleeCombat,
-        death
-    }
-
-
     public AI_States _state = AI_States.idle;
 
     private void Start()
@@ -70,7 +59,7 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (MyVitals.GetCurrentHealth() > 0)
+        if (MyVitals.IsAlive())
         {
             switch (_state)
             {
@@ -96,13 +85,11 @@ public class EnemyRangeBehavior : MonoBehaviour
 
             Destroy(GetComponent<CapsuleCollider>());
 
-            Destroy(GetComponent<Team>());
-
             _characterAnimator.SetBool("Dead", true);
 
             if (_currentCover != null)
             {
-                _coverManager.ExitCover(_currentCover);
+                _coverManager.ExitCover(ref _currentCover);
             }
 
             _state = AI_States.death;
@@ -114,10 +101,9 @@ public class EnemyRangeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
-        if (_currentTarget != null) // если есть цель
+        if (_currentTarget != null && _currentTarget.GetComponent<Vitals>().IsAlive()) // если есть цель
         {
-            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
-            {
+            
                 if (_currentCover != null) // если существует укрытие
                 {
                     if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
@@ -139,17 +125,6 @@ public class EnemyRangeBehavior : MonoBehaviour
                 {
                     _currentCover = _coverManager.GetCover(this);  // запрашиваем укрытие
                 }
-            }
-            else
-            {
-                //ищем новую цель
-                Team _bestTarget = GetNewTarget();
-
-                if (_bestTarget != null)
-                {
-                    _currentTarget = _bestTarget;
-                }
-            }
         }
         else // если цели нет
         {
@@ -215,7 +190,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     {
         if (_currentTarget != null) // если есть цель
         {
-            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
+            if (_currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
             {
                 if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
                 {
@@ -290,7 +265,7 @@ public class EnemyRangeBehavior : MonoBehaviour
     {
         if (_currentTarget != null) // если есть цель
         {
-            if (_currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0) // если цель жива
+            if (_currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
             {
                 _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
 
@@ -332,7 +307,7 @@ public class EnemyRangeBehavior : MonoBehaviour
 
             //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
-                && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
+                && _currentCharacter.GetComponent<Vitals>().IsAlive())
             {
                 //если рейкаст попал в цель, то мы знаем, что можем его увидеть
                 if (CanSeeTarget(_currentCharacter))
