@@ -45,7 +45,6 @@ public class DroneBehavior : MonoBehaviour
 
     private void Start()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>(); // раньше было в GetTarget
 
         _myTransform = transform;
 
@@ -104,8 +103,6 @@ public class DroneBehavior : MonoBehaviour
                 {
                     _state = AI_States.moveToTarget;
                 }
-
-
             }
             else
             {
@@ -216,13 +213,14 @@ public class DroneBehavior : MonoBehaviour
 
     private Team GetNewTarget()
     {
+        _allCharacters = GameObject.FindObjectsOfType<Team>(); // раньше было в GetTarget
+
         Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)
         {
             Team _currentCharacter = _allCharacters[i];
 
-            //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() == MyTeam.GetTeamNumber()
                 && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
             {

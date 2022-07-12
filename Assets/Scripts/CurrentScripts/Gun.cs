@@ -5,7 +5,6 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
     [Header("Gun Settings")]
-
     [SerializeField]
     private Transform _bulletSpawnPoint;
     [SerializeField]
@@ -39,6 +38,16 @@ public class Gun : MonoBehaviour
     private bool _triggerReleasedSinceLastShot;
     private int _bulletsInMagazine;
 
+    [Header("Recoil")]
+    private Vector2 kickMinMax = new Vector2(0.05f, 2f);
+    private Vector2 recoilAngleMinMax = new Vector2(3, 5);
+    [SerializeField]
+    private float timeOfReturnToPosition = 0.1f;
+    private Vector3 recoilSmoothDampVelocity;    
+    private float recoilRotSmoothDampVelocity;  
+    private float recoilAngle;
+
+
     private void Start()
     {
         _bulletsInMagazine = _magazineCapacity;
@@ -47,6 +56,11 @@ public class Gun : MonoBehaviour
 
     private void LateUpdate()
     {
+        // Возвращение оружия в нормальное положение после отдачи
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, Vector3.zero, ref recoilSmoothDampVelocity, timeOfReturnToPosition); 
+        recoilAngle = Mathf.SmoothDamp(recoilAngle, 0, ref recoilRotSmoothDampVelocity, timeOfReturnToPosition);          
+        transform.localEulerAngles = transform.localEulerAngles + Vector3.left * recoilAngle;
+
         if (!_isReloading && _bulletsInMagazine == 0)
             Reload();
     }
@@ -60,7 +74,6 @@ public class Gun : MonoBehaviour
 
             if (_lastShootTime + _shootDelay < Time.time)
             {
-
                 _shootingParticle.Play();
 
                 Vector3 _direction = GetDirection(); // определяем направление стрельбы
@@ -113,6 +126,13 @@ public class Gun : MonoBehaviour
         }
     }
 
+
+    private void Recoil()
+    {
+        transform.localPosition -= Vector3.forward * Random.Range(kickMinMax.x, kickMinMax.y);
+        recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
+        recoilAngle = Mathf.Clamp(recoilAngle, 0, 25);
+    }
 
 
     private Vector3 GetDirection()
