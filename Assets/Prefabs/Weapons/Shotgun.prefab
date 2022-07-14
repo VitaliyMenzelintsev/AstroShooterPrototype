@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4228549202066733923}
   - component: {fileID: 4236743084012206707}
   - component: {fileID: 4245968955719044015}
-  - component: {fileID: 451536171949756890}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
@@ -88,27 +87,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &451536171949756890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4231771499721768765}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91d085f784934b84f9c68dfe16d18a16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FireModeOfGun: 2
-  ProjectileSpawnPoint:
-  - {fileID: 6150412979103245236}
-  Projectile: {fileID: 722235385578831419, guid: 6668ccc7b2b583641b324b8bff48acbe, type: 3}
-  BurstCount: 0
-  ProjectilesPerMagazine: 0
-  ReloadTime: 0.3
-  MsBetweenShots: 400
-  MuzzleVelocity: 35
 --- !u!1 &4231774616234664333
 GameObject:
   m_ObjectHideFlags: 0

@@ -220,7 +220,6 @@ GameObject:
   - component: {fileID: 4600939518135095740}
   - component: {fileID: 4584864570341452428}
   - component: {fileID: 4577022380272078698}
-  - component: {fileID: 4062911885320569854}
   m_Layer: 0
   m_Name: RobotPistol
   m_TagString: Untagged
@@ -295,30 +294,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4062911885320569854
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4599656588534941462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91d085f784934b84f9c68dfe16d18a16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _bulletSpawnPoint: {fileID: 3201410756892984152}
-  _magazineCapacity: 14
-  _reloadTime: 0.6
-  _msBetweenShots: 100
-  _damage: 25
-  _shootDelay: 0.05
-  _bulletSpeed: 200
-  _range: 30
-  _addBulletSpread: 1
-  _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
-  _mask:
-    serializedVersion: 2
-    m_Bits: 1
-  _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
-  _bulletTrail: {fileID: 1921083361938323580, guid: 434dc2a8b152dcf41aff1e13876fc714, type: 3}

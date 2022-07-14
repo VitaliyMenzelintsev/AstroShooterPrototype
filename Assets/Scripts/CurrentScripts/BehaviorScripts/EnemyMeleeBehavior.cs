@@ -13,7 +13,7 @@ public class EnemyMeleeBehavior : EnemyBehavior
     public Vitals MyVitals;
     public Transform Eyes;
 
-    private NavMeshAgent _myNavMeshAgent;
+    private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
     private Animator _characterAnimator;
     public Team _currentTarget = null;
@@ -26,16 +26,8 @@ public class EnemyMeleeBehavior : EnemyBehavior
     private float _damageDealt = 100f;
     [SerializeField]
     private float _fireCooldown = 2.667f;
-    private float _currentFireCooldown = 0;
+    private float _currentFireCooldown = 0; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-    public enum AI_States
-    {
-        idle,
-        investigate,
-        combat,
-        death
-    }
 
     public AI_States _state = AI_States.idle;
 
@@ -47,7 +39,7 @@ public class EnemyMeleeBehavior : EnemyBehavior
 
         MyVitals = GetComponent<Vitals>();
 
-        _myNavMeshAgent = GetComponent<NavMeshAgent>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
     }
@@ -61,7 +53,7 @@ public class EnemyMeleeBehavior : EnemyBehavior
                 case AI_States.idle:
                     StateIdle();
                     break;
-                case AI_States.combat:
+                case AI_States.meleeCombat:
                     StateCombat();
                     break;
                 case AI_States.investigate:
@@ -99,7 +91,7 @@ public class EnemyMeleeBehavior : EnemyBehavior
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
-                _state = AI_States.combat;
+                _state = AI_States.meleeCombat;
             }
             else
             {
@@ -161,13 +153,13 @@ public class EnemyMeleeBehavior : EnemyBehavior
     {
         if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance)
         {
-            _state = AI_States.combat;
+            _state = AI_States.meleeCombat;
         }
         else
         {
             _characterAnimator.SetBool("Move", true);
 
-            _myNavMeshAgent.SetDestination(_currentTarget.transform.position);
+            _navMeshAgent.SetDestination(_currentTarget.transform.position);
         }
 
         if (_currentTarget == null)

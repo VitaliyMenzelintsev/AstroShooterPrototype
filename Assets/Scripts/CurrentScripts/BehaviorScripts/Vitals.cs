@@ -13,11 +13,22 @@ public class Vitals : MonoBehaviour
     {
         _currentHealth = _health;
     }
+
     public bool IsAlive() => _currentHealth > 0;
 
     public void GetHit(float _damage)
     {
         _currentHealth -= _damage;
+    }
+
+    public float GetMaxHealth()
+    {
+        return _health;
+    }
+
+    public float GetCurrentHealth()
+    {
+        return _currentHealth;
     }
 
     public void GetHeal(float _heal)

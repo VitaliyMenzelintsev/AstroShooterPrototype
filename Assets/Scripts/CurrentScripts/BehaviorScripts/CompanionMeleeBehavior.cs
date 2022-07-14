@@ -23,13 +23,13 @@ public class CompanionMeleeBehavior : MonoBehaviour
     private Animator _characterAnimator;
 
     [SerializeField]
-    private Team _currentTarget;
+    private Team _currentTarget = null;
     [SerializeField]
-    private BulletGun _currentGun;
+    private BaseGun _currentGun;
     [SerializeField]
-    private float _minAttackDistance = 7;
+    private float _minAttackDistance = 0.5f;
     [SerializeField]
-    private float _maxAttackDistance = 13;
+    private float _maxAttackDistance = 1.5f;
 
 
     public AI_States _state = AI_States.idle;
@@ -47,7 +47,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
         _characterAnimator = GetComponent<Animator>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (MyVitals.IsAlive())
         {
@@ -78,7 +78,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider other)  // переработать рессурект/смерть
+    private void OnTriggerEnter(Collider other)
     {
         GetNewTarget();
 
@@ -91,6 +91,41 @@ public class CompanionMeleeBehavior : MonoBehaviour
             _characterAnimator.SetBool("Dead", false);
 
             _characterAnimator.SetBool("HasEnemy", false);
+        }
+    }
+
+
+
+    private void StateIdle()
+    {
+        if (_currentTarget != null
+            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        {
+                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            {
+                _state = AI_States.meleeCombat;
+            }
+            else
+            {
+                _state = AI_States.investigate;
+            }
+
+        }
+        else
+        {
+            Team _bestTarget = GetNewTarget();
+
+            if (_bestTarget != null)
+            {
+                _currentTarget = _bestTarget;
+            }
+            else
+            {
+                _characterAnimator.SetBool("Move", true); 
+                _characterAnimator.SetBool("HasEnemy", false); 
+                _state = AI_States.followThePlayer;
+            }
         }
     }
 
@@ -125,40 +160,6 @@ public class CompanionMeleeBehavior : MonoBehaviour
         }
     }
 
-
-    private void StateIdle()
-    {
-        if (_currentTarget != null)
-        {
-            if (_currentTarget.GetComponent<Vitals>().IsAlive())
-            {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
-                {
-                    _state = AI_States.meleeCombat;
-                }
-                else
-                {
-                    _state = AI_States.investigate;
-                }
-            }
-        }
-        else
-        {
-            Team _bestTarget = GetNewTarget();
-
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
-            else
-            {
-                _characterAnimator.SetBool("Move", true); // !!
-                _characterAnimator.SetBool("HasEnemy", false); // !!
-                _state = AI_States.followThePlayer;
-            }
-        }
-    }
 
 
     private void StateCombat()

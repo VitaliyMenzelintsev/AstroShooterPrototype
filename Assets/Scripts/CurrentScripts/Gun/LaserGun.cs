@@ -53,7 +53,7 @@ public class LaserGun : BaseGun
             }
             else
             {
-                ShootRender(_aimPoint);
+                //ShootRender(_aimPoint);
 
                 Debug.Log("не лечу");
 
