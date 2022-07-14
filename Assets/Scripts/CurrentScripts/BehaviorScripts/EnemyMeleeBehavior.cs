@@ -5,7 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class EnemyMeleeBehavior : MonoBehaviour
+public class EnemyMeleeBehavior : EnemyBehavior
 {
     [HideInInspector]
     public Team MyTeam;
@@ -54,7 +54,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (MyVitals.GetCurrentHealth() > 0)
+        if (MyVitals.IsAlive())
         {
             switch (_state)
             {
@@ -68,7 +68,6 @@ public class EnemyMeleeBehavior : MonoBehaviour
                     StateInvestigate();
                     break;
                 case AI_States.death:
-
                     break;
                 default:
                     StateIdle();
@@ -95,7 +94,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
     private void StateIdle()
     {
         if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+            && _currentTarget.GetComponent<Vitals>().IsAlive())
         {
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
@@ -122,7 +121,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
     private void StateCombat()
     {
         if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().GetCurrentHealth() > 0)
+            && _currentTarget.GetComponent<Vitals>().IsAlive())
         {
             _myTransform.LookAt(_currentTarget.transform);
 
@@ -192,7 +191,7 @@ public class EnemyMeleeBehavior : MonoBehaviour
 
             //выбирать текущего противника в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
-                && _currentCharacter.GetComponent<Vitals>().GetCurrentHealth() > 0)
+                && _currentCharacter.GetComponent<Vitals>().IsAlive())
             {
                 //если рейкаст попал в цель, мы знаем, что видим её
                 if (CanSeeTarget(_currentCharacter))

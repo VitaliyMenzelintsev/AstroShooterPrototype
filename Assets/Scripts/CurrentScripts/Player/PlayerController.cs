@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private float rotationSpeed = 5f;
     private Transform cameraTransform;
     [SerializeField]
-    private Gun _currentGun;
+    private BaseGun _currentGun;
     [SerializeField]
     private float animationSmoothTime = 0.2f;  // смягчение скорости для анимации
     //[SerializeField]
@@ -155,7 +155,7 @@ public class PlayerController : MonoBehaviour
     private void ShootGun()
     {
         animator.CrossFade(shootAnimation, animationSmoothTime);
-        _currentGun.OnTriggerHold(_aimPoint);
+        _currentGun.Shoot(_aimPoint);
     }
 
     private void Aim(Vector3 _aimPoint)

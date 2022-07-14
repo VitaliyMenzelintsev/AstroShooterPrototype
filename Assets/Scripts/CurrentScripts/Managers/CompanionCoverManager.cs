@@ -18,10 +18,6 @@ public class CompanionCoverManager : MonoBehaviour
             _unOccupiedCoverSpots.Remove(_spot);
             _occupiedCoverSpots.Add(_spot);
         }
-        //if (!_occupiedCoverSpots.Contains(_spot))
-        //{
-        //    _occupiedCoverSpots.Add(_spot);
-        //}
     }
     private void AddToUnoccupied(CompanionCoverSpot _spot)
     {
@@ -30,56 +26,10 @@ public class CompanionCoverManager : MonoBehaviour
             _occupiedCoverSpots.Remove(_spot);
             _unOccupiedCoverSpots.Add(_spot);
         }
-        //if (!_unOccupiedCoverSpots.Contains(_spot))
-        //{
-        //    _unOccupiedCoverSpots.Add(_spot);
-        //}
     }
 
-    //прежняя версия поиска укрытий - не подходит под текущие реалии
-    //public CompanionCoverSpot GetCoverTowardsTarget(CompanionRangeBehavior _character, Vector3 _targetPosition, float _maxAttackDistance, float _minAttackDistance, CompanionCoverSpot _prevCoverSpot)
-    //{
-    //    CompanionCoverSpot _bestCover = null;
 
-    //    Vector3 _characterPosition = _character.transform.position;
-
-    //    CompanionCoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
-
-    //    for (int i = 0; i < _possibleCoverSpots.Length; i++)
-    //    {
-    //        CompanionCoverSpot _spot = _possibleCoverSpots[i];
-
-    //        if (!_spot.IsOccupied() && _spot.AmICoveredFrom(_targetPosition)
-    //            && Vector3.Distance(_spot.transform.position, _targetPosition) >= _minAttackDistance
-    //            && !CoverIsPastEnemyLine(_character, _spot))
-    //        {
-    //            if (_bestCover == null)
-    //            {
-    //                _bestCover = _spot;
-    //            }
-    //            else if (_prevCoverSpot != _spot
-    //                && Vector3.Distance(_bestCover.transform.position, _characterPosition) > Vector3.Distance(_spot.transform.position, _characterPosition)
-    //                && Vector3.Distance(_spot.transform.position, _targetPosition) < Vector3.Distance(_characterPosition, _targetPosition))
-    //            {
-    //                if (Vector3.Distance(_spot.transform.position, _characterPosition) < Vector3.Distance(_targetPosition, _characterPosition))
-    //                {
-    //                    _bestCover = _spot;
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    if (_bestCover != null)
-    //    {
-    //        _bestCover.SetOccupier(_character.transform);
-    //        AddToOccupied(_bestCover);
-    //    }
-
-    //    return _bestCover;
-    //}
-
-
-    public CompanionCoverSpot GetCover(CompanionRangeBehavior _character)
+    public CompanionCoverSpot GetCover(CompanionRangeBehavior _character, Team _target)
     {
         CompanionCoverSpot _bestCover = null;
 
@@ -92,12 +42,22 @@ public class CompanionCoverManager : MonoBehaviour
             CompanionCoverSpot _spot = _possibleCoverSpots[i];
 
             if (!_spot.IsOccupied() // если спот свободен
-                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 5f) // если дистанция до спота менее 5 метров
+                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 10f  // если дистанция до спота менее 10 метров
+                && CanSeeEnemyFromSpot(_target, _spot))  // если со спота видно врага
             {
                 if (_bestCover == null)
                 {
                     _bestCover = _spot;
                 }
+                else
+                {   
+                    // поиск ближайшего спота
+                    if (Vector3.Distance(_spot.transform.position, _characterPosition) < Vector3.Distance(_bestCover.transform.position, _characterPosition))
+                    {
+                        _bestCover = _spot;
+                    }
+                }
+
             }
         }
 
@@ -108,6 +68,30 @@ public class CompanionCoverManager : MonoBehaviour
         }
 
         return _bestCover;
+    }
+
+
+    private bool CanSeeEnemyFromSpot(Team _target, CompanionCoverSpot _spot)
+    {
+        bool _canSeeIt = false;
+
+        Vector3 _enemyPosition = _target.Eyes.position;
+
+        float _averageEyesPosition = 1.8f;
+
+        Vector3 _possibleSpotPosition = new Vector3(_spot.transform.position.x, _spot.transform.position.y + _averageEyesPosition, _spot.transform.position.z); 
+
+        RaycastHit _hit;
+
+        if (Physics.Raycast(_possibleSpotPosition, _enemyPosition, out _hit, Mathf.Infinity))
+        {
+            //если рейкаст попал в цель, то мы знаем, что можем его увидеть
+            if (_hit.transform == _target.Eyes.transform)  //??
+            {
+                _canSeeIt = true;
+            }
+        }
+        return _canSeeIt;
     }
 
 

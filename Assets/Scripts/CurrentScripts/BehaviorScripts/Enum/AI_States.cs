@@ -5,5 +5,6 @@ public enum AI_States
     moveToCover,
     rangeCombat,
     meleeCombat,
+    investigate,
     death
 }
