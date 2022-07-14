@@ -8,31 +8,15 @@ using UnityEngine.AI;
 
 public class EnemyRangeBehavior : EnemyBehavior
 {
-    [HideInInspector]
-    public Team MyTeam;
-    [HideInInspector]
-    public Vitals MyVitals;
-    public Transform Eyes;
-
     private NavMeshAgent _navMeshAgent;
-    private Transform _myTransform;
     private Animator _characterAnimator;
     private EnemyCoverManager _coverManager;
 
-    [SerializeField]
-    private Team _currentTarget;
-    [SerializeField]
-    private BaseGun _currentGun;
-    [SerializeField]
-    private float _minAttackDistance = 5;
-    [SerializeField]
-    private float _maxAttackDistance = 13;
+
     [SerializeField]
     private float _punchDistance = 1;
     [SerializeField]
     private EnemyCoverSpot _currentCover = null;
-    [SerializeField]
-    private Team[] _allCharacters;
 
 
     public AI_States _state = AI_States.idle;
@@ -98,8 +82,7 @@ public class EnemyRangeBehavior : EnemyBehavior
 
     private void StateIdle()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive()) // если есть цель
+        if (IsTargetAlive()) // если есть цель
         {
             if (_currentCover == null) // запрашиваем укрытие только в случае, если у персонажа нет укрытия
                 _currentCover = _coverManager.GetCover(this, _currentTarget);
@@ -115,8 +98,7 @@ public class EnemyRangeBehavior : EnemyBehavior
                 }
                 else // если персонаж уже в укрытии (< 0.2f до укрытия)
                 {
-                    if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance // проверка на дистанцию ни к чему не ведёт: либо убрать, либо придумать действие
-                      && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+                    if (IsDistanceCorrect())
                     {
                         _state = AI_States.rangeCombat;
                     }
@@ -149,7 +131,7 @@ public class EnemyRangeBehavior : EnemyBehavior
 
     private void StateMoveToCover()
     {
-        if (_currentTarget != null) // если есть цель
+        if (IsTargetAlive()) // если есть цель
         {
             if (_currentCover != null) // если существует укрытие
             {
@@ -187,10 +169,8 @@ public class EnemyRangeBehavior : EnemyBehavior
 
     private void StateRangeCombat()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
+        if (IsTargetAlive()) // если цель жива
         {
-
             if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
             {
                 Team _alternativeTarget = GetNewTarget(); // ищем альтернативную цель
@@ -212,8 +192,7 @@ public class EnemyRangeBehavior : EnemyBehavior
             _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
 
             // если дистанция для атаки подходящая
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (IsDistanceCorrect())
             {
                 // атакуем
 
@@ -254,8 +233,7 @@ public class EnemyRangeBehavior : EnemyBehavior
 
     private void StateMeleeCombat()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive()) // если есть
+        if (IsTargetAlive()) // если есть
         {
             _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
 
@@ -317,6 +295,18 @@ public class EnemyRangeBehavior : EnemyBehavior
         }
 
         return _bestTarget;
+    }
+
+    private bool IsMeleeDistance()
+    {
+        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) < _minAttackDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 

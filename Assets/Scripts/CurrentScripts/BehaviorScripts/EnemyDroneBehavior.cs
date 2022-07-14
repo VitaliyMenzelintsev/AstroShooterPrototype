@@ -7,26 +7,8 @@ using UnityEngine;
 
 public class EnemyDroneBehavior : EnemyBehavior
 {
-    [HideInInspector]
-    public Team MyTeam;
-    [HideInInspector]
-    public Vitals MyVitals;
-    public Transform Eyes;
-
     private NavMeshAgent _navMeshAgent;
-    private Transform _myTransform;
-
-    [SerializeField]
-    private Team _currentTarget;
-    [SerializeField]
-    private LaserGun _currentGun;
-    [SerializeField]
-    private float _minAttackDistance = 2;
-    [SerializeField]
-    private float _maxAttackDistance = 3;
-    private Team[] _allCharacters;
-
-
+   
     public AI_States _state = AI_States.idle;
 
 
@@ -74,11 +56,9 @@ public class EnemyDroneBehavior : EnemyBehavior
 
     private void StateIdle()
     {
-        if (_currentTarget != null                              // если есть цель
-            && _currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
+        if (IsTargetAlive()) // если цель жива
         {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-              && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (IsDistanceCorrect())
             {
                 _state = AI_States.rangeCombat;
             }
@@ -105,10 +85,9 @@ public class EnemyDroneBehavior : EnemyBehavior
 
     private void StateInvestigate()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (IsTargetAlive())
         {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _maxAttackDistance)
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
             {
                 _navMeshAgent.SetDestination(_currentTarget.transform.position);
             }
@@ -128,10 +107,8 @@ public class EnemyDroneBehavior : EnemyBehavior
     {
         _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
 
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive() // если цель жива
-            && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-            && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        if (IsTargetAlive() // если цель жива
+          && IsDistanceCorrect())
         {
             // атакуем
 

@@ -7,32 +7,19 @@ using UnityEngine.AI;
 
 public class EnemyMeleeBehavior : EnemyBehavior
 {
-    [HideInInspector]
-    public Team MyTeam;
-    [HideInInspector]
-    public Vitals MyVitals;
-    public Transform Eyes;
-
     private NavMeshAgent _navMeshAgent;
-    private Transform _myTransform;
     private Animator _characterAnimator;
-    public Team _currentTarget = null;
-
-    [SerializeField]
-    private float _minAttackDistance = 0.5f;
-    [SerializeField]
-    private float _maxAttackDistance = 2.5f;
-    [SerializeField]
-    private float _damageDealt = 100f;
-    [SerializeField]
-    private float _fireCooldown = 2.667f;
-    private float _currentFireCooldown = 0; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ 
+    //[SerializeField]
+    //private float _fireCooldown = 2.667f;
 
 
     public AI_States _state = AI_States.idle;
 
     private void Start()
     {
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
+
         _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
@@ -85,11 +72,9 @@ public class EnemyMeleeBehavior : EnemyBehavior
 
     private void StateIdle()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (IsTargetAlive())
         {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (IsDistanceCorrect())
             {
                 _state = AI_States.meleeCombat;
             }
@@ -112,30 +97,21 @@ public class EnemyMeleeBehavior : EnemyBehavior
 
     private void StateCombat()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (IsTargetAlive())
         {
-            _myTransform.LookAt(_currentTarget.transform);
-
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (IsDistanceCorrect())
             {
                 // Атака
-                if (_currentFireCooldown <= 0)
                 {
+                    _myTransform.LookAt(_currentTarget.transform);
+
                     _characterAnimator.SetTrigger("Fire");
 
-                    _currentTarget.GetComponent<Vitals>().GetHit(_damageDealt);
-
-                    _currentFireCooldown = _fireCooldown;
-                }
-                else
-                {
-                    _currentFireCooldown -= 1 * Time.deltaTime;
+                    _currentGun.Shoot(_currentTarget.Eyes.position);
                 }
             }
 
-            else if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
+             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
             {
                 _state = AI_States.investigate;
             }
@@ -153,6 +129,8 @@ public class EnemyMeleeBehavior : EnemyBehavior
     {
         if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance)
         {
+            _characterAnimator.SetBool("Move", false);
+
             _state = AI_States.meleeCombat;
         }
         else
@@ -173,8 +151,6 @@ public class EnemyMeleeBehavior : EnemyBehavior
 
     private Team GetNewTarget()
     {
-        Team[] _allCharacters = GameObject.FindObjectsOfType<Team>();
-
         Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)

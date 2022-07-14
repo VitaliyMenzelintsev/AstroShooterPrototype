@@ -167,14 +167,12 @@ public class CompanionMeleeBehavior : MonoBehaviour
         if (_currentTarget != null
            && _currentTarget.GetComponent<Vitals>().IsAlive())
         {
-            _myTransform.LookAt(_currentTarget.transform);
-
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
                 _characterAnimator.SetTrigger("Fire");
 
-                _currentGun.Aim(_currentTarget.Eyes.position);
+                _myTransform.LookAt(_currentTarget.transform);
 
                 _currentGun.Shoot(_currentTarget.Eyes.position);
             }

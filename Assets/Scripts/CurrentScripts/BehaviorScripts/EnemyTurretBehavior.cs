@@ -5,22 +5,12 @@ using UnityEngine;
 
 public class EnemyTurretBehavior : EnemyBehavior
 {
-    [HideInInspector]
-    public Team MyTeam;
-    [HideInInspector]
-    public Vitals MyVitals;
-
     [SerializeField]
     private LineRenderer _lineRenderer;
     [SerializeField]
     private Transform _partToRotate;                                             // определили поворачивающуюся деталь
     [SerializeField]
     private Transform _firePoint;
-    [SerializeField]
-    private Team _currentTarget;
-
-    private Team[] _allCharacters;
-    private Transform _myTransform;
 
     private float _turnSpeed = 3f;                                             // скорость поворота башни
     private float _range = 15f;
@@ -43,7 +33,7 @@ public class EnemyTurretBehavior : EnemyBehavior
 
     private void FixedUpdate()
     {
-        if (_currentTarget != null)
+        if (IsTargetAlive())
         {
             if (MyVitals.IsAlive())
             {
