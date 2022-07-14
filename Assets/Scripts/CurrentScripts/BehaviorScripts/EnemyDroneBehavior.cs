@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
+
 public class EnemyDroneBehavior : EnemyBehavior
 {
     [HideInInspector]
@@ -15,7 +16,7 @@ public class EnemyDroneBehavior : EnemyBehavior
     private NavMeshAgent _navMeshAgent;
     private Transform _myTransform;
 
-    [SerializeField] // тест
+    [SerializeField]
     private Team _currentTarget;
     [SerializeField]
     private LaserGun _currentGun;
@@ -26,20 +27,13 @@ public class EnemyDroneBehavior : EnemyBehavior
     private Team[] _allCharacters;
 
 
-    public enum AI_States
-    {
-        idle,
-        moveToTarget,
-        rangeCombat,
-        death
-    }
-
-
     public AI_States _state = AI_States.idle;
 
 
     private void Start()
     {
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
+
         _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
@@ -62,8 +56,8 @@ public class EnemyDroneBehavior : EnemyBehavior
                 case AI_States.rangeCombat:
                     StateRangeCombat();
                     break;
-                case AI_States.moveToTarget:
-                    StateMoveToTarget();
+                case AI_States.investigate:
+                    StateInvestigate();
                     break;
             }
         }
@@ -71,39 +65,29 @@ public class EnemyDroneBehavior : EnemyBehavior
         {
             _state = AI_States.death;
 
-            Destroy(gameObject, 3f);
+            Destroy(GetComponent<CapsuleCollider>());
+
+            Destroy(gameObject, 2f);
         }
     }
 
 
     private void StateIdle()
     {
-        if (_currentTarget != null) // если есть цель
+        if (_currentTarget != null                              // если есть цель
+            && _currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
         {
-            if (_currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+              && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                  && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
-                {
-                    _state = AI_States.rangeCombat;
-                }
-                else
-                {
-                    _state = AI_States.moveToTarget;
-                }
+                _state = AI_States.rangeCombat;
             }
             else
             {
-                //ищем новую цель
-                Team _bestTarget = GetNewTarget();
-
-                if (_bestTarget != null)
-                {
-                    _currentTarget = _bestTarget;
-                }
+                _state = AI_States.investigate;
             }
         }
-        else // если цели нет
+        else // если цели нет или она мертва
         {
             Team _bestTarget = GetNewTarget();
 
@@ -119,7 +103,7 @@ public class EnemyDroneBehavior : EnemyBehavior
     }
 
 
-    private void StateMoveToTarget()
+    private void StateInvestigate()
     {
         if (_currentTarget != null
             && _currentTarget.GetComponent<Vitals>().IsAlive())
@@ -137,32 +121,25 @@ public class EnemyDroneBehavior : EnemyBehavior
         {
             _state = AI_States.idle;
         }
-
     }
 
 
     private void StateRangeCombat()
     {
+        _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+
         if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive()) // если цель жива
+            && _currentTarget.GetComponent<Vitals>().IsAlive() // если цель жива
+            && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+            && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
         {
-            _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+            // атакуем
 
-            // если дистанция для атаки подходящая
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
-            {
+            _currentGun.Aim(_currentTarget.Eyes.position);
 
-                _currentGun.Aim(_currentTarget.Eyes.position);
-
-                _currentGun.Shoot(_currentTarget.Eyes.position);
-            }
-            else // если дистанция не подходящая, начинаем стоять 
-            {
-                _state = AI_States.idle;
-            }
+            _currentGun.Shoot(_currentTarget.Eyes.position);
         }
-        else // если цель мертва, начинаем стоять
+        else // если дистанция не подходящая, начинаем стоять 
         {
             _state = AI_States.idle;
         }
@@ -171,8 +148,6 @@ public class EnemyDroneBehavior : EnemyBehavior
 
     private Team GetNewTarget()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>(); // раньше было в GetTarget
-
         Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)

@@ -27,7 +27,7 @@ public class CompanionCoverManager : MonoBehaviour
             _unOccupiedCoverSpots.Add(_spot);
         }
     }
-
+     
 
     public CompanionCoverSpot GetCover(CompanionRangeBehavior _character, Team _target)
     {
@@ -43,7 +43,7 @@ public class CompanionCoverManager : MonoBehaviour
 
             if (!_spot.IsOccupied() // если спот свободен
                 && Vector3.Distance(_characterPosition, _spot.transform.position) <= 10f  // если дистанция до спота менее 10 метров
-                && CanSeeEnemyFromSpot(_target, _spot))  // если со спота видно врага
+                /*&& CanSeeEnemyFromSpot(_target, _spot)*/)  // если со спота видно врага
             {
                 if (_bestCover == null)
                 {

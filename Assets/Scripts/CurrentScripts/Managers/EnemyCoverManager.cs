@@ -13,27 +13,20 @@ public class EnemyCoverManager : MonoBehaviour
 
     private void AddToOccupied(EnemyCoverSpot _spot)
     {
-        if (_unOccupiedCoverSpots.Contains(_spot))
+        if (_unOccupiedCoverSpots.Contains(_spot) && !_occupiedCoverSpots.Contains(_spot))
         {
             _unOccupiedCoverSpots.Remove(_spot);
-        }
-        if (!_occupiedCoverSpots.Contains(_spot))
-        {
             _occupiedCoverSpots.Add(_spot);
         }
     }
     private void AddToUnoccupied(EnemyCoverSpot _spot)
     {
-        if (_occupiedCoverSpots.Contains(_spot))
+        if (_occupiedCoverSpots.Contains(_spot) && !_unOccupiedCoverSpots.Contains(_spot))
         {
             _occupiedCoverSpots.Remove(_spot);
-        }
-        if (!_unOccupiedCoverSpots.Contains(_spot))
-        {
             _unOccupiedCoverSpots.Add(_spot);
         }
-    } 
-
+    }
     public EnemyCoverSpot GetCover(EnemyRangeBehavior _character, Team _target)
     {
         EnemyCoverSpot _bestCover = null;

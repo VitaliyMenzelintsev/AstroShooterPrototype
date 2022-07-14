@@ -28,6 +28,8 @@ public class LaserGun : BaseGun
     {
         if (IsGunReady())
         {
+            _lineRenderer.enabled = true;
+
             _bulletsInMagazine--;
 
             _nextShotTime = Time.time + _msBetweenShots / 1000;
@@ -44,8 +46,6 @@ public class LaserGun : BaseGun
             {
                 ShootRender(_hit.point);
 
-                Debug.Log("Лечу");
-
                 _lastShootTime = Time.time;
 
                 if (_hit.collider.gameObject.GetComponent<Vitals>())
@@ -59,6 +59,10 @@ public class LaserGun : BaseGun
 
                 _lastShootTime = Time.time;
             }
+        }
+        else
+        {
+            _lineRenderer.enabled = false;
         }
     }
 

@@ -31,9 +31,12 @@ public class EnemyRangeBehavior : EnemyBehavior
     private float _punchDistance = 1;
     [SerializeField]
     private EnemyCoverSpot _currentCover = null;
+    [SerializeField]
     private Team[] _allCharacters;
 
+
     public AI_States _state = AI_States.idle;
+
 
     private void Start()
     {

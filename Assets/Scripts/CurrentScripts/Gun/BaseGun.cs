@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 public abstract class BaseGun : MonoBehaviour
-{
+{ 
     [SerializeField]
     protected Transform _barrelPoint;
     [SerializeField]
@@ -113,8 +113,8 @@ public abstract class BaseGun : MonoBehaviour
         {
             _percent += Time.deltaTime * _reloadSpeed;
             float interpolation = (-Mathf.Pow(_percent, 2) + _percent) * 4;
-            float reloadAngle = Mathf.Lerp(0, _maxReloadAngle, interpolation);
-            transform.localEulerAngles = _initialRot + Vector3.left * reloadAngle;
+            float _reloadAngle = Mathf.Lerp(0, _maxReloadAngle, interpolation);
+            transform.localEulerAngles = _initialRot + Vector3.down * _reloadAngle;
 
             yield return null;
         }
