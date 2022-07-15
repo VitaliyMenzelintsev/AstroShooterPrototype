@@ -101,19 +101,14 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (IsTargetAlive())
         {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (IsDistanceCorrect())
             {
-                _characterAnimator.SetBool("HasEnemy", true);
                 _state = AI_States.meleeCombat;
             }
             else
             {
-                _characterAnimator.SetBool("HasEnemy", true);
-                _characterAnimator.SetBool("Move", true);
                 _state = AI_States.investigate;
             }
 
@@ -124,13 +119,25 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
             if (_bestTarget != null)
             {
+                _characterAnimator.SetBool("HasEnemy", true);
+
                 _currentTarget = _bestTarget;
             }
             else
             {
-                _characterAnimator.SetBool("Move", true);
                 _characterAnimator.SetBool("HasEnemy", false);
-                _state = AI_States.followThePlayer;
+
+                if (Vector3.Distance(_myTransform.position, _player.position) > 3f)
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.idle;         // действие Idle
+                }
+
             }
         }
     }
@@ -138,43 +145,111 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private void StateFollowThePlayer()
     {
-        _currentTarget = GetNewTarget();
-
-        if (_currentTarget == null)
+        if (IsTargetAlive())
         {
-            if (Vector3.Distance(transform.position, _player.position) > 3f)
+            if (IsDistanceCorrect())
             {
-                _myTransform.LookAt(_player);
-                _characterAnimator.SetBool("Move", true);
-                _navMeshAgent.SetDestination(_followPoint.position);
+                _state = AI_States.meleeCombat;
             }
             else
             {
-                _characterAnimator.SetBool("Move", false);
-
-                if (Vector3.Distance(_followPoint.position, _myTransform.position) < 0.3f)
-                {
-                    _characterAnimator.SetBool("Move", false);
-                    _state = AI_States.idle;
-                }
+                _state = AI_States.investigate;
             }
+
         }
         else
         {
-            _characterAnimator.SetBool("Move", false);
-            _state = AI_States.idle;
+            Team _bestTarget = GetNewTarget();
+
+            if (_bestTarget != null)
+            {
+                _characterAnimator.SetBool("HasEnemy", true);
+
+                _currentTarget = _bestTarget;
+
+            }
+            else
+            {
+                _characterAnimator.SetBool("HasEnemy", false);
+
+                if (Vector3.Distance(_myTransform.position, _player.position) > 3f)
+                {
+                    _characterAnimator.SetBool("Move", true);
+
+                    _myTransform.LookAt(_player);
+
+                    _navMeshAgent.SetDestination(_followPoint.position);            // действие Follow The Player
+
+                    if (Vector3.Distance(_followPoint.position, _myTransform.position) < 0.3f)
+                    {
+                        _characterAnimator.SetBool("Move", false);
+
+                        _state = AI_States.idle;
+                    }
+                }
+                else
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.idle;
+                }
+            }
         }
     }
 
 
 
+    private void StateInvestigate()
+    {
+        if (IsTargetAlive())
+        {
+            if (IsDistanceCorrect())
+            {
+
+                _state = AI_States.meleeCombat;
+            }
+            else
+            {
+                _characterAnimator.SetBool("Move", true);
+
+                _navMeshAgent.SetDestination(_currentTarget.transform.position); // действие Investigate
+            }
+
+        }
+        else
+        {
+            Team _bestTarget = GetNewTarget();
+
+            if (_bestTarget != null)
+            {
+                _characterAnimator.SetBool("HasEnemy", true);
+
+                _currentTarget = _bestTarget;
+            }
+            else
+            {
+                _characterAnimator.SetBool("HasEnemy", false);
+
+                if (Vector3.Distance(_myTransform.position, _player.position) > 3f)
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.idle;
+                }
+            }
+        }
+    }
+
+
     private void StateCombat()
     {
-        if (_currentTarget != null
-           && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (IsTargetAlive())
         {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (IsDistanceCorrect())
             {
                 _characterAnimator.SetBool("Move", false);
 
@@ -183,55 +258,42 @@ public class CompanionMeleeBehavior : MonoBehaviour
                 _myTransform.LookAt(_currentTarget.transform);
 
                 _currentGun.Shoot(_currentTarget.Eyes.position);
-            }
 
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
-            {
-                _characterAnimator.SetBool("Move", true);
-
-                _state = AI_States.investigate;
-            }
-        }
-        else
-        {
-            _characterAnimator.SetBool("HasEnemy", false);
-
-            _characterAnimator.SetBool("Move", false);
-
-            _state = AI_States.idle;
-        }
-    }
-
-
-    private void StateInvestigate()
-    {
-        if (_currentTarget != null)
-        {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= 2.5f)
-            {
-                _state = AI_States.meleeCombat;
             }
             else
             {
-                _characterAnimator.SetBool("Move", true);
 
-                _navMeshAgent.SetDestination(_currentTarget.transform.position);
-            }
-
-            if (_currentTarget == null)
-            {
-                _characterAnimator.SetBool("Move", false);
-
-                _state = AI_States.idle;
+                _state = AI_States.investigate;
             }
 
         }
         else
         {
-            _characterAnimator.SetBool("Move", true); //!
-            _characterAnimator.SetBool("HasEnemy", false); //!!
-            _state = AI_States.followThePlayer;
+            Team _bestTarget = GetNewTarget();
+
+            if (_bestTarget != null)
+            {
+                _characterAnimator.SetBool("HasEnemy", true);
+
+                _currentTarget = _bestTarget;
+            }
+            else
+            {
+                _characterAnimator.SetBool("HasEnemy", false);
+
+                if (Vector3.Distance(_myTransform.position, _player.position) > 3f)
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.idle;
+                }
+            }
         }
+
     }
 
 
@@ -291,5 +353,33 @@ public class CompanionMeleeBehavior : MonoBehaviour
         }
 
         return _canSeeIt;
+    }
+
+
+    private bool IsTargetAlive()
+    {
+        if (_currentTarget != null
+            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    private bool IsDistanceCorrect()
+    {
+        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
