@@ -158,13 +158,22 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else
         {
-            if (IsPlayerFar())
+            GetNewTarget();
+
+            if (_currentTarget != null)
             {
-                _state = AI_States.followThePlayer;
+                return;
             }
             else
             {
-                _state = AI_States.idle;
+                if (IsPlayerFar())
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _state = AI_States.idle;
+                }
             }
         }
     }
