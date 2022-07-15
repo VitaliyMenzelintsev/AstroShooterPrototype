@@ -16,6 +16,10 @@ public class LaserGun : BaseGun
     {
         base.Start();
 
+        _lineRenderer = GetComponent<LineRenderer>();
+
+        _lineRenderer.enabled = false;
+
         _punchDamage = _damage / 2;
     }
 
@@ -28,8 +32,6 @@ public class LaserGun : BaseGun
     {
         if (IsGunReady())
         {
-            _lineRenderer.enabled = true;
-
             _bulletsInMagazine--;
 
             _nextShotTime = Time.time + _msBetweenShots / 1000;
@@ -44,18 +46,27 @@ public class LaserGun : BaseGun
 
             if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
             {
-                ShootRender(_hit.point);
-
                 _lastShootTime = Time.time;
 
                 if (_hit.collider.gameObject.GetComponent<Vitals>())
+                {
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+
+                    _lineRenderer.enabled = true;
+
+                    ShootRender(_hit.point);
+                }
+                else
+                {
+                    _lineRenderer.enabled = false;
+                }
+                    
             }
             else
             {
-                //ShootRender(_aimPoint);
+                //_lineRenderer.enabled = false;
 
-                Debug.Log("не лечу");
+                ShootRender(_aimPoint);
 
                 _lastShootTime = Time.time;
             }

@@ -6,16 +6,10 @@ using UnityEngine;
 public class EnemyTurretBehavior : EnemyBehavior
 {
     [SerializeField]
-    private LineRenderer _lineRenderer;
-    [SerializeField]
     private Transform _partToRotate;                                             // определили поворачивающуюся деталь
-    [SerializeField]
-    private Transform _firePoint;
+    private float _turnSpeed = 5f;                                               // скорость поворота башни
 
-    private float _turnSpeed = 3f;                                             // скорость поворота башни
-    private float _range = 15f;
-    private float _damageOverTime = 0.5f;                                      // урон в секунд
-
+    public AI_States _state = AI_States.idle;
 
     private void Start()
     {
@@ -26,42 +20,113 @@ public class EnemyTurretBehavior : EnemyBehavior
         MyTeam = GetComponent<Team>();
 
         MyVitals = GetComponent<Vitals>();
-
-        _lineRenderer = GetComponent<LineRenderer>();
     }
 
 
     private void FixedUpdate()
     {
-        if (IsTargetAlive())
+        if (MyVitals.IsAlive())
         {
-            if (MyVitals.IsAlive())
+            switch (_state)
             {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _range)
-                {
-                    _lineRenderer.enabled = true;
-
-                    LockOnTarget();
-
-                    Laser();
-                }
-                else
-                {
-                    _lineRenderer.enabled = false;
-                }
-            }
-            else
-            {
-                Destroy(gameObject, 1f);
+                case AI_States.idle:
+                    StateIdle();
+                    break;
+                case AI_States.rangeCombat:
+                    StateRangeCombat();
+                    break;
+                case AI_States.death:
+                    StateDeath();
+                    break;
             }
         }
         else
         {
-            _currentTarget = GetNewTarget();
+            _state = AI_States.death;
         }
-
     }
 
+
+    private void StateIdle()
+    {
+        if (IsTargetAlive()) // если цель есть и она жива
+        {
+            if (IsDistanceCorrect())
+            {
+                _state = AI_States.rangeCombat;
+            }
+            else
+            {
+                _state = AI_States.idle;
+            }
+        }
+        else // если цели нет или она мертва
+        {
+            Team _bestTarget = GetNewTarget();
+
+            if (_bestTarget != null)
+            {
+                _currentTarget = _bestTarget;
+            }
+            else
+            {
+                _state = AI_States.idle;
+            }
+        }
+    }
+
+    private void StateRangeCombat()
+    {
+        if (IsTargetAlive())
+        {
+            if (IsDistanceCorrect())
+            {
+                // Атака
+                {
+                    LockOnTarget();
+
+                    _currentGun.Shoot(_currentTarget.Eyes.position);
+                }
+            }
+            else
+            {
+                _state = AI_States.idle;
+            }
+        }
+        else
+        {
+            _state = AI_States.idle;
+        }
+    }
+
+    private void StateDeath()
+    {
+        Destroy(this, 3f); 
+    }
+
+
+    private bool CanSeeTarget(Team _target)
+    {
+        bool _canSeeIt = false;
+
+        Vector3 _enemyPosition = _target.Eyes.position; ;
+
+        Vector3 _directionTowardsEnemy = _enemyPosition - Eyes.position;
+
+        RaycastHit _hit;
+
+        //направить луч на текущего врага
+        if (Physics.Raycast(Eyes.position, _directionTowardsEnemy, out _hit, Mathf.Infinity))
+        {
+            //если рейкаст попал в цель, то мы знаем, что можем его увидеть
+            if (_hit.transform == _target.transform)
+            {
+                _canSeeIt = true;
+            }
+        }
+
+        return _canSeeIt;
+    }
 
     private void LockOnTarget()
     {
@@ -75,29 +140,10 @@ public class EnemyTurretBehavior : EnemyBehavior
     }
 
 
-    private void Laser()
-    {
-        Vector3 _direction = _firePoint.transform.forward;
-
-        _lineRenderer.SetPosition(0, _firePoint.position);
-
-        if (Physics.Raycast(_firePoint.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали во что-то
-        {
-            _lineRenderer.SetPosition(1, _hit.point);
-
-            _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damageOverTime);
-        }
-        else
-        {
-            _lineRenderer.SetPosition(1, _firePoint.position + _direction * (_range - 1f));
-        }
-    }
-
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _range);
+        Gizmos.DrawWireSphere(transform.position, _maxAttackDistance);
     }
 
     private Team GetNewTarget()

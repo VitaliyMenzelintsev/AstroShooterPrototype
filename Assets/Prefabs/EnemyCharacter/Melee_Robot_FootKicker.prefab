@@ -1,5 +1,57 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1981158557807509817
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3695533936208278362}
+  - component: {fileID: 5771935605720387096}
+  m_Layer: 0
+  m_Name: MeleeGun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3695533936208278362
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981158557807509817}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4412976726030788606}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5771935605720387096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1981158557807509817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2208bb2bb4feba442b421ab4519c7789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _barrelPoint: {fileID: 9067486875859619031}
+  _magazineCapacity: 100
+  _reloadTime: 0.1
+  _msBetweenShots: 1700
+  _damage: 25
+  _shootDelay: 0
+  _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
+  _isRangeGun: 0
 --- !u!1 &4412976725811624342
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,6 +277,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4412976726228186769}
+  - {fileID: 3695533936208278362}
   m_Father: {fileID: 4412976726901929884}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -832,16 +885,17 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4412976726901929874}
-  m_LocalRotation: {x: 0, y: 0.0031572874, z: -0, w: -0.999995}
+  m_LocalRotation: {x: 0, y: -0.0031589614, z: 0, w: 0.99999505}
   m_LocalPosition: {x: 21.242563, y: -0.05622917, z: 7.2786865}
   m_LocalScale: {x: 0.85, y: 0.85, z: 0.85}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4412976727329919717}
   - {fileID: 4412976726030788606}
+  - {fileID: 9067486875859619031}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -91.774, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -0.362, z: 0}
 --- !u!95 &4412976726901929875
 Animator:
   serializedVersion: 4
@@ -876,11 +930,11 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0.1
+  m_StoppingDistance: 0.9
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 1.8
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -941,11 +995,10 @@ MonoBehaviour:
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 4412976726536666238}
+  _currentGun: {fileID: 5771935605720387096}
   _currentTarget: {fileID: 0}
   _minAttackDistance: 0.2
   _maxAttackDistance: 1.5
-  _damageDealt: 30
-  _fireCooldown: 0.8
   _state: 0
 --- !u!1 &4412976726920975752
 GameObject:
@@ -1844,4 +1897,35 @@ Transform:
   - {fileID: 4412976726297978067}
   m_Father: {fileID: 4412976726109291820}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7205176650929980054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9067486875859619031}
+  m_Layer: 0
+  m_Name: meleeGunPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9067486875859619031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7205176650929980054}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.001, y: 1.268, z: -0.015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4412976726901929884}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

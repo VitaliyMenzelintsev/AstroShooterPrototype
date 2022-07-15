@@ -17,6 +17,8 @@ public abstract class BaseGun : MonoBehaviour
     protected float _shootDelay = 0.05f;
     [SerializeField]
     protected ParticleSystem _shootingParticle;
+    [SerializeField]
+    protected bool _isRangeGun = false;
 
 
     protected float _lastShootTime = 0;
@@ -29,11 +31,13 @@ public abstract class BaseGun : MonoBehaviour
         _bulletsInMagazine = _magazineCapacity;
     }
 
+
     public virtual void LateUpdate()
     {
         if (!_isReloading && _bulletsInMagazine == 0)
             Reload();
     }
+
 
     public void Reload()
     {
@@ -47,11 +51,15 @@ public abstract class BaseGun : MonoBehaviour
         transform.LookAt(_aimPoint);
     }
 
+
     public abstract Vector3 GetDirection();
+
 
     public abstract void ShootRender(Vector3 _aimPoint);
 
+
     public abstract void Punch();
+
 
     public virtual void Shoot(Vector3 _aimPoint)
     {
@@ -73,19 +81,22 @@ public abstract class BaseGun : MonoBehaviour
             {
                 _lastShootTime = Time.time;
 
-                ShootRender(_hit.point);
+                if(_isRangeGun)
+                    ShootRender(_hit.point);
 
                 if (_hit.collider.gameObject.GetComponent<Vitals>())
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
             }
             else
             {
-                ShootRender(_aimPoint);
+                if (_isRangeGun)
+                    ShootRender(_aimPoint);
 
                 _lastShootTime = Time.time;
             }
         }
     }
+
 
     public bool IsGunReady()
     {

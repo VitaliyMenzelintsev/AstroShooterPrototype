@@ -1659,11 +1659,11 @@ GameObject:
   - component: {fileID: 4715794430430443157}
   m_Layer: 0
   m_Name: Range_Robot_LaserRifle
-  m_TagString: BadEntity
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &590611565721503919
 Transform:
   m_ObjectHideFlags: 0
@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
+  _health: 10000
   _currentHealth: 100
 --- !u!114 &590611565721503954
 MonoBehaviour:
@@ -1782,13 +1782,12 @@ MonoBehaviour:
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 590698901145720839}
-  _currentTarget: {fileID: 0}
   _currentGun: {fileID: 1199917959549628126}
+  _currentTarget: {fileID: 0}
   _minAttackDistance: 0
   _maxAttackDistance: 16
   _punchDistance: 1
   _currentCover: {fileID: 0}
-  _allCharacters: []
   _state: 0
 --- !u!114 &4715794430430443157
 MonoBehaviour:
@@ -2094,7 +2093,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4141869770323897267}
   m_LocalRotation: {x: -0.39896932, y: 0.31703123, z: 0.5706001, w: 0.6439955}
-  m_LocalPosition: {x: -0.302, y: 0.409, z: 0.043}
+  m_LocalPosition: {x: -0.212, y: 0.395, z: 0.043}
   m_LocalScale: {x: 0.8235293, y: 0.82352924, z: 0.8235293}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2187,9 +2186,10 @@ MonoBehaviour:
   _damage: 0.5
   _shootDelay: 0
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
+  _isRangeGun: 1
   _addBulletSpread: 0
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
-  _lineRenderer: {fileID: 0}
+  _lineRenderer: {fileID: 7526491722398991572, guid: 095300b792ab2bc4fbb86c3da3ec0e94, type: 3}
 --- !u!1 &4143201039509477913
 GameObject:
   m_ObjectHideFlags: 0

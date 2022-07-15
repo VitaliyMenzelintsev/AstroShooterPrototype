@@ -30,12 +30,15 @@ public class CompanionMeleeBehavior : MonoBehaviour
     private float _minAttackDistance = 0.5f;
     [SerializeField]
     private float _maxAttackDistance = 1.5f;
+    private Team[] _allCharacters;
 
 
     public AI_States _state = AI_States.idle;
 
     private void Start()
     {
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
+
         _myTransform = transform;
 
         MyTeam = GetComponent<Team>();
@@ -101,13 +104,16 @@ public class CompanionMeleeBehavior : MonoBehaviour
         if (_currentTarget != null
             && _currentTarget.GetComponent<Vitals>().IsAlive())
         {
-                if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                    && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
+                _characterAnimator.SetBool("HasEnemy", true);
                 _state = AI_States.meleeCombat;
             }
             else
             {
+                _characterAnimator.SetBool("HasEnemy", true);
+                _characterAnimator.SetBool("Move", true);
                 _state = AI_States.investigate;
             }
 
@@ -122,8 +128,8 @@ public class CompanionMeleeBehavior : MonoBehaviour
             }
             else
             {
-                _characterAnimator.SetBool("Move", true); 
-                _characterAnimator.SetBool("HasEnemy", false); 
+                _characterAnimator.SetBool("Move", true);
+                _characterAnimator.SetBool("HasEnemy", false);
                 _state = AI_States.followThePlayer;
             }
         }
@@ -170,6 +176,8 @@ public class CompanionMeleeBehavior : MonoBehaviour
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
             {
+                _characterAnimator.SetBool("Move", false);
+
                 _characterAnimator.SetTrigger("Fire");
 
                 _myTransform.LookAt(_currentTarget.transform);
@@ -179,11 +187,15 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
             {
+                _characterAnimator.SetBool("Move", true);
+
                 _state = AI_States.investigate;
             }
         }
         else
         {
+            _characterAnimator.SetBool("HasEnemy", false);
+
             _characterAnimator.SetBool("Move", false);
 
             _state = AI_States.idle;
@@ -225,8 +237,6 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private Team GetNewTarget()
     {
-        Team[] _allCharacters = GameObject.FindObjectsOfType<Team>();
-
         Team _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Length; i++)
