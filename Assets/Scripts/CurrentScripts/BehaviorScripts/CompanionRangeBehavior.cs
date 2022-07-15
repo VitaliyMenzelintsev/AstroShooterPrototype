@@ -123,7 +123,84 @@ public class CompanionRangeBehavior : MonoBehaviour
     {
         if (IsTargetAlive())
         {
-            if (_currentCover == null)
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
+
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
+                {
+                    _navMeshAgent.SetDestination(_currentCover.transform.position);            // действие move to cover
+                }
+                else
+                {
+                    if (IsRangeDistance())
+                    {
+                        _myTransform.LookAt(_currentTarget.transform);
+
+                        _characterAnimator.SetTrigger("Fire");
+
+                        _currentGun.Aim(_currentTarget.Eyes.position);
+
+                        _currentGun.Shoot(_currentTarget.Eyes.position); //  действие range combat;
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        ExitCover();
+
+                        _characterAnimator.SetTrigger("Punch");  // действие melee combat
+                    }
+                }
+            }
+            else
+            {
+                if (IsRangeDistance())
+                {
+                    _myTransform.LookAt(_currentTarget.transform);
+
+                    _characterAnimator.SetTrigger("Fire");
+
+                    _currentGun.Aim(_currentTarget.Eyes.position);
+
+                    _currentGun.Shoot(_currentTarget.Eyes.position); //  действие range combat;
+                }
+                else if (IsMeleeDistance())
+                {
+                    ExitCover();
+
+                    _characterAnimator.SetTrigger("Punch");  // действие melee combat
+                }
+            }
+        }
+        else
+        {
+            GetNewTarget();
+
+            if (IsTargetAlive())
+            {
+                return;
+            }
+            else
+            {
+                if (IsPlayerFar())
+                {
+                    ExitCover();
+
+                    _navMeshAgent.SetDestination(_followPoint.position);      // действие follow the player
+                }
+                else
+                {
+                    _state = AI_States.idle;
+                }
+            }
+        }
+    }
+
+    private void StateIdle()
+    {
+        if (IsTargetAlive())
+        {
+            if (!IsCoverExist())
                 _currentCover = _coverManager.GetCover(this, _currentTarget);
 
             if (IsCoverExist())
@@ -160,7 +237,139 @@ public class CompanionRangeBehavior : MonoBehaviour
         {
             GetNewTarget();
 
-            if (_currentTarget != null)
+            if (IsTargetAlive())
+            {
+                return;
+            }
+            else
+            {
+                if (IsPlayerFar())
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _characterAnimator.SetBool("Move", false);
+
+                    _state = AI_States.idle;
+                }
+            }
+        }
+    }
+
+
+    private void StateFollowThePlayer()
+    {
+        if (IsTargetAlive())
+        {
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
+
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
+                {
+                    _state = AI_States.moveToCover;
+                }
+                else
+                {
+                    if (IsRangeDistance())
+                    {
+                        _state = AI_States.rangeCombat;
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        _state = AI_States.meleeCombat;
+                    }
+                }
+            }
+            else
+            {
+                if (IsRangeDistance())
+                {
+                    _state = AI_States.rangeCombat;
+                }
+                else if (IsMeleeDistance())
+                {
+                    _state = AI_States.meleeCombat;
+                }
+            }
+        }
+        else
+        {
+            GetNewTarget();
+
+            if (IsTargetAlive())
+            {
+                return;
+            }
+            else
+            {
+                if (IsPlayerFar())
+                {
+                    ExitCover();
+
+                    _characterAnimator.SetBool("Move", true);
+
+                    _characterAnimator.SetBool("HasEnemy", false);
+
+                    _navMeshAgent.SetDestination(_followPoint.position);      // действие follow the player
+                }
+                else
+                {
+                    _state = AI_States.idle;
+                }
+            }
+        }
+    }
+
+
+    private void StateMoveToCover()
+    {
+        if (IsTargetAlive())
+        {
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
+
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
+                {
+                    _characterAnimator.SetBool("Move", true);
+
+                    _characterAnimator.SetBool("HasEnemy", true);
+
+                    _navMeshAgent.SetDestination(_currentCover.transform.position);            // действие move to cover
+                }
+                else
+                {
+                    if (IsRangeDistance())
+                    {
+                        _state = AI_States.rangeCombat;
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        _state = AI_States.meleeCombat;
+                    }
+                }
+            }
+            else
+            {
+                if (IsRangeDistance())
+                {
+                    _state = AI_States.rangeCombat;
+                }
+                else if (IsMeleeDistance())
+                {
+                    _state = AI_States.meleeCombat;
+                }
+            }
+        }
+        else
+        {
+            GetNewTarget();
+
+            if (IsTargetAlive())
             {
                 return;
             }
@@ -178,203 +387,143 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
     }
 
-    private void StateIdle()
-    {
-        if (IsTargetAlive()) // если есть цель
-        {
-            if (_currentCover == null)                   // запрашиваем укрытие только в случае, если у персонажа нет укрытия
-                _currentCover = _coverManager.GetCover(this, _currentTarget);
-
-            if (_currentCover != null)         // если существует укрытие
-            {
-                if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
-                {
-                    _characterAnimator.SetBool("Move", true);           // двигаемся к нему
-                    _characterAnimator.SetBool("HasEnemy", true);
-                    _state = AI_States.moveToCover;
-                }
-                else // если персонаж уже в укрытии (< 0.2f до укрытия)
-                {
-                    if (IsRangeDistance())
-                    {
-                        _state = AI_States.rangeCombat;
-                    }
-                }
-            }
-            else // если нет укрытия, а цель есть, переходим к бою на данной позиции
-            {
-                _state = AI_States.rangeCombat;
-            }
-        }
-        else // если цели нет
-        {
-            Team _bestTarget = GetNewTarget();
-
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
-            else
-            {
-                _characterAnimator.SetBool("HasEnemy", false);
-
-                if (Vector3.Distance(transform.position, _player.position) > 3f)
-                {
-                    ExitCover();
-
-                    _characterAnimator.SetBool("Move", true);
-
-                    _state = AI_States.followThePlayer;
-                }
-            }
-        }
-    }
-
-
-    private void StateFollowThePlayer()
-    {
-        _currentTarget = GetNewTarget(); // смотрим, есть ли цель
-
-        if (_currentTarget == null
-            && Vector3.Distance(_followPoint.position, _myTransform.position) > 0.4f)    // и дистанция до точки за игроком больше 0.3f
-        {
-            ExitCover();
-
-            _navMeshAgent.SetDestination(_followPoint.position); // идём за игроком
-        }
-        else
-        {
-            _characterAnimator.SetBool("Move", false);  // ПРОСТЕСТИРОВАТЬ ПЕРЕКЛЮЧЕНИЕ НА УКРЫТИЕ ИЛИ БОЙ
-            _state = AI_States.idle;
-        }
-    }
-
-
-    private void StateMoveToCover()
-    {
-        if (IsTargetAlive()) // если есть цель
-        {
-            if (_currentCover != null) // если существует укрытие
-            {
-                _navMeshAgent.SetDestination(_currentCover.transform.position); // идём к укрытию
-
-                if (Vector3.Distance(this.transform.position, _currentCover.transform.position) <= 0.2f) //если дошли до укрытия
-                {
-                    _characterAnimator.SetBool("Move", false); // начинаем бой
-
-                    _state = AI_States.rangeCombat;
-                }
-            }
-            else // если укрытия нет
-            {
-                _characterAnimator.SetBool("Move", false);  // останавливаемся и начинаем бой
-
-                _state = AI_States.rangeCombat;
-            }
-
-        }
-        else // если цели нет, стоим
-        {
-            _characterAnimator.SetBool("Move", false);
-
-            _characterAnimator.SetBool("HasEnemy", false);
-
-            _state = AI_States.idle;
-        }
-    }
-
 
     private void StateRangeCombat()
     {
-        if (IsTargetAlive()) // если цель жива
+        if (IsTargetAlive())
         {
-            if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
-            {
-                Team _alternativeTarget = GetNewTarget(); // ищем альтернативную цель
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
 
-                if (_alternativeTarget == null) // если альтернативной цели нет
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
                 {
-                    _characterAnimator.SetBool("Move", false);  // переходим в ожидание
-
-                    _state = AI_States.idle;
-
+                    _state = AI_States.moveToCover;
                 }
-                else // если альтернативная цель есть - она становится основной
+                else
                 {
-                    _currentTarget = _alternativeTarget;
+                    if (IsRangeDistance())
+                    {
+                        _myTransform.LookAt(_currentTarget.transform);
+
+                        _characterAnimator.SetTrigger("Fire");
+
+                        _currentGun.Aim(_currentTarget.Eyes.position);
+
+                        _currentGun.Shoot(_currentTarget.Eyes.position); //  действие range combat
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        _state = AI_States.meleeCombat;
+                    }
                 }
-                return;
             }
-
-            _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
-
-            // если дистанция для атаки подходящая
-            if (IsRangeDistance())
+            else
             {
-                // атакуем
+                if (IsRangeDistance())
+                {
+                    _myTransform.LookAt(_currentTarget.transform);
 
-                _characterAnimator.SetTrigger("Fire");
+                    _characterAnimator.SetTrigger("Fire");
 
-                _currentGun.Aim(_currentTarget.Eyes.position);
+                    _currentGun.Aim(_currentTarget.Eyes.position);
 
-                _currentGun.Shoot(_currentTarget.Eyes.position);
-
-
-            }
-            else if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) < _minAttackDistance)
-            {
-                _characterAnimator.SetTrigger("Punch");
-
-                _state = AI_States.meleeCombat;
-            }
-            else // если дистанция не подходящая, начинаем стоять 
-            {
-                _characterAnimator.SetBool("Move", false);
-
-                _state = AI_States.idle;
+                    _currentGun.Shoot(_currentTarget.Eyes.position);   // действие range combat
+                }
+                else if (IsMeleeDistance())
+                {
+                    _state = AI_States.meleeCombat;
+                }
             }
         }
-        else // если цели нет, начианем стоять
+        else
         {
-            _characterAnimator.SetBool("Move", false);
+            GetNewTarget();
 
-
-            ExitCover();
-
-
-            _state = AI_States.idle;
+            if (IsTargetAlive())
+            {
+                return;
+            }
+            else
+            {
+                if (IsPlayerFar())
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _state = AI_States.idle;
+                }
+            }
         }
     }
 
 
     private void StateMeleeCombat()
     {
-        if (IsTargetAlive()) // если есть
+        if (IsTargetAlive())
         {
-            _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
 
-            // если дистанция для атаки подходящая
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _punchDistance)
+            if (IsCoverExist())
             {
-                // атакуем
+                if (IsNotInCover())
+                {
+                    _state = AI_States.moveToCover;
+                }
+                else
+                {
+                    if (IsRangeDistance())
+                    {
+                        _state = AI_States.rangeCombat;
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        ExitCover();
 
-                _characterAnimator.SetTrigger("Punch");
+                        _characterAnimator.SetTrigger("Punch");  // действие melee combat
 
-                _currentGun.Punch();
-
+                        _currentGun.Punch();
+                    }
+                }
             }
-            else // если дистанция не подходящая, возвращаемся в состояние атаки
+            else
             {
-                _characterAnimator.SetBool("Move", false);
+                if (IsRangeDistance())
+                {
+                    _state = AI_States.rangeCombat;
+                }
+                else if (IsMeleeDistance())
+                {
+                    ExitCover();
 
-                _state = AI_States.rangeCombat;
+                    _characterAnimator.SetTrigger("Punch");   // действие melee combat
+
+                    _currentGun.Punch();
+                }
             }
         }
-        else // если цели нет
+        else
         {
-            _characterAnimator.SetBool("Move", false);
+            GetNewTarget();
 
-            _state = AI_States.idle;
+            if (IsTargetAlive())
+            {
+                return;
+            }
+            else
+            {
+                if (IsPlayerFar())
+                {
+                    _state = AI_States.followThePlayer;
+                }
+                else
+                {
+                    _state = AI_States.idle;
+                }
+            }
         }
     }
 
@@ -439,6 +588,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         return _canSeeIt;
     }
 
+
     private bool IsTargetAlive()
     {
         if (_currentTarget != null
@@ -465,6 +615,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             return false;
         }
     }
+     
 
     private bool IsMeleeDistance()
     {
@@ -478,6 +629,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
     }
 
+
     private bool IsPlayerFar()
     {
         if (Vector3.Distance(_myTransform.position, _player.transform.position) > 3f)
@@ -490,11 +642,13 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
     }
 
+
     private void ExitCover()
     {
         if (_currentCover != null)
             _coverManager.ExitCover(ref _currentCover);
     }
+
 
     private bool IsNotInCover()
     {
@@ -507,6 +661,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             return false;
         }
     }
+
 
     private bool IsCoverExist()
     {
