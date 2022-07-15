@@ -9,17 +9,13 @@ public class EnemyTurretBehavior : EnemyBehavior
     private Transform _partToRotate;                                             // определили поворачивающуюся деталь
     private float _turnSpeed = 5f;                                               // скорость поворота башни
 
-    public AI_States _state = AI_States.idle;
-
     private void Start()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
-
-        _myTransform = transform;
-
         MyTeam = GetComponent<Team>();
 
         MyVitals = GetComponent<Vitals>();
+
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
     }
 
 
@@ -27,81 +23,47 @@ public class EnemyTurretBehavior : EnemyBehavior
     {
         if (MyVitals.IsAlive())
         {
-            switch (_state)
-            {
-                case AI_States.idle:
-                    StateIdle();
-                    break;
-                case AI_States.rangeCombat:
-                    StateRangeCombat();
-                    break;
-                case AI_States.death:
-                    StateDeath();
-                    break;
-            }
-        }
-        else
-        {
-            _state = AI_States.death;
-        }
-    }
-
-
-    private void StateIdle()
-    {
-        if (IsTargetAlive()) // если цель есть и она жива
-        {
-            if (IsDistanceCorrect())
-            {
-                _state = AI_States.rangeCombat;
-            }
-            else
-            {
-                _state = AI_States.idle;
-            }
-        }
-        else // если цели нет или она мертва
-        {
-            Team _bestTarget = GetNewTarget();
-
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
-            else
-            {
-                _state = AI_States.idle;
-            }
-        }
-    }
-
-    private void StateRangeCombat()
-    {
-        if (IsTargetAlive())
-        {
-            if (IsDistanceCorrect())
-            {
-                // Атака
+            if (IsTargetAlive())
                 {
-                    LockOnTarget();
-
-                    _currentGun.Shoot(_currentTarget.Eyes.position);
+                if (IsDistanceCorrect())
+                {
+                    StateRangeCombat();
+                }
+                else
+                {
+                    StateIdle();
                 }
             }
             else
             {
-                _state = AI_States.idle;
+                _currentTarget = GetNewTarget();
+
+                StateIdle();
             }
         }
         else
         {
-            _state = AI_States.idle;
+            StateDeath();
         }
     }
 
     private void StateDeath()
     {
-        Destroy(this, 3f); 
+        Destroy(this, 3f);
+    }
+
+    private void StateIdle()
+    {
+       
+    }
+
+    private void StateRangeCombat()
+    {
+
+        LockOnTarget();
+
+        _currentGun.Shoot(_currentTarget.Eyes.position);
+
     }
 
 
@@ -127,6 +89,7 @@ public class EnemyTurretBehavior : EnemyBehavior
 
         return _canSeeIt;
     }
+
 
     private void LockOnTarget()
     {
@@ -154,25 +117,28 @@ public class EnemyTurretBehavior : EnemyBehavior
         {
             Team _currentCharacter = _allCharacters[i];
 
+            //выбирать текущего солдата в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
                 && _currentCharacter.GetComponent<Vitals>().IsAlive())
             {
-                if (_bestTarget == null)
+                //если рейкаст попал в цель, то мы знаем, что можем его увидеть
+                if (CanSeeTarget(_currentCharacter))
                 {
-                    _bestTarget = _currentCharacter;
-                }
-                else
-                {
-                    //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
-                    if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
+                    if (_bestTarget == null)
                     {
                         _bestTarget = _currentCharacter;
                     }
+                    else
+                    {
+                        //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
+                        if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
+                        {
+                            _bestTarget = _currentCharacter;
+                        }
+                    }
                 }
-
             }
         }
-
         return _bestTarget;
     }
 }

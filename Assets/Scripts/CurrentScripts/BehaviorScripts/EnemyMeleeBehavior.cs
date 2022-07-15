@@ -9,22 +9,15 @@ public class EnemyMeleeBehavior : EnemyBehavior
 {
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
- 
-    //[SerializeField]
-    //private float _fireCooldown = 2.667f;
 
-
-    public AI_States _state = AI_States.idle;
 
     private void Start()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
-
-        _myTransform = transform;
-
         MyTeam = GetComponent<Team>();
 
         MyVitals = GetComponent<Vitals>();
+
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -35,117 +28,73 @@ public class EnemyMeleeBehavior : EnemyBehavior
     {
         if (MyVitals.IsAlive())
         {
-            switch (_state)
+            if (IsTargetAlive())
             {
-                case AI_States.idle:
-                    StateIdle();
-                    break;
-                case AI_States.meleeCombat:
+                if (IsDistanceCorrect())
+                {
                     StateCombat();
-                    break;
-                case AI_States.investigate:
+                }
+                else
+                {
                     StateInvestigate();
-                    break;
-                case AI_States.death:
-                    break;
-                default:
-                    StateIdle();
-                    break;
+                }
+
+            }
+            else
+            {
+                _currentTarget = GetNewTarget();
+
+                StateIdle();
             }
         }
         else
         {
-            _characterAnimator.SetBool("Move", false);
-
-            _characterAnimator.SetBool("Dead", true);
-
-            Destroy(GetComponent<CapsuleCollider>());
-
-            Destroy(GetComponent<NavMeshAgent>());
-
-            _state = AI_States.death;
-
-            Destroy(gameObject, 7f);
+            StateDeath();
         }
+    }
+
+
+    private void StateDeath()
+    {
+        _characterAnimator.SetBool("Move", false);
+
+        _characterAnimator.SetBool("Dead", true);
+
+        Destroy(GetComponent<CapsuleCollider>());
+
+        Destroy(GetComponent<NavMeshAgent>());
+
+        Destroy(gameObject, 10f);
     }
 
 
     private void StateIdle()
     {
-        if (IsTargetAlive())
-        {
-            if (IsDistanceCorrect())
-            {
-                _state = AI_States.meleeCombat;
-            }
-            else
-            {
-                _state = AI_States.investigate;
-            }
-        }
-        else
-        {
-            //ищем новую цель
-            Team _bestTarget = GetNewTarget();
+        _characterAnimator.SetBool("Move", false);
 
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
-        }
+        _characterAnimator.SetBool("HasEnemy", false);
     }
+
 
     private void StateCombat()
     {
-        if (IsTargetAlive())
-        {
-            if (IsDistanceCorrect())
-            {
-                // Атака
-                {
-                    _myTransform.LookAt(_currentTarget.transform);
+        _characterAnimator.SetBool("Move", false);
 
-                    _characterAnimator.SetTrigger("Fire");
+        _characterAnimator.SetTrigger("Fire");
 
-                    _currentGun.Shoot(_currentTarget.Eyes.position);
-                }
-            }
+        transform.LookAt(_currentTarget.transform);
 
-             if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
-            {
-                _state = AI_States.investigate;
-            }
-        }
-        else
-        {
-            _characterAnimator.SetBool("Move", false);
-
-            _state = AI_States.idle;
-        }
+        _currentGun.Shoot(_currentTarget.Eyes.position);
     }
 
 
     private void StateInvestigate()
     {
-        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance)
-        {
-            _characterAnimator.SetBool("Move", false);
+        _characterAnimator.SetBool("HasEnemy", true);
 
-            _state = AI_States.meleeCombat;
-        }
-        else
-        {
-            _characterAnimator.SetBool("Move", true);
+        _characterAnimator.SetBool("Move", true);
 
-            _navMeshAgent.SetDestination(_currentTarget.transform.position);
-        }
-
-        if (_currentTarget == null)
-        {
-            _characterAnimator.SetBool("Move", false);
-
-            _state = AI_States.idle;
-        }
+        _navMeshAgent.SetDestination(_currentTarget.transform.position); // действие Investigate
     }
 
 

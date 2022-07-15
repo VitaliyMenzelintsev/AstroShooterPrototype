@@ -8,19 +8,15 @@ using UnityEngine;
 public class EnemyDroneBehavior : EnemyBehavior
 {
     private NavMeshAgent _navMeshAgent;
-   
-    public AI_States _state = AI_States.idle;
 
 
     private void Start()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
-
-        _myTransform = transform;
-
         MyTeam = GetComponent<Team>();
 
         MyVitals = GetComponent<Vitals>();
+
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
     }
@@ -30,96 +26,61 @@ public class EnemyDroneBehavior : EnemyBehavior
     {
         if (MyVitals.IsAlive())
         {
-            switch (_state)
+            if (IsTargetAlive())
             {
-                case AI_States.idle:
-                    StateIdle();
-                    break;
-                case AI_States.rangeCombat:
-                    StateRangeCombat();
-                    break;
-                case AI_States.investigate:
+                if (IsDistanceCorrect())
+                {
+                    StateCombat();
+                }
+                else
+                {
                     StateInvestigate();
-                    break;
+                }
+
+            }
+            else
+            {
+                _currentTarget = GetNewTarget();
+
+                StateIdle();
             }
         }
         else
         {
-            _state = AI_States.death;
-
-            Destroy(GetComponent<CapsuleCollider>());
-
-            Destroy(gameObject, 2f);
+            StateDeath();
         }
+    }
+
+
+    private void StateDeath()
+    {
+        Destroy(GetComponent<CapsuleCollider>());
+
+        Destroy(GetComponent<NavMeshAgent>());
+
+        Destroy(gameObject, 10f);
     }
 
 
     private void StateIdle()
     {
-        if (IsTargetAlive()) // если цель жива
-        {
-            if (IsDistanceCorrect())
-            {
-                _state = AI_States.rangeCombat;
-            }
-            else
-            {
-                _state = AI_States.investigate;
-            }
-        }
-        else // если цели нет или она мертва
-        {
-            Team _bestTarget = GetNewTarget();
 
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
-            else
-            {
-                _state = AI_States.idle;
-            }
-        }
     }
 
 
     private void StateInvestigate()
     {
-        if (IsTargetAlive())
-        {
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) > _maxAttackDistance)
-            {
-                _navMeshAgent.SetDestination(_currentTarget.transform.position);
-            }
-            else
-            {
-                _state = AI_States.rangeCombat;
-            }
-        }
-        else
-        {
-            _state = AI_States.idle;
-        }
+        _navMeshAgent.SetDestination(_currentTarget.transform.position);
     }
 
 
-    private void StateRangeCombat()
+    private void StateCombat()
     {
         _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
 
-        if (IsTargetAlive() // если цель жива
-          && IsDistanceCorrect())
-        {
-            // атакуем
+        //_currentGun.Aim(_currentTarget.Eyes.position);
 
-            _currentGun.Aim(_currentTarget.Eyes.position);
-
-            _currentGun.Shoot(_currentTarget.Eyes.position);
-        }
-        else // если дистанция не подходящая, начинаем стоять 
-        {
-            _state = AI_States.idle;
-        }
+        _currentGun.Shoot(_currentTarget.Eyes.position);
     }
 
 

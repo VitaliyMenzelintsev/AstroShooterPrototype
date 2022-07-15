@@ -11,10 +11,6 @@ public class EnemyRangeBehavior : EnemyBehavior
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
     private EnemyCoverManager _coverManager;
-
-
-    [SerializeField]
-    private float _punchDistance = 1;
     [SerializeField]
     private EnemyCoverSpot _currentCover = null;
 
@@ -24,13 +20,11 @@ public class EnemyRangeBehavior : EnemyBehavior
 
     private void Start()
     {
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
-
-        _myTransform = transform;
-
         MyTeam = GetComponent<Team>();
 
         MyVitals = GetComponent<Vitals>();
+
+        _allCharacters = GameObject.FindObjectsOfType<Team>();
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -44,222 +38,110 @@ public class EnemyRangeBehavior : EnemyBehavior
     {
         if (MyVitals.IsAlive())
         {
-            switch (_state)
+            if (IsTargetAlive())
             {
-                case AI_States.idle:
-                    StateIdle();
-                    break;
-                case AI_States.moveToCover:
-                    StateMoveToCover();
-                    break;
-                case AI_States.rangeCombat:
-                    StateRangeCombat();
-                    break;
-                case AI_States.meleeCombat:
-                    StateMeleeCombat();
-                    break;
-                default:
-                    break;
+                if (!IsCoverExist())
+                    _currentCover = _coverManager.GetCover(this, _currentTarget);
+
+                if (IsCoverExist())
+                {
+                    if (IsNotInCover())
+                    {
+                        StateMoveToCover();
+                    }
+                    else
+                    {
+                        if (IsRangeDistance())
+                        {
+                            StateRangeCombat();
+                        }
+                        else if (IsMeleeDistance())
+                        {
+                            StateMeleeCombat();
+                        }
+                    }
+                }
+                else
+                {
+                    if (IsRangeDistance())
+                    {
+                        StateRangeCombat();
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        StateMeleeCombat();
+                    }
+                }
+            }
+            else
+            {
+                _currentTarget = GetNewTarget();
+
+                StateIdle();
             }
         }
         else
         {
-            _state = AI_States.death;
-
-            _characterAnimator.SetBool("Move", false);
-
-            _characterAnimator.SetBool("Dead", true);
-
-            if (_currentCover != null)
-                _coverManager.ExitCover(ref _currentCover);
-
-            Destroy(GetComponent<CapsuleCollider>());
-
-            Destroy(gameObject, 10f);
+            StateDeath();
         }
+    }
+
+
+    private void StateDeath()
+    {
+        _characterAnimator.SetBool("Move", false);
+
+        _characterAnimator.SetBool("Dead", true);
+
+        ExitCover();
+
+        Destroy(GetComponent<CapsuleCollider>());
+
+        Destroy(gameObject, 10f);
     }
 
 
     private void StateIdle()
     {
-        if (IsTargetAlive()) // если есть цель
-        {
-            if (_currentCover == null) // запрашиваем укрытие только в случае, если у персонажа нет укрытия
-                _currentCover = _coverManager.GetCover(this, _currentTarget);
+        _characterAnimator.SetBool("Move", false);
 
-
-            if (_currentCover != null) // если существует укрытие
-            {
-                if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F) // если расстояние до укрытия больше 20 см.
-                {
-                    _characterAnimator.SetBool("Move", true);    // двигаемся к нему
-                    _characterAnimator.SetBool("HasEnemy", true);
-                    _state = AI_States.moveToCover;
-                }
-                else // если персонаж уже в укрытии (< 0.2f до укрытия)
-                {
-                    if (IsDistanceCorrect())
-                    {
-                        _state = AI_States.rangeCombat;
-                    }
-                }
-            }
-            else // если нет укрытия
-            {
-                _state = AI_States.rangeCombat;
-            }
-        }
-        else // если цели нет
-        {
-            Team _bestTarget = GetNewTarget();
-
-            if (_bestTarget != null)
-            {
-                _currentTarget = _bestTarget;
-            }
-            else
-            {
-                _characterAnimator.SetBool("HasEnemy", false);
-
-                _characterAnimator.SetBool("Move", false);
-
-                _state = AI_States.idle;
-            }
-        }
+        _characterAnimator.SetBool("HasEnemy", false);
     }
 
 
     private void StateMoveToCover()
     {
-        if (IsTargetAlive()) // если есть цель
-        {
-            if (_currentCover != null) // если существует укрытие
-            {
-                _navMeshAgent.SetDestination(_currentCover.transform.position); // идём к укрытию
+        _characterAnimator.SetBool("Move", true);
 
-                if (Vector3.Distance(this.transform.position, _currentCover.transform.position) <= 0.2f) //если дошли до укрытия
-                {
-                    _characterAnimator.SetBool("Move", false); // начинаем бой
+        _characterAnimator.SetBool("HasEnemy", true);
 
-                    _state = AI_States.rangeCombat;
-
-                    return; //??
-                }
-            }
-            else // если укрытия нет
-            {
-                _characterAnimator.SetBool("Move", false);  // останавливаемся и начинаем бой
-
-                _state = AI_States.rangeCombat;
-
-                return;  //??
-            }
-
-        }
-        else // если цели нет, стоим
-        {
-            _characterAnimator.SetBool("Move", false);
-
-            _characterAnimator.SetBool("HasEnemy", false);
-
-            _state = AI_States.idle;
-        }
+        _navMeshAgent.SetDestination(_currentCover.transform.position);
     }
 
 
     private void StateRangeCombat()
     {
-        if (IsTargetAlive()) // если цель жива
-        {
-            if (!CanSeeTarget(_currentTarget)) // если цель пропала из зоны видимости
-            {
-                Team _alternativeTarget = GetNewTarget(); // ищем альтернативную цель
+        transform.LookAt(_currentTarget.transform);
 
-                if (_alternativeTarget == null) // если альтернативной цели нет
-                {
-                    _characterAnimator.SetBool("Move", false);  // переходим в ожидание
+        _characterAnimator.SetBool("Move", false);
 
-                    _state = AI_States.idle;
+        _characterAnimator.SetTrigger("Fire");
 
-                }
-                else // если альтернативная цель есть - она становится основной
-                {
-                    _currentTarget = _alternativeTarget;
-                }
-                return;
-            }
+        _currentGun.Aim(_currentTarget.Eyes.position);
 
-            _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
-
-            // если дистанция для атаки подходящая
-            if (IsDistanceCorrect())
-            {
-                // атакуем
-
-                _characterAnimator.SetTrigger("Fire");
-
-                _currentGun.Aim(_currentTarget.Eyes.position);
-
-                _currentGun.Shoot(_currentTarget.Eyes.position);
-
-
-            }
-            else if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) < _minAttackDistance)
-            {
-                _characterAnimator.SetTrigger("Punch");
-
-                _state = AI_States.meleeCombat;
-            }
-            else // если дистанция не подходящая, начинаем стоять 
-            {
-                _characterAnimator.SetBool("Move", false);
-
-                _state = AI_States.idle;
-            }
-        }
-        else // если цели нет, начианем стоять
-        {
-            _characterAnimator.SetBool("Move", false);
-
-
-            if (_currentCover != null)
-                _coverManager.ExitCover(ref _currentCover);
-
-
-            _state = AI_States.idle;
-        }
+        _currentGun.Shoot(_currentTarget.Eyes.position); //  действие range combat
     }
 
 
     private void StateMeleeCombat()
     {
-        if (IsTargetAlive()) // если есть
-        {
-            _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+        ExitCover();
 
-            // если дистанция для атаки подходящая
-            if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _punchDistance)
-            {
-                // атакуем
+        _characterAnimator.SetBool("Move", false);
 
-                _characterAnimator.SetTrigger("Punch");
+        _characterAnimator.SetTrigger("Punch");  // действие melee combat
 
-                _currentGun.Punch();
-
-            }
-            else // если дистанция не подходящая, возвращаемся в состояние атаки
-            {
-                _characterAnimator.SetBool("Move", false);
-
-                _state = AI_States.rangeCombat;
-            }
-        }
-        else // если цели нет
-        {
-            _characterAnimator.SetBool("Move", false);
-
-            _state = AI_States.idle;
-        }
+        _currentGun.Punch();
     }
 
 
@@ -297,9 +179,24 @@ public class EnemyRangeBehavior : EnemyBehavior
         return _bestTarget;
     }
 
+
     private bool IsMeleeDistance()
     {
         if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) < _minAttackDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    private bool IsRangeDistance()
+    {
+        if (Vector3.Distance(transform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(transform.position, _currentTarget.transform.position) >= _minAttackDistance)
         {
             return true;
         }
@@ -331,5 +228,38 @@ public class EnemyRangeBehavior : EnemyBehavior
         }
 
         return _canSeeIt;
+    }
+
+
+    private void ExitCover()
+    {
+        if (_currentCover != null)
+            _coverManager.ExitCover(ref _currentCover);
+    }
+
+
+    private bool IsNotInCover()
+    {
+        if (Vector3.Distance(transform.position, _currentCover.transform.position) > 0.2F)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    private bool IsCoverExist()
+    {
+        if (_currentCover != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
