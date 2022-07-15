@@ -123,13 +123,48 @@ public class CompanionRangeBehavior : MonoBehaviour
     {
         if (IsTargetAlive())
         {
-            // Combat
+            if (_currentCover == null)
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
+
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
+                {
+                    _state = AI_States.moveToCover;
+                }
+                else
+                {
+                    if (IsRangeDistance())
+                    {
+                        _state = AI_States.rangeCombat;
+                    }
+                    else if (IsMeleeDistance())
+                    {
+                        _state = AI_States.meleeCombat;
+                    }
+                }
+            }
+            else
+            {
+                if (IsRangeDistance())
+                {
+                    _state = AI_States.rangeCombat;
+                }
+                else if (IsMeleeDistance())
+                {
+                    _state = AI_States.meleeCombat;
+                }
+            }
         }
         else
         {
-            if(Vector3.Distance(transform.position, _player.position) > 3f)
+            if (IsPlayerFar())
             {
-
+                _state = AI_States.followThePlayer;
+            }
+            else
+            {
+                _state = AI_States.idle;
             }
         }
     }
@@ -138,8 +173,8 @@ public class CompanionRangeBehavior : MonoBehaviour
     {
         if (IsTargetAlive()) // если есть цель
         {
-            if(_currentCover == null)                   // запрашиваем укрытие только в случае, если у персонажа нет укрытия
-            _currentCover = _coverManager.GetCover(this, _currentTarget);
+            if (_currentCover == null)                   // запрашиваем укрытие только в случае, если у персонажа нет укрытия
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
 
             if (_currentCover != null)         // если существует укрытие
             {
@@ -151,7 +186,7 @@ public class CompanionRangeBehavior : MonoBehaviour
                 }
                 else // если персонаж уже в укрытии (< 0.2f до укрытия)
                 {
-                    if (IsDistanceCorrect())
+                    if (IsRangeDistance())
                     {
                         _state = AI_States.rangeCombat;
                     }
@@ -164,7 +199,7 @@ public class CompanionRangeBehavior : MonoBehaviour
         }
         else // если цели нет
         {
-            Team _bestTarget = GetNewTarget(); 
+            Team _bestTarget = GetNewTarget();
 
             if (_bestTarget != null)
             {
@@ -265,7 +300,7 @@ public class CompanionRangeBehavior : MonoBehaviour
             _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
 
             // если дистанция для атаки подходящая
-            if (IsDistanceCorrect())
+            if (IsRangeDistance())
             {
                 // атакуем
 
@@ -409,10 +444,34 @@ public class CompanionRangeBehavior : MonoBehaviour
     }
 
 
-    private bool IsDistanceCorrect()
+    private bool IsRangeDistance()
     {
         if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
                 && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private bool IsMeleeDistance()
+    {
+        if (Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _minAttackDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private bool IsPlayerFar()
+    {
+        if (Vector3.Distance(_myTransform.position, _player.transform.position) > 3f)
         {
             return true;
         }
@@ -426,5 +485,29 @@ public class CompanionRangeBehavior : MonoBehaviour
     {
         if (_currentCover != null)
             _coverManager.ExitCover(ref _currentCover);
+    }
+
+    private bool IsNotInCover()
+    {
+        if (Vector3.Distance(_myTransform.position, _currentCover.transform.position) > 0.2F)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private bool IsCoverExist()
+    {
+        if (_currentCover != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
