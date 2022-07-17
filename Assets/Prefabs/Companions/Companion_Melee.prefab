@@ -101,7 +101,7 @@ MonoBehaviour:
   _reloadTime: 0.1
   _msBetweenShots: 100
   _damage: 75
-  _shootDelay: 0.05
+  _shootDelay: 2.12
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 0
 --- !u!1 &5384486056493359228
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 1000
+  _health: 250
   _currentHealth: 100
 --- !u!114 &5469794294766487151
 MonoBehaviour:
@@ -282,7 +282,6 @@ MonoBehaviour:
   _currentGun: {fileID: 3239440531487501003}
   _minAttackDistance: 0.5
   _maxAttackDistance: 1.5
-  _state: 0
 --- !u!135 &1503665260722634062
 SphereCollider:
   m_ObjectHideFlags: 0

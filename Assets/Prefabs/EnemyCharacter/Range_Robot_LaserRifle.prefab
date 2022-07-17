@@ -1663,7 +1663,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &590611565721503919
 Transform:
   m_ObjectHideFlags: 0
@@ -1765,7 +1765,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 10000
+  _startHealth: 140
   _currentHealth: 100
 --- !u!114 &590611565721503954
 MonoBehaviour:
@@ -1786,7 +1786,7 @@ MonoBehaviour:
   _currentTarget: {fileID: 0}
   _minAttackDistance: 0
   _maxAttackDistance: 16
-  _punchDistance: 1
+  _allCharacters: []
   _currentCover: {fileID: 0}
   _state: 0
 --- !u!114 &4715794430430443157

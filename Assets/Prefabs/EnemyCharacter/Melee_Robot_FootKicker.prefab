@@ -978,7 +978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
+  _startHealth: 100
   _currentHealth: 100
 --- !u!114 &4412976726901929887
 MonoBehaviour:
@@ -999,7 +999,7 @@ MonoBehaviour:
   _currentTarget: {fileID: 0}
   _minAttackDistance: 0.2
   _maxAttackDistance: 1.5
-  _state: 0
+  _allCharacters: []
 --- !u!1 &4412976726920975752
 GameObject:
   m_ObjectHideFlags: 0

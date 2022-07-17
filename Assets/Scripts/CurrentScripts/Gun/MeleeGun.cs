@@ -18,23 +18,29 @@ public class MeleeGun : BaseGun
         {
             _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
+            Invoke("DamageDeal", _shootDelay); 
+        }
+    }
 
-            Ray _ray = new Ray(_barrelPoint.position, _direction);
 
-            RaycastHit _hit;
+    private void DamageDeal()
+    {
+        Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-            if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
-            {
-                _lastShootTime = Time.time;
+        Ray _ray = new Ray(_barrelPoint.position, _direction);
 
-                if (_hit.collider.gameObject.GetComponent<Vitals>())
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
-            }
-            else
-            {
-                _lastShootTime = Time.time;
-            }
+        RaycastHit _hit;
+
+        if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
+        {
+            _lastShootTime = Time.time;
+
+            if (_hit.collider.gameObject.GetComponent<Vitals>())
+                _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+        }
+        else
+        {
+            _lastShootTime = Time.time;
         }
     }
 

@@ -38,9 +38,7 @@ public class BulletGun : BaseGun
     {
         base.LateUpdate();
 
-        //Debug.DrawRay(_barrelPoint.position, _barrelPoint.forward, Color.red, 200f);
-
-        // Возвращение оружия в нормальное положение после отдачи
+        // Возвращение оружия в начальное положение после отдачи
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, _gunOriginPosition, ref _recoilSmoothDampVelocity, _recoilBackTime);
         _recoilAngle = Mathf.SmoothDamp(_recoilAngle, 0, ref _recoilRotSmoothDampVelocity, _recoilBackTime);
         transform.localEulerAngles = transform.localEulerAngles + Vector3.left * _recoilAngle;

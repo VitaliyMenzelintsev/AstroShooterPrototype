@@ -119,6 +119,8 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private void StateIdle()
     {
+        _characterAnimator.SetBool("HasEnemy", false);
+
         _characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetBool("HasEnemy", false);
@@ -171,11 +173,13 @@ public class CompanionMeleeBehavior : MonoBehaviour
         {
             Team _currentCharacter = _allCharacters[i];
 
-            //выбирать текущего врага в качестве цели, только если мы не в одной команде и если у него осталось здоровье
-            if (_currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
-                && _currentCharacter.GetComponent<Vitals>().IsAlive())
+            //выбирать текущего персонажа в качестве цели, только если мы не в одной команде и если у него осталось здоровье
+            if (_currentCharacter != null
+                && _currentCharacter.GetComponent<Team>().GetTeamNumber() != MyTeam.GetTeamNumber()
+                && _currentCharacter.GetComponent<Vitals>().IsAlive()
+                && Vector3.Distance(transform.position, _currentCharacter.transform.position) <= _maxAttackDistance)
             {
-                //если рейкаст попал в цель, то мы знаем, что можем его увидеть
+                //если цель видно
                 if (CanSeeTarget(_currentCharacter))
                 {
                     if (_bestTarget == null)
@@ -184,7 +188,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
                     }
                     else
                     {
-                        //если текущий враг ближе, чем лучшая цель, то выбрать текущего солдата в качестве лучшей цели
+                        //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
                         if (Vector3.Distance(_currentCharacter.transform.position, transform.position) < Vector3.Distance(_bestTarget.transform.position, transform.position))
                         {
                             _bestTarget = _currentCharacter;

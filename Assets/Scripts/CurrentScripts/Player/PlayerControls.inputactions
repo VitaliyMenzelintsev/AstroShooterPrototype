@@ -69,13 +69,13 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Mouse",
-                    "type": "Value",
-                    "id": "496db6ab-2eb6-49dd-b94e-c8c0ebf268a6",
-                    "expectedControlType": "Vector2",
+                    "name": "HealParty",
+                    "type": "Button",
+                    "id": "50e8278a-81fc-4156-a132-adf184eaa697",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -202,12 +202,12 @@
                 },
                 {
                     "name": "",
-                    "id": "46c6c677-2552-407c-97bb-74f3744e2d65",
-                    "path": "<Mouse>/position",
+                    "id": "fa11ba7e-4c95-453d-8f6c-f27b0fd12c40",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Mouse",
+                    "action": "HealParty",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

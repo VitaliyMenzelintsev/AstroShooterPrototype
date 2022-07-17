@@ -1,20 +1,22 @@
 using UnityEngine;
 
 public class Vitals : MonoBehaviour
-{
+{ 
     [SerializeField]
-    private float _health = 100;
+    private float _startHealth = 100;
     [SerializeField]
     private float _currentHealth = 100;
     [SerializeField]
-    private readonly float _ressurectHealth = 60;
+    private readonly float _ressurectHealth = 80;
 
     private void Start()
     {
-        _currentHealth = _health;
+        _currentHealth = _startHealth;
     }
 
+
     public bool IsAlive() => _currentHealth > 0;
+
 
     public void GetHit(float _damage)
     {
@@ -23,7 +25,7 @@ public class Vitals : MonoBehaviour
 
     public float GetMaxHealth()
     {
-        return _health;
+        return _startHealth;
     }
 
     public float GetCurrentHealth()

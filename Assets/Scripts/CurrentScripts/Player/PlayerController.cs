@@ -6,20 +6,21 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [HideInInspector]
+    public Team MyTeam;
+    [HideInInspector]
+    public Vitals MyVitals;
     [SerializeField]
     private float _walkSpeed = 3.4f;
     [SerializeField]
     private float _crouchSpeed = 2.6f;
     [SerializeField]
     private float _sprintSpeed = 4.0f;
-    [SerializeField]
     private float _currentSpeed;
-    [SerializeField]
     private float _rotationSpeed = 5f;
     private Transform _cameraTransform;
     [SerializeField]
     private BaseGun _currentGun;
-    [SerializeField]
     private float _animationSmoothTime = 0.2f;  // смягчение скорости для анимации
 
     private float _gravityValue = -9.81f;
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private InputAction _sprintAction; // ?
     private InputAction _shootAction;
     private InputAction _reloadAction;
+    private InputAction _healPartyAction;
 
     private Vector3 _viewPoint;
 
@@ -45,10 +47,14 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 _blendVector;
     private Vector2 _animationVelocity;
+    [SerializeField]
+    private Vitals[] _companions;
 
 
     private void Awake()
     {
+        MyVitals = GetComponent<Vitals>();
+
         _controller = GetComponent<CharacterController>();
         _playerInput = GetComponent<PlayerInput>();
         _cameraTransform = Camera.main.transform;
@@ -58,12 +64,12 @@ public class PlayerController : MonoBehaviour
         _sprintAction = _playerInput.actions["Sprint"];
         _shootAction = _playerInput.actions["Shoot"];
         _reloadAction = _playerInput.actions["Reload"];
+        _healPartyAction = _playerInput.actions["HealParty"];
 
         _animator = GetComponent<Animator>();
         _shootAnimation = Animator.StringToHash("Rifle_Shooting");
         _moveX = Animator.StringToHash("MoveX");
         _moveZ = Animator.StringToHash("MoveZ");
-
     }
 
     private void Update()
@@ -164,6 +170,7 @@ public class PlayerController : MonoBehaviour
     {
         _shootAction.performed += _ => ShootGun();
         _reloadAction.performed += _ => Reload();
+        _healPartyAction.performed += _ => HealParty();
     }
 
 
@@ -171,6 +178,7 @@ public class PlayerController : MonoBehaviour
     {
         _shootAction.performed -= _ => ShootGun();
         _reloadAction.performed -= _ => Reload();
+        _healPartyAction.performed -= _ => HealParty();
     }
 
 
@@ -180,6 +188,23 @@ public class PlayerController : MonoBehaviour
         _currentGun.Shoot(_viewPoint);
     }
 
+
+    private void HealParty()
+    {
+        for(int i = 0; i < _companions.Length; i++)
+        {
+            if (_companions[i].IsAlive())
+            {
+                _companions[i].GetHeal(100f);
+            }
+            else
+            {
+                _companions[i].GetRessurect();
+            }
+        }
+
+        MyVitals.GetHeal(100f);
+    }
 
     private void Aim(Vector3 _aimPoint)
     {

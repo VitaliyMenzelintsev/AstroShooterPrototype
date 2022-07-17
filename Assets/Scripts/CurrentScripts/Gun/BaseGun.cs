@@ -102,7 +102,8 @@ public abstract class BaseGun : MonoBehaviour
 
     public bool IsGunReady()
     {
-        if (!_isReloading && Time.time > _nextShotTime
+        if (!_isReloading 
+            && Time.time > _nextShotTime
             && _bulletsInMagazine > 0
             && _lastShootTime + _shootDelay < Time.time)
         {
