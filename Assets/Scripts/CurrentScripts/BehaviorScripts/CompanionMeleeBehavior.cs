@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class CompanionMeleeBehavior : MonoBehaviour
+public class CompanionMeleeBehavior : CompanionBaseBehavior
 {
     [HideInInspector]
     public Team MyTeam;
@@ -21,8 +21,6 @@ public class CompanionMeleeBehavior : MonoBehaviour
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
 
-    [SerializeField]
-    private Team _currentTarget = null;
     [SerializeField]
     private BaseGun _currentGun;
     [SerializeField]
@@ -63,7 +61,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
             }
             else
             {
-                _currentTarget = GetNewTarget();
+                CurrentTarget = GetNewTarget();
 
                 if (IsTargetAlive())
                 {
@@ -94,7 +92,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
     {
         GetNewTarget();
 
-        if (_currentTarget == null)
+        if (CurrentTarget == null)
         {
             MyVitals.GetRessurect();
 
@@ -147,7 +145,7 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
         _characterAnimator.SetBool("Move", true);
 
-        _navMeshAgent.SetDestination(_currentTarget.transform.position); // действие Investigate
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
     }
 
 
@@ -158,9 +156,9 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
         _characterAnimator.SetTrigger("Fire");
 
-        transform.LookAt(_currentTarget.transform);
+        transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Shoot(_currentTarget.Eyes.position);
+        _currentGun.Shoot(CurrentTarget.Eyes.position);
     }
 
 
@@ -230,8 +228,8 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private bool IsTargetAlive()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (CurrentTarget != null
+            && CurrentTarget.GetComponent<Vitals>().IsAlive())
         {
             return true;
         }
@@ -245,8 +243,8 @@ public class CompanionMeleeBehavior : MonoBehaviour
 
     private bool IsDistanceCorrect()
     {
-        if (Vector3.Distance(transform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(transform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        if (Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(transform.position, CurrentTarget.transform.position) >= _minAttackDistance)
         {
             return true;
         }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.AI;
 
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
@@ -32,8 +33,8 @@ public class PlayerController : MonoBehaviour
     private bool _groundedPlayer;
 
     private InputAction _moveAction;
-    private InputAction _crouchAction; // ?
-    private InputAction _sprintAction; // ?
+    private InputAction _crouchAction; 
+    private InputAction _sprintAction; 
     private InputAction _shootAction;
     private InputAction _reloadAction;
     private InputAction _healPartyAction;
@@ -48,7 +49,10 @@ public class PlayerController : MonoBehaviour
     private Vector2 _blendVector;
     private Vector2 _animationVelocity;
     [SerializeField]
-    private Vitals[] _companions;
+    private GameObject[] _companions;
+
+    [SerializeField]
+    public Team _currentTarget = null;
 
 
     private void Awake()
@@ -72,31 +76,17 @@ public class PlayerController : MonoBehaviour
         _moveZ = Animator.StringToHash("MoveZ");
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (_crouchAction.inProgress)
-        {
-            _animator.SetInteger("MoveState", 1);
-            _currentSpeed = _crouchSpeed;
-        }
-        else if (_sprintAction.inProgress)
-        {
-            _animator.SetInteger("MoveState", 2);
-            _currentSpeed = _sprintSpeed;
-        }
-        else
-        {
-            _animator.SetInteger("MoveState", 0);
-            _currentSpeed = _walkSpeed;
-        }
+        SetSpeed();
 
 
         Move();
 
 
-        VectorSending();
+        SetAnimation();
 
-        
+
         CursorDetermination();
 
 
@@ -136,7 +126,27 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    private void VectorSending()
+    private void SetSpeed()
+    {
+        if (_crouchAction.inProgress)
+        {
+            _animator.SetInteger("MoveState", 1);
+            _currentSpeed = _crouchSpeed;
+        }
+        else if (_sprintAction.inProgress)
+        {
+            _animator.SetInteger("MoveState", 2);
+            _currentSpeed = _sprintSpeed;
+        }
+        else
+        {
+            _animator.SetInteger("MoveState", 0);
+            _currentSpeed = _walkSpeed;
+        }
+    }
+
+
+    private void SetAnimation()
     {
         // передача в аниматор данных инпута
         _animator.SetFloat(_moveX, _blendVector.x);
@@ -166,12 +176,14 @@ public class PlayerController : MonoBehaviour
     }
 
 
+
     private void OnEnable()
     {
         _shootAction.performed += _ => ShootGun();
         _reloadAction.performed += _ => Reload();
         _healPartyAction.performed += _ => HealParty();
     }
+
 
 
     private void OnDisable()
@@ -191,20 +203,42 @@ public class PlayerController : MonoBehaviour
 
     private void HealParty()
     {
-        for(int i = 0; i < _companions.Length; i++)
+        for (int i = 0; i < _companions.Length; i++)
         {
-            if (_companions[i].IsAlive())
+            if (_companions[i].gameObject.GetComponent<Vitals>().IsAlive())
             {
-                _companions[i].GetHeal(100f);
+                _companions[i].gameObject.GetComponent<Vitals>().GetHeal(100f);
             }
             else
             {
-                _companions[i].GetRessurect();
+                _companions[i].gameObject.GetComponent<Vitals>().GetRessurect();
             }
         }
 
         MyVitals.GetHeal(100f);
     }
+
+
+
+    private void SpeedUpParty() //если нажата кнопка увеличивается скорость напарников
+    {
+        for (int i = 0; i < _companions.Length; i++)
+        {
+            _companions[i].gameObject.GetComponent<NavMeshAgent>().speed += 1.5f;
+        }
+    }
+
+
+
+    private void SetPriorityTarget() // по нажатию Space заставляем компаньонов атаковать цель игрока 
+    {
+        for (int i = 0; i < _companions.Length; i++)
+        {
+            _companions[i].gameObject.GetComponent<CompanionBaseBehavior>().CurrentTarget = _currentGun.CurrentTarget;
+        }
+    }
+
+
 
     private void Aim(Vector3 _aimPoint)
     {

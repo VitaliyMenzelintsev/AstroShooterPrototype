@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
 
-public class EnemyTurretBehavior : EnemyBehavior
+public class EnemyTurretBehavior : EnemyBaseBehavior
 {
     [SerializeField]
     private Transform _partToRotate;                                             // определили поворачивающуюся деталь

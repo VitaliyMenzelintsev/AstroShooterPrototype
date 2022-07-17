@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RoomActivator : MonoBehaviour
 {
-    public EnemyBehavior[] Enemies;
+    public EnemyBaseBehavior[] Enemies;
 
     private void Start()
     {

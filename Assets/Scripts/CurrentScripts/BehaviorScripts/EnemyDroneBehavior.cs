@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
 
-public class EnemyDroneBehavior : EnemyBehavior
+public class EnemyDroneBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
 

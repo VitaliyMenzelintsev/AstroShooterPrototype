@@ -5,7 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class EnemyMeleeBehavior : EnemyBehavior
+public class EnemyMeleeBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;

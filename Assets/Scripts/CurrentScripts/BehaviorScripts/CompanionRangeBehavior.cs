@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class CompanionRangeBehavior : MonoBehaviour
+public class CompanionRangeBehavior : CompanionBaseBehavior
 {
     [HideInInspector]
     public Team MyTeam;
@@ -22,8 +22,6 @@ public class CompanionRangeBehavior : MonoBehaviour
     private Animator _characterAnimator;
     private CompanionCoverManager _coverManager;
 
-    [SerializeField]
-    private Team _currentTarget;
     [SerializeField]
     private BaseGun _currentGun;
     [SerializeField]
@@ -53,76 +51,65 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (MyVitals.IsAlive())
+        if (!MyVitals.IsAlive())
         {
-            if (IsTargetAlive())
-            {
-                if (!IsCoverExist())
-                    _currentCover = _coverManager.GetCover(this, _currentTarget);
+            StateDeath();
+            return;
+        }
 
-                if (IsCoverExist())
+        if (IsTargetAlive())
+        {
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, CurrentTarget);
+
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
                 {
-                    if (IsNotInCover())
-                    {
-                        StateMoveToCover();
-                    }
-                    else
-                    {
-                        if (IsRangeDistance())
-                        {
-                            StateRangeCombat();
-                        }
-                        else if (IsMeleeDistance())
-                        {
-                            StateMeleeCombat();
-                        }
-                    }
+                    StateMoveToCover();
                 }
                 else
                 {
-                    if (IsRangeDistance())
-                    {
-                        StateRangeCombat();
-                    }
-                    else if (IsMeleeDistance())
-                    {
-                        StateMeleeCombat();
-                    }
+                    StateCombat();
                 }
             }
             else
             {
-                _currentTarget = GetNewTarget();
-
-                if (IsTargetAlive())
-                {
-                    StateIdle();
-                }
-                else
-                {
-                    if (IsPlayerFar())
-                    {
-                        StateFollowThePlayer();
-                    }
-                    else
-                    {
-                        StateIdle();
-                    }
-                }
+                StateCombat();
             }
         }
         else
         {
-            StateDeath();
+            CurrentTarget = GetNewTarget();
+
+            if (IsPlayerFar())
+            {
+                StateFollowThePlayer();
+            }
+            else
+            {
+                StateIdle();
+            }
         }
     }
 
+    private void StateCombat()
+    {
+        if (IsRangeDistance())
+        {
+            StateRangeCombat();
+        }
+        else if (IsMeleeDistance())
+        {
+            StateMeleeCombat();
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        _currentTarget = GetNewTarget();
+        CurrentTarget = GetNewTarget();
 
-        if (_currentTarget == null)
+        if (CurrentTarget == null)
         {
             MyVitals.GetRessurect();
 
@@ -177,15 +164,15 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private void StateRangeCombat()
     {
-        transform.LookAt(_currentTarget.transform);
+        transform.LookAt(CurrentTarget.transform);
 
         _characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetTrigger("Fire");
 
-        _currentGun.Aim(_currentTarget.Eyes.position);
+        _currentGun.Aim(CurrentTarget.Eyes.position);
 
-        _currentGun.Shoot(_currentTarget.Eyes.position); //  действие range combat
+        _currentGun.Shoot(CurrentTarget.Eyes.position); //  действие range combat
     }
 
 
@@ -264,8 +251,8 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private bool IsTargetAlive()
     {
-        if (_currentTarget != null
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (CurrentTarget != null
+            && CurrentTarget.GetComponent<Vitals>().IsAlive())
         {
             return true;
         }
@@ -278,8 +265,8 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private bool IsRangeDistance()
     {
-        if (Vector3.Distance(transform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(transform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        if (Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(transform.position, CurrentTarget.transform.position) >= _minAttackDistance)
         {
             return true;
         }
@@ -292,7 +279,7 @@ public class CompanionRangeBehavior : MonoBehaviour
 
     private bool IsMeleeDistance()
     {
-        if (Vector3.Distance(transform.position, _currentTarget.transform.position) <= _minAttackDistance)
+        if (Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _minAttackDistance)
         {
             return true;
         }

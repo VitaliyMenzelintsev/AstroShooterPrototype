@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
-public class EnemyRangeBehavior : EnemyBehavior
+public class EnemyRangeBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
@@ -36,56 +36,51 @@ public class EnemyRangeBehavior : EnemyBehavior
 
     private void FixedUpdate()
     {
-        if (MyVitals.IsAlive())
+        if (!MyVitals.IsAlive())
         {
-            if (IsTargetAlive())
-            {
-                if (!IsCoverExist())
-                    _currentCover = _coverManager.GetCover(this, _currentTarget);
+            StateDeath();
+            return;
+        }
+        if (IsTargetAlive())
+        {
+            if (!IsCoverExist())
+                _currentCover = _coverManager.GetCover(this, _currentTarget);
 
-                if (IsCoverExist())
+            if (IsCoverExist())
+            {
+                if (IsNotInCover())
                 {
-                    if (IsNotInCover())
-                    {
-                        StateMoveToCover();
-                    }
-                    else
-                    {
-                        if (IsRangeDistance())
-                        {
-                            StateRangeCombat();
-                        }
-                        else if (IsMeleeDistance())
-                        {
-                            StateMeleeCombat();
-                        }
-                    }
+                    StateMoveToCover();
                 }
                 else
                 {
-                    if (IsRangeDistance())
-                    {
-                        StateRangeCombat();
-                    }
-                    else if (IsMeleeDistance())
-                    {
-                        StateMeleeCombat();
-                    }
+                    StateCombat();
                 }
             }
             else
             {
-                _currentTarget = GetNewTarget();
-
-                StateIdle();
+                StateCombat();
             }
         }
         else
         {
-            StateDeath();
+            _currentTarget = GetNewTarget();
+
+            StateIdle();
         }
     }
 
+    private void StateCombat()
+    {
+        if (IsRangeDistance())
+        {
+            StateRangeCombat();
+        }
+        else if (IsMeleeDistance())
+        {
+            StateMeleeCombat();
+        }
+    }
 
     private void StateDeath()
     {
@@ -171,7 +166,7 @@ public class EnemyRangeBehavior : EnemyBehavior
         }
     }
 
-    
+
     private void ExitCover()
     {
         if (_currentCover != null)

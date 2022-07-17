@@ -26,6 +26,9 @@ public abstract class BaseGun : MonoBehaviour
     protected float _nextShotTime;
     protected int _bulletsInMagazine;
 
+    [HideInInspector]
+    public Team CurrentTarget = null;
+
     public virtual void Start()
     {
         _bulletsInMagazine = _magazineCapacity;
@@ -75,8 +78,6 @@ public abstract class BaseGun : MonoBehaviour
 
             Ray _ray = new Ray(_barrelPoint.position, _direction);
 
-            
-
             RaycastHit _hit;
 
             if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
@@ -88,6 +89,9 @@ public abstract class BaseGun : MonoBehaviour
                
                 if (_hit.collider.gameObject.GetComponent<Vitals>())
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+
+                if (_hit.collider.gameObject.GetComponent<Team>())
+                    CurrentTarget = _hit.collider.gameObject.GetComponent<Team>();
             }
             else
             {
