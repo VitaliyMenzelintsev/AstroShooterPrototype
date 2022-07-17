@@ -7,154 +7,156 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float walkSpeed = 3.4f;
+    private float _walkSpeed = 3.4f;
     [SerializeField]
-    private float crouchSpeed = 2.6f;
+    private float _crouchSpeed = 2.6f;
     [SerializeField]
-    private float sprintSpeed = 4.0f;
+    private float _sprintSpeed = 4.0f;
     [SerializeField]
-    private float currentSpeed;
+    private float _currentSpeed;
     [SerializeField]
-    private float rotationSpeed = 5f;
-    private Transform cameraTransform;
+    private float _rotationSpeed = 5f;
+    private Transform _cameraTransform;
     [SerializeField]
     private BaseGun _currentGun;
     [SerializeField]
-    private float animationSmoothTime = 0.2f;  // смягчение скорости для анимации
-    //[SerializeField]
-    //private float animationPlayTransition = 0.2f;
-    //[SerializeField]
-    //private Transform aimTarget;
+    private float _animationSmoothTime = 0.2f;  // смягчение скорости для анимации
 
-    private float gravityValue = -9.81f;
+    private float _gravityValue = -9.81f;
 
-    private CharacterController controller;
-    private PlayerInput playerInput;
+    private CharacterController _controller;
+    private PlayerInput _playerInput;
 
-    private Vector3 playerVelocity;
-    private bool groundedPlayer;
+    private Vector3 _playerVelocity;
+    private bool _groundedPlayer;
 
-    private InputAction moveAction;
-    private InputAction crouchAction; // ?
-    private InputAction sprintAction; // ?
-    private InputAction shootAction;
-    private InputAction reloadAction;
+    private InputAction _moveAction;
+    private InputAction _crouchAction; // ?
+    private InputAction _sprintAction; // ?
+    private InputAction _shootAction;
+    private InputAction _reloadAction;
+
+    //private InputAction _mouseAction;
 
 
     private Vector3 _aimPoint;
+    private Vector3 _lookPoint;
 
-    private Animator animator;
-    private int moveXAnimationParameterID;
-    private int moveZAnimationParameterID;
-    private int shootAnimation;
-    private int crouchAnimation;
+    private Animator _animator;
+    private int _moveX;
+    private int _moveZ;
+    private int _shootAnimation;
+    //private int _crouchAnimation;
 
-    private Vector2 currentAnimationBlendVector;
-    private Vector2 animationVelocity;
+    private Vector2 _currentAnimationBlendVector;
+    private Vector2 _animationVelocity;
 
     private void Awake()
     {
-        controller = GetComponent<CharacterController>();
-        playerInput = GetComponent<PlayerInput>();
-        cameraTransform = Camera.main.transform;
+        _controller = GetComponent<CharacterController>();
+        _playerInput = GetComponent<PlayerInput>();
+        _cameraTransform = Camera.main.transform;
 
-        moveAction = playerInput.actions["Move"];
-        crouchAction = playerInput.actions["Crouch"];
-        sprintAction = playerInput.actions["Sprint"];
-        shootAction = playerInput.actions["Shoot"];
-        reloadAction = playerInput.actions["Reload"];
+        _moveAction = _playerInput.actions["Move"];
+        _crouchAction = _playerInput.actions["Crouch"];
+        _sprintAction = _playerInput.actions["Sprint"];
+        _shootAction = _playerInput.actions["Shoot"];
+        _reloadAction = _playerInput.actions["Reload"];
 
-        animator = GetComponent<Animator>();
-        shootAnimation = Animator.StringToHash("Rifle_Shooting");
-        moveXAnimationParameterID = Animator.StringToHash("MoveX");
-        moveZAnimationParameterID = Animator.StringToHash("MoveZ");
-        //crouchAnimation = Animator.StringToHash("Crouch");
+        //_mouseAction = _playerInput.actions["Look"];
 
-        // выключение курсора во время игры и лок его на центре
-        Cursor.lockState = CursorLockMode.Locked; 
+        _animator = GetComponent<Animator>();
+        _shootAnimation = Animator.StringToHash("Rifle_Shooting");
+        _moveX = Animator.StringToHash("MoveX");
+        _moveZ = Animator.StringToHash("MoveZ");
+
     }
 
     private void Update()
     {
-        if (crouchAction.inProgress)
+        if (_crouchAction.inProgress)
         {
-            animator.SetInteger("MoveState", 1);
-            currentSpeed = crouchSpeed;
+            _animator.SetInteger("MoveState", 1);
+            _currentSpeed = _crouchSpeed;
         }
-        else if (sprintAction.inProgress)
+        else if (_sprintAction.inProgress)
         {
-            animator.SetInteger("MoveState", 2);
-            currentSpeed = sprintSpeed;
+            _animator.SetInteger("MoveState", 2);
+            _currentSpeed = _sprintSpeed;
         }
         else
         {
-            animator.SetInteger("MoveState", 0);
-            currentSpeed = walkSpeed;
+            _animator.SetInteger("MoveState", 0);
+            _currentSpeed = _walkSpeed;
         }
 
 
         // чтение инпута в виде вектора
-        Vector2 input = moveAction.ReadValue<Vector2>();
-
+        Vector2 input = _moveAction.ReadValue<Vector2>();
 
         // "смягчение" данных input, чтобы анимации были плавнее
-        currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, input, ref animationVelocity, animationSmoothTime);
-        Vector3 move = new Vector3(currentAnimationBlendVector.x, 0, currentAnimationBlendVector.y);
+        _currentAnimationBlendVector = Vector2.SmoothDamp(_currentAnimationBlendVector, input, ref _animationVelocity, _animationSmoothTime);
+        Vector3 move = new Vector3(_currentAnimationBlendVector.x, 0, _currentAnimationBlendVector.y);
 
 
         // воздействие гравитации и модель движения игрока
-        groundedPlayer = controller.isGrounded;
+        _groundedPlayer = _controller.isGrounded;
 
-        if (groundedPlayer && playerVelocity.y < 0)
-            playerVelocity.y = 0f;
+        if (_groundedPlayer && _playerVelocity.y < 0)
+            _playerVelocity.y = 0f;
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        _playerVelocity.y += _gravityValue * Time.deltaTime;
+        _controller.Move(_playerVelocity * Time.deltaTime);
 
 
         // движение относительно камеры
-        move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;  
+        move = move.x * _cameraTransform.right.normalized + move.z * _cameraTransform.forward.normalized;
         move.y = 0f;
-        controller.Move(move * Time.deltaTime * currentSpeed);
+        _controller.Move(move * Time.deltaTime * _currentSpeed);
 
 
         // передача в аниматор данных инпута
-        animator.SetFloat(moveXAnimationParameterID, currentAnimationBlendVector.x);
-        animator.SetFloat(moveZAnimationParameterID, currentAnimationBlendVector.y);
+        _animator.SetFloat(_moveX, _currentAnimationBlendVector.x);
+        _animator.SetFloat(_moveZ, _currentAnimationBlendVector.y);
 
 
-        // поворот в сторону курсора
-        float targetAngle = cameraTransform.eulerAngles.y;
-        Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-
-        // определение точки для стрельбы
-        Ray _ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        // определение точки для стрельбы 
+        Ray _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        RaycastHit _hit;
         float _rayDistance = 100f;
-        _aimPoint = _ray.GetPoint(_rayDistance);
 
+        if (Physics.Raycast(_ray, out _hit, _rayDistance))
+        {
+            _aimPoint = _hit.point;
+            _lookPoint = _hit.point;
+        }
 
         // прицеливание оружия в точку
+        Mathf.Clamp(_aimPoint.y, -60, 60);
         Aim(_aimPoint);
 
+       
+        // поворот PLAYER в сторону курсора
+        _lookPoint.y = transform.position.y;
+        Quaternion targetRotation = Quaternion.LookRotation(_lookPoint - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
     }
 
     private void OnEnable()
     {
-        shootAction.performed += _ => ShootGun();
-        reloadAction.performed += _ => Reload();
+        _shootAction.performed += _ => ShootGun();
+        _reloadAction.performed += _ => Reload();
     }
 
     private void OnDisable()
     {
-        shootAction.performed -= _ => ShootGun();
-        reloadAction.performed -= _ => Reload();
+        _shootAction.performed -= _ => ShootGun();
+        _reloadAction.performed -= _ => Reload();
     }
 
     private void ShootGun()
     {
-        animator.CrossFade(shootAnimation, animationSmoothTime);
+        _animator.CrossFade(_shootAnimation, _animationSmoothTime);
         _currentGun.Shoot(_aimPoint);
     }
 
@@ -167,4 +169,119 @@ public class PlayerController : MonoBehaviour
     {
         _currentGun.Reload();
     }
+
+    //private void Awake()
+    //{
+    //    _controller = GetComponent<CharacterController>();
+    //    _playerInput = GetComponent<PlayerInput>();
+    //    _cameraTransform = Camera.main.transform;
+
+    //    _moveAction = _playerInput.actions["Move"];
+    //    _crouchAction = _playerInput.actions["Crouch"];
+    //    _sprintAction = _playerInput.actions["Sprint"];
+    //    _shootAction = _playerInput.actions["Shoot"];
+    //    _reloadAction = _playerInput.actions["Reload"];
+
+    //    _animator = GetComponent<Animator>();
+    //    _shootAnimation = Animator.StringToHash("Rifle_Shooting");
+    //    _moveXAnimationParameterID = Animator.StringToHash("MoveX");
+    //    _moveZAnimationParameterID = Animator.StringToHash("MoveZ");
+
+    //    // выключение курсора во время игры и лок его на центре
+    //    Cursor.lockState = CursorLockMode.Locked;
+    //}
+
+    //private void Update()
+    //{
+    //    if (_crouchAction.inProgress)
+    //    {
+    //        _animator.SetInteger("MoveState", 1);
+    //        _currentSpeed = _crouchSpeed;
+    //    }
+    //    else if (_sprintAction.inProgress)
+    //    {
+    //        _animator.SetInteger("MoveState", 2);
+    //        _currentSpeed = _sprintSpeed;
+    //    }
+    //    else
+    //    {
+    //        _animator.SetInteger("MoveState", 0);
+    //        _currentSpeed = _walkSpeed;
+    //    }
+
+
+    //    // чтение инпута в виде вектора
+    //    Vector2 input = _moveAction.ReadValue<Vector2>();
+
+
+    //    // "смягчение" данных input, чтобы анимации были плавнее
+    //    _currentAnimationBlendVector = Vector2.SmoothDamp(_currentAnimationBlendVector, input, ref _animationVelocity, _animationSmoothTime);
+    //    Vector3 move = new Vector3(_currentAnimationBlendVector.x, 0, _currentAnimationBlendVector.y);
+
+
+    //    // воздействие гравитации и модель движения игрока
+    //    _groundedPlayer = _controller.isGrounded;
+
+    //    if (_groundedPlayer && _playerVelocity.y < 0)
+    //        _playerVelocity.y = 0f;
+
+    //    _playerVelocity.y += _gravityValue * Time.deltaTime;
+    //    _controller.Move(_playerVelocity * Time.deltaTime);
+
+
+    //    // движение относительно камеры
+    //    move = move.x * _cameraTransform.right.normalized + move.z * _cameraTransform.forward.normalized;
+    //    move.y = 0f;
+    //    _controller.Move(move * Time.deltaTime * _currentSpeed);
+
+
+    //    // передача в аниматор данных инпута
+    //    _animator.SetFloat(_moveXAnimationParameterID, _currentAnimationBlendVector.x);
+    //    _animator.SetFloat(_moveZAnimationParameterID, _currentAnimationBlendVector.y);
+
+
+    //    // поворот в сторону курсора
+    //    float targetAngle = _cameraTransform.eulerAngles.y;
+    //    Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+    //    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+
+
+    //    // определение точки для стрельбы
+    //    Ray _ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
+    //    float _rayDistance = 100f;
+    //    _aimPoint = _ray.GetPoint(_rayDistance);
+
+
+    //    // прицеливание оружия в точку
+    //    Aim(_aimPoint);
+
+    //}
+
+    //private void OnEnable()
+    //{
+    //    _shootAction.performed += _ => ShootGun();
+    //    _reloadAction.performed += _ => Reload();
+    //}
+
+    //private void OnDisable()
+    //{
+    //    _shootAction.performed -= _ => ShootGun();
+    //    _reloadAction.performed -= _ => Reload();
+    //}
+
+    //private void ShootGun()
+    //{
+    //    _animator.CrossFade(_shootAnimation, _animationSmoothTime);
+    //    _currentGun.Shoot(_aimPoint);
+    //}
+
+    //private void Aim(Vector3 _aimPoint)
+    //{
+    //    _currentGun.Aim(_aimPoint);
+    //}
+
+    //private void Reload()
+    //{
+    //    _currentGun.Reload();
+    //}
 }

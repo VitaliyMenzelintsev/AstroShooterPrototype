@@ -9,20 +9,19 @@ public abstract class EnemyBehavior : MonoBehaviour
     public Transform Eyes;
 
     [SerializeField]
-    protected BaseGun _currentGun;
+    public BaseGun _currentGun;
     [SerializeField]
-    protected Team _currentTarget;
-    protected Transform _myTransform;
+    public Team _currentTarget;
     [SerializeField]
-    protected float _minAttackDistance = 5;
+    public float _minAttackDistance = 5;
     [SerializeField]
-    protected float _maxAttackDistance = 13;
-    protected Team[] _allCharacters;
+    public float _maxAttackDistance = 13;
+    public Team[] _allCharacters;
 
-    protected bool IsDistanceCorrect()
+    public bool IsDistanceCorrect()
     {
-        if(Vector3.Distance(_myTransform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(_myTransform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        if(Vector3.Distance(transform.position, _currentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(transform.position, _currentTarget.transform.position) >= _minAttackDistance)
         {
             return true;
         }
@@ -32,7 +31,7 @@ public abstract class EnemyBehavior : MonoBehaviour
         }
     }
 
-    protected bool IsTargetAlive()
+    public bool IsTargetAlive()
     {
         if (_currentTarget != null
             && _currentTarget.GetComponent<Vitals>().IsAlive())

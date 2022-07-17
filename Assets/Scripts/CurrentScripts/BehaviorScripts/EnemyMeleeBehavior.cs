@@ -120,7 +120,7 @@ public class EnemyMeleeBehavior : EnemyBehavior
                     else
                     {
                         //если текущий враг ближе, чем лучшая цель, то выбрать текущего врага в качестве лучшей цели
-                        if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
+                        if (Vector3.Distance(_currentCharacter.transform.position, transform.position) < Vector3.Distance(_bestTarget.transform.position, transform.position))
                         {
                             _bestTarget = _currentCharacter;
                         }

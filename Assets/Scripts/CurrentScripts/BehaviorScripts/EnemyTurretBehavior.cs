@@ -131,7 +131,7 @@ public class EnemyTurretBehavior : EnemyBehavior
                     else
                     {
                         //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
-                        if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
+                        if (Vector3.Distance(_currentCharacter.transform.position, transform.position) < Vector3.Distance(_bestTarget.transform.position, transform.position))
                         {
                             _bestTarget = _currentCharacter;
                         }

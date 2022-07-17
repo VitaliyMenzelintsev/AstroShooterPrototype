@@ -76,7 +76,7 @@ public class EnemyDroneBehavior : EnemyBehavior
 
     private void StateCombat()
     {
-        _myTransform.LookAt(_currentTarget.transform); // смотрим на цель
+        transform.LookAt(_currentTarget.transform); // смотрим на цель
 
         //_currentGun.Aim(_currentTarget.Eyes.position);
 
@@ -105,7 +105,7 @@ public class EnemyDroneBehavior : EnemyBehavior
                     else
                     {
                         //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
-                        if (Vector3.Distance(_currentCharacter.transform.position, _myTransform.position) < Vector3.Distance(_bestTarget.transform.position, _myTransform.position))
+                        if (Vector3.Distance(_currentCharacter.transform.position, transform.position) < Vector3.Distance(_bestTarget.transform.position, transform.position))
                         {
                             _bestTarget = _currentCharacter;
                         }
