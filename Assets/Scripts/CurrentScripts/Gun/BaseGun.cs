@@ -75,6 +75,8 @@ public abstract class BaseGun : MonoBehaviour
 
             Ray _ray = new Ray(_barrelPoint.position, _direction);
 
+            
+
             RaycastHit _hit;
 
             if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
@@ -83,7 +85,7 @@ public abstract class BaseGun : MonoBehaviour
 
                 if(_isRangeGun)
                     ShootRender(_hit.point);
-
+               
                 if (_hit.collider.gameObject.GetComponent<Vitals>())
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
             }

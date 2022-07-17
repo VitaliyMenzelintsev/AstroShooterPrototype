@@ -13,9 +13,9 @@ public abstract class EnemyBehavior : MonoBehaviour
     [SerializeField]
     public Team _currentTarget;
     [SerializeField]
-    public float _minAttackDistance = 5;
+    public float _minAttackDistance = 1;
     [SerializeField]
-    public float _maxAttackDistance = 13;
+    public float _maxAttackDistance = 10;
     public Team[] _allCharacters;
 
     public bool IsDistanceCorrect()
