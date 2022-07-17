@@ -43,8 +43,9 @@ public class PlayerController : MonoBehaviour
     private int _moveZ;
     private int _shootAnimation;
 
-    private Vector2 _currentAnimationBlendVector;
+    private Vector2 _blendVector;
     private Vector2 _animationVelocity;
+
 
     private void Awake()
     {
@@ -118,8 +119,8 @@ public class PlayerController : MonoBehaviour
 
 
         // "смягчение" данных input, чтобы анимации были плавнее
-        _currentAnimationBlendVector = Vector2.SmoothDamp(_currentAnimationBlendVector, input, ref _animationVelocity, _animationSmoothTime);
-        Vector3 move = new Vector3(_currentAnimationBlendVector.x, 0, _currentAnimationBlendVector.y);
+        _blendVector = Vector2.SmoothDamp(_blendVector, input, ref _animationVelocity, _animationSmoothTime);
+        Vector3 move = new Vector3(_blendVector.x, 0, _blendVector.y);
 
 
         // движение относительно камеры
@@ -132,8 +133,8 @@ public class PlayerController : MonoBehaviour
     private void VectorSending()
     {
         // передача в аниматор данных инпута
-        _animator.SetFloat(_moveX, _currentAnimationBlendVector.x);
-        _animator.SetFloat(_moveZ, _currentAnimationBlendVector.y);
+        _animator.SetFloat(_moveX, _blendVector.x);
+        _animator.SetFloat(_moveZ, _blendVector.y);
     }
 
 
