@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletShotGun : BaseGun
@@ -37,6 +36,7 @@ public class BulletShotGun : BaseGun
         _gunOriginPosition = transform.localPosition;
     }
 
+
     public override void LateUpdate()
     {
         base.LateUpdate();
@@ -46,6 +46,7 @@ public class BulletShotGun : BaseGun
         _recoilAngle = Mathf.SmoothDamp(_recoilAngle, 0, ref _recoilRotSmoothDampVelocity, _recoilBackTime);
         transform.localEulerAngles = transform.localEulerAngles + Vector3.left * _recoilAngle;
     }
+
 
     public override void Shoot(Vector3 _aimPoint)
     {
@@ -136,12 +137,14 @@ public class BulletShotGun : BaseGun
         StartCoroutine(SpawnTrail(_trail, _aimPoint));
     }
 
+
     private void Recoil()
     {
         transform.localPosition -= Vector3.forward * Random.Range(_kickMinMax.x, _kickMinMax.y);
         _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
         _recoilAngle = Mathf.Clamp(_recoilAngle, 0, 25);
     }
+
 
     private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {

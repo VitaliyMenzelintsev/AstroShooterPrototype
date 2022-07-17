@@ -34,6 +34,7 @@ public class BulletGun : BaseGun
         _gunOriginPosition = transform.localPosition;
     }
 
+
     public override void LateUpdate()
     {
         base.LateUpdate();
@@ -44,6 +45,7 @@ public class BulletGun : BaseGun
         transform.localEulerAngles = transform.localEulerAngles + Vector3.left * _recoilAngle;
     }
      
+
     public override void Shoot(Vector3 _aimPoint)
     {
         if (IsGunReady())
@@ -54,6 +56,8 @@ public class BulletGun : BaseGun
 
             _shootingParticle.Play();
 
+            Recoil();
+
             Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
             Ray _ray = new Ray(_barrelPoint.position, _direction);
@@ -62,9 +66,6 @@ public class BulletGun : BaseGun
 
             if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
             {
-
-                Recoil();
-
                 ShootRender(_hit.point);
 
                 _lastShootTime = Time.time;
@@ -74,9 +75,6 @@ public class BulletGun : BaseGun
             }
             else
             {
-
-                Recoil();
-
                 ShootRender(_aimPoint);
 
                 _lastShootTime = Time.time;
@@ -134,12 +132,14 @@ public class BulletGun : BaseGun
         StartCoroutine(SpawnTrail(_trail, _aimPoint));
     }
 
+
     private void Recoil()
     {
         transform.localPosition -= Vector3.forward * Random.Range(_kickMinMax.x, _kickMinMax.y);
         _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
         _recoilAngle = Mathf.Clamp(_recoilAngle, 0, 25);
     }
+
 
     private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {
