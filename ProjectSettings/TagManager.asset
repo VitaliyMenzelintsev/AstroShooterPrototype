@@ -9,7 +9,7 @@ TagManager:
   - Enemy
   - GoodEntity
   - BadEntity
-  - Ground
+  - Character
   layers:
   - Default
   - TransparentFX

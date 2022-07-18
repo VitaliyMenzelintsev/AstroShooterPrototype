@@ -29,7 +29,7 @@ public class CompanionCoverManager : MonoBehaviour
     }
      
 
-    public CompanionCoverSpot GetCover(CompanionRangeBehavior _character, Team _target)
+    public CompanionCoverSpot GetCover(CompanionRangeBehavior _character, GameObject _target)
     {
         CompanionCoverSpot _bestCover = null;
 

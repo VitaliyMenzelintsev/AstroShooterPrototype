@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 1503665260722634062}
   m_Layer: 0
   m_Name: Companion_Melee
-  m_TagString: Untagged
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -262,6 +262,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 250
   _currentHealth: 100
+  _damageMultiplier: 1
 --- !u!114 &5469794294766487151
 MonoBehaviour:
   m_ObjectHideFlags: 0

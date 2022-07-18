@@ -1940,7 +1940,7 @@ GameObject:
   - component: {fileID: 4896516897456954544}
   m_Layer: 0
   m_Name: Companion_Shotgun
-  m_TagString: Untagged
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2097,6 +2097,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 250
   _currentHealth: 100
+  _damageMultiplier: 1
 --- !u!114 &3937586668711955917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2120,6 +2121,7 @@ MonoBehaviour:
   _maxAttackDistance: 8
   _currentCover: {fileID: 0}
   _allCharacters: []
+  MyActivatedSkill: {fileID: 0}
 --- !u!114 &6914673975370171443
 MonoBehaviour:
   m_ObjectHideFlags: 0

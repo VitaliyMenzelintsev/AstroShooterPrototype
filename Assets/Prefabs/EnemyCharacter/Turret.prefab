@@ -305,6 +305,7 @@ MonoBehaviour:
   _shootDelay: 0
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 1
+  CurrentTarget: {fileID: 0}
   _addBulletSpread: 0
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
   _lineRenderer: {fileID: 0}
@@ -433,7 +434,7 @@ GameObject:
   - component: {fileID: 2306508516182554603}
   m_Layer: 0
   m_Name: Turret
-  m_TagString: Untagged
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 1
   m_StaticEditorFlags: 8
@@ -545,6 +546,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 600
   _currentHealth: 100
+  _damageMultiplier: 1
 --- !u!114 &2306508516182554603
 MonoBehaviour:
   m_ObjectHideFlags: 0

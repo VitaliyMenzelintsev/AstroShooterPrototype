@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 7135324987127298571}
   m_Layer: 0
   m_Name: Range_Robot_Pistol
-  m_TagString: BadEntity
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
