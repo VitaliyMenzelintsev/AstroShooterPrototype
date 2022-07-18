@@ -26,8 +26,8 @@ public abstract class BaseGun : MonoBehaviour
     protected float _nextShotTime;
     protected int _bulletsInMagazine;
 
-    [HideInInspector]
-    public Team CurrentTarget = null;
+    //[HideInInspector]
+    public GameObject CurrentTarget = null;
 
     public virtual void Start()
     {
@@ -87,11 +87,8 @@ public abstract class BaseGun : MonoBehaviour
                 if(_isRangeGun)
                     ShootRender(_hit.point);
                
-                if (_hit.collider.gameObject.GetComponent<Vitals>())
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
-
-                if (_hit.collider.gameObject.GetComponent<Team>())
-                    CurrentTarget = _hit.collider.gameObject.GetComponent<Team>();
+                if (_hit.collider.GetComponent<Vitals>())
+                    _hit.collider.GetComponent<Vitals>().GetHit(_damage);
             }
             else
             {

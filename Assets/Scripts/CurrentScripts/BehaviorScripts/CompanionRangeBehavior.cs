@@ -97,16 +97,21 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
-    public override void StateSkill()
+    public override void StateSkill(bool _isESkill, GameObject _target)
     {
-        // запуск отрисовки луча замедления по цели
-        // MyActivatedSkill
+
+        if (MyVitals.IsAlive())
+        {
+            //if(_target == null)
+            //{
+            //    _target = CurrentTarget.gameObject;
+            //}
+
+            MyActivatedSkill.Activation(_isESkill, _target);
+        }
+            
     }
 
-    private bool IsSkillActive()
-    {
-        return false;
-    }
 
     private void StateCombat()
     {

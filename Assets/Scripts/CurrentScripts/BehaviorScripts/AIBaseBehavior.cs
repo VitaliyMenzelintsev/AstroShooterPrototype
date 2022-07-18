@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class AIBaseBehavior : MonoBehaviour
 {
-    public virtual void StateSkill()
+    public virtual void StateSkill(bool _isESkill, GameObject _target)
     {
 
     }

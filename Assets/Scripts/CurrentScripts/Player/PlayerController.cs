@@ -33,11 +33,13 @@ public class PlayerController : MonoBehaviour
     private bool _groundedPlayer;
 
     private InputAction _moveAction;
-    private InputAction _crouchAction; 
-    private InputAction _sprintAction; 
+    private InputAction _crouchAction;
+    private InputAction _sprintAction;
     private InputAction _shootAction;
     private InputAction _reloadAction;
     private InputAction _healPartyAction;
+    private InputAction _skillEButtonAction;
+    private InputAction _skillQButtonAction;
 
     private Vector3 _viewPoint;
 
@@ -52,7 +54,7 @@ public class PlayerController : MonoBehaviour
     private GameObject[] _companions;
 
     [SerializeField]
-    public Team _currentTarget = null;
+    public GameObject _currentTarget = null;
 
 
     private void Awake()
@@ -69,6 +71,8 @@ public class PlayerController : MonoBehaviour
         _shootAction = _playerInput.actions["Shoot"];
         _reloadAction = _playerInput.actions["Reload"];
         _healPartyAction = _playerInput.actions["HealParty"];
+        _skillEButtonAction = _playerInput.actions["EButtonSkill"];
+        _skillQButtonAction = _playerInput.actions["QButtonSkill"];
 
         _animator = GetComponent<Animator>();
         _shootAnimation = Animator.StringToHash("Rifle_Shooting");
@@ -94,6 +98,9 @@ public class PlayerController : MonoBehaviour
 
 
         RotationTowardsCursor();
+
+
+        _currentTarget = _currentGun.CurrentTarget;
     }
 
 
@@ -182,6 +189,8 @@ public class PlayerController : MonoBehaviour
         _shootAction.performed += _ => ShootGun();
         _reloadAction.performed += _ => Reload();
         _healPartyAction.performed += _ => HealParty();
+        _skillEButtonAction.performed += _ => ActivateESkill();
+        _skillQButtonAction.performed += _ => ActivateQSkill();
     }
 
 
@@ -191,6 +200,8 @@ public class PlayerController : MonoBehaviour
         _shootAction.performed -= _ => ShootGun();
         _reloadAction.performed -= _ => Reload();
         _healPartyAction.performed -= _ => HealParty();
+        _skillEButtonAction.performed -= _ => ActivateESkill();
+        _skillQButtonAction.performed -= _ => ActivateQSkill();
     }
 
 
@@ -230,20 +241,32 @@ public class PlayerController : MonoBehaviour
 
 
 
-    private void SetPriorityTarget() // по нажатию Space заставляем компаньонов атаковать цель игрока 
-    {
-        for (int i = 0; i < _companions.Length; i++)
-        {
-            _companions[i].GetComponent<CompanionBaseBehavior>().CurrentTarget = _currentGun.CurrentTarget;
-        }
-    }
+    //private void SetPriorityTarget() // по нажатию Space заставляем компаньонов атаковать цель игрока 
+    //{
+    //    for (int i = 0; i < _companions.Length; i++)
+    //    {
+    //        _companions[i].GetComponent<CompanionBaseBehavior>().CurrentTarget = _currentGun.CurrentTarget;
+    //    }
+    //}
 
 
     private void ActivateESkill()
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-            _companions[i].gameObject.GetComponent<AIBaseBehavior>().StateSkill();
+            //if(_currentGun.CurrentTarget != null)
+            Debug.Log("Игрок отдал приказ применить способность");
+            _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, _currentTarget);
+
+        }
+    }
+
+    private void ActivateQSkill()
+    {
+        for (int i = 0; i < _companions.Length; i++)
+        {
+
+            _companions[i].GetComponent<AIBaseBehavior>().StateSkill(false, _currentTarget);
         }
     }
 

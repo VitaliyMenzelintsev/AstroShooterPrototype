@@ -72,6 +72,9 @@ public class BulletGun : BaseGun
 
                 if (_hit.collider.gameObject.GetComponent<Vitals>())
                     _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+
+                if (_hit.collider.GetComponent<Team>())
+                    CurrentTarget = _hit.collider.GetComponent<Team>().gameObject;
             }
             else
             {

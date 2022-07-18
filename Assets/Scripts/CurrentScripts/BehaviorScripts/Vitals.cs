@@ -8,6 +8,7 @@ public class Vitals : MonoBehaviour
     private float _currentHealth = 100;
     [SerializeField]
     private readonly float _ressurectHealth = 80;
+    public float _damageMultiplier = 1;
 
     private void Start()
     {
@@ -20,7 +21,7 @@ public class Vitals : MonoBehaviour
 
     public void GetHit(float _damage)
     {
-        _currentHealth -= _damage;
+        _currentHealth -= _damageMultiplier *_damage;
     }
 
     public float GetMaxHealth()
