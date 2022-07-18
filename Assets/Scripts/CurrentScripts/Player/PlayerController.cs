@@ -205,13 +205,13 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-            if (_companions[i].gameObject.GetComponent<Vitals>().IsAlive())
+            if (_companions[i].GetComponent<Vitals>().IsAlive())
             {
-                _companions[i].gameObject.GetComponent<Vitals>().GetHeal(100f);
+                _companions[i].GetComponent<Vitals>().GetHeal(100f);
             }
             else
             {
-                _companions[i].gameObject.GetComponent<Vitals>().GetRessurect();
+                _companions[i].GetComponent<Vitals>().GetRessurect();
             }
         }
 
@@ -224,7 +224,7 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-            _companions[i].gameObject.GetComponent<NavMeshAgent>().speed += 1.5f;
+            _companions[i].GetComponent<NavMeshAgent>().speed += 1.5f;
         }
     }
 
@@ -234,10 +234,18 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-            _companions[i].gameObject.GetComponent<CompanionBaseBehavior>().CurrentTarget = _currentGun.CurrentTarget;
+            _companions[i].GetComponent<CompanionBaseBehavior>().CurrentTarget = _currentGun.CurrentTarget;
         }
     }
 
+
+    private void ActivateESkill()
+    {
+        for (int i = 0; i < _companions.Length; i++)
+        {
+            _companions[i].gameObject.GetComponent<AIBaseBehavior>().StateSkill();
+        }
+    }
 
 
     private void Aim(Vector3 _aimPoint)

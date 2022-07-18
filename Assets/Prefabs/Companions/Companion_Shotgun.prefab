@@ -2109,12 +2109,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0093c3f8e639c4ebc82b9969a36ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentTarget: {fileID: 0}
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 4028088492298337573}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
-  _currentTarget: {fileID: 0}
   _currentGun: {fileID: 9043222431910821623}
   _minAttackDistance: 1.5
   _maxAttackDistance: 8
@@ -2132,12 +2132,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac5b970561845a747831670dbb9acaca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentTarget: {fileID: 0}
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 4033443794692023815}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
-  _currentTarget: {fileID: 0}
   _currentGun: {fileID: 9043222431910821623}
   _minAttackDistance: 1.5
   _maxAttackDistance: 8
@@ -3032,6 +3032,7 @@ MonoBehaviour:
   _shootDelay: 0.05
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 1
+  CurrentTarget: {fileID: 0}
   _barrelPoints:
   - {fileID: 1336304648272160302}
   - {fileID: 4839871069736126101}

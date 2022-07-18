@@ -33,6 +33,9 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     [SerializeField]
     private Team[] _allCharacters;
 
+    // skill 
+    public BaseActivatedSkill MyActivatedSkill; // в это поле в инспекторе кладём нужный скилл
+
 
     private void Start()
     {
@@ -91,6 +94,18 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
                 StateIdle();
             }
         }
+    }
+
+
+    public override void StateSkill()
+    {
+        // запуск отрисовки луча замедления по цели
+        // MyActivatedSkill
+    }
+
+    private bool IsSkillActive()
+    {
+        return false;
     }
 
     private void StateCombat()

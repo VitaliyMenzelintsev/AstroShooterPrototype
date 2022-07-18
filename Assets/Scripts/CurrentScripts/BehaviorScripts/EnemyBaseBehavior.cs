@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class EnemyBaseBehavior : MonoBehaviour
+public abstract class EnemyBaseBehavior : AIBaseBehavior
 {
     [HideInInspector]
     public Team MyTeam;
