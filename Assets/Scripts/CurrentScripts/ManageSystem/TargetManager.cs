@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,30 +5,30 @@ public class TargetManager : MonoBehaviour
 {
     [SerializeField]
     private List<GameObject> _allCharacters = new List<GameObject>();
-    // должен составить список из всех персонажей и выдавать цель персонажу при выполнении условий
+    
 
     private void Awake()
     {
         _allCharacters = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
     }
 
-    public GameObject GetNewTarget(int _myTeamNumber, Transform _myEyesPosition, float _myMaxAttackDistance)
+    public GameObject GetNewTarget(int _myTeamNumber, Transform _myEyesPosition)
     {
+        float _viewDistance = 15f;
+
         GameObject _bestTarget = null;
 
         for (int i = 0; i < _allCharacters.Count; i++)
         {
-           
-
             GameObject _currentCharacter = _allCharacters[i];
 
             //выбирать текущего персонажа в качестве цели, только если мы не в одной команде и если у него осталось здоровье
             if (_currentCharacter != null &&
                 _currentCharacter.GetComponent<Team>().GetTeamNumber() != _myTeamNumber
                 && _currentCharacter.GetComponent<Vitals>().IsAlive()
-                && Vector3.Distance(_myEyesPosition.position, _currentCharacter.transform.position) <= _myMaxAttackDistance)
+                && Vector3.Distance(_myEyesPosition.position, _currentCharacter.transform.position) <= _viewDistance)
             {
-                Debug.Log(" Таргет менеджер пытается найти цель");
+                
                 //если цель видно
                 if (CanSeeTarget(_currentCharacter, _myEyesPosition))
                 {

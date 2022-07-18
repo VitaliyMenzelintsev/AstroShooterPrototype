@@ -980,7 +980,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startHealth: 100000
+  _startHealth: 120
   _currentHealth: 100
   _damageMultiplier: 1
 --- !u!114 &4412976726901929887
@@ -998,11 +998,11 @@ MonoBehaviour:
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 4412976726536666238}
+  CurrentTarget: {fileID: 0}
+  _myTeamNumber: 0
   _currentGun: {fileID: 5771935605720387096}
-  _currentTarget: {fileID: 0}
   _minAttackDistance: 0.2
   _maxAttackDistance: 1.5
-  _allCharacters: []
 --- !u!1 &4412976726920975752
 GameObject:
   m_ObjectHideFlags: 0

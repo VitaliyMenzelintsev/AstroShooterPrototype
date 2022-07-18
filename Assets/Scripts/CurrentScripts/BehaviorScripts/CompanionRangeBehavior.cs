@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
+using System;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Team))]
@@ -14,7 +16,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     private Transform _player;
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
-    private CompanionCoverManager _coverManager;
+    private CoverManager _coverManager;
     private CompanionCoverSpot _currentCover = null;
 
 
@@ -30,8 +32,9 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _characterAnimator = GetComponent<Animator>();
 
-        _coverManager = GameObject.FindObjectOfType<CompanionCoverManager>();
+        _coverManager = GameObject.FindObjectOfType<CoverManager>();
     }
+
 
     private void FixedUpdate()
     {
@@ -66,9 +69,16 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         {
             GetNewTarget();
 
-            if (IsPlayerFar())
+            if (IsFollowPointFar())
             {
-                StateFollowThePlayer();
+                if (IsPlayerFar())
+                {
+                    StateFollowThePlayer();
+                }
+                else
+                {
+                    StateIdle();
+                }
             }
             else
             {
@@ -77,6 +87,17 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         }
     }
 
+    private bool IsFollowPointFar()
+    {
+        if (Vector3.Distance(transform.position, _followPoint.transform.position) > 0.3f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     public override void StateSkill(bool _isESkill, GameObject _target)
     {
@@ -90,7 +111,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
             MyActivatedSkill.Activation(_isESkill, _target);
         }
-            
+
     }
 
 
@@ -220,7 +241,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private bool IsPlayerFar()
     {
-        if (Vector3.Distance(transform.position, _player.transform.position) > 3f)
+        if (Vector3.Distance(transform.position, _player.transform.position) > 2.5f)
         {
             return true;
         }

@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
 public class EnemyMeleeBehavior : EnemyBaseBehavior

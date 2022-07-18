@@ -1,6 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+[RequireComponent(typeof(Team))]
+[RequireComponent(typeof(Vitals))]
 
 public abstract class AIBaseBehavior : MonoBehaviour
 {
@@ -39,9 +40,7 @@ public abstract class AIBaseBehavior : MonoBehaviour
 
     public void GetNewTarget()
     {
-        Debug.Log("Запрашиваю цель");
-
-        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes, _maxAttackDistance);
+        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes);
     }
 
     public bool IsDistanceCorrect()

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Team))]
@@ -22,50 +23,99 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
+
+        StartCoroutine(StateUpdate());
     }
 
-    private void FixedUpdate()
+
+    private IEnumerator StateUpdate()
     {
-        if (MyVitals.IsAlive())
+        while (true)
         {
-            if (IsTargetAlive())
-            {
-                if (IsDistanceCorrect())
-                {
-                    StateCombat();
-                }
-                else
-                {
-                    StateInvestigate();
-                }
 
-            }
-            else
+            if (MyVitals.IsAlive())
             {
-                GetNewTarget();
-
                 if (IsTargetAlive())
                 {
-                    StateIdle();
-                }
-                else
-                {
-                    if (IsPlayerFar())
+                    if (IsDistanceCorrect())
                     {
-                        StateFollowThePlayer();
+                        StateCombat();
                     }
                     else
                     {
+                        StateInvestigate();
+                    }
+
+                }
+                else
+                {
+                    GetNewTarget();
+
+                    if (IsTargetAlive())
+                    {
                         StateIdle();
+                    }
+                    else
+                    {
+                        if (IsPlayerFar())
+                        {
+                            StateFollowThePlayer();
+                        }
+                        else
+                        {
+                            StateIdle();
+                        }
                     }
                 }
             }
-        }
-        else
-        {
-            StateDeath();
+            else
+            {
+                StateDeath();
+            }
         }
     }
+    //private void FixedUpdate()
+    //{
+    //    if (MyVitals.IsAlive())
+    //    {
+    //        if (IsTargetAlive())
+    //        {
+    //            if (IsDistanceCorrect())
+    //            {
+    //                StateCombat();
+    //            }
+    //            else
+    //            {
+    //                StateInvestigate();
+    //            }
+
+    //        }
+    //        else
+    //        {
+    //            GetNewTarget();
+
+    //            if (IsTargetAlive())
+    //            {
+    //                StateIdle();
+    //            }
+    //            else
+    //            {
+    //                if (IsPlayerFar())
+    //                {
+    //                    StateFollowThePlayer();
+    //                }
+    //                else
+    //                {
+    //                    StateIdle();
+    //                }
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        StateDeath();
+    //    }
+    //}
 
 
 
@@ -130,7 +180,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     }
 
 
-     
+
     private void StateCombat()
     {
         _characterAnimator.SetBool("Move", false);

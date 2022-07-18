@@ -3,28 +3,28 @@ using UnityEngine;
 
 public class CompanionCoverManager : MonoBehaviour
 {
-    List<CompanionCoverSpot> _unOccupiedCoverSpots = new List<CompanionCoverSpot>();
-    List<CompanionCoverSpot> _occupiedCoverSpots = new List<CompanionCoverSpot>();
+    List<CompanionCoverSpot> _freeCompanionCoverSpots = new List<CompanionCoverSpot>();
+    List<CompanionCoverSpot> _lockCompanionCoverSpots = new List<CompanionCoverSpot>();
 
     private void Awake()
     {
-        _unOccupiedCoverSpots = new List<CompanionCoverSpot>(GameObject.FindObjectsOfType<CompanionCoverSpot>());
+        _freeCompanionCoverSpots = new List<CompanionCoverSpot>(GameObject.FindObjectsOfType<CompanionCoverSpot>());
     }
 
     private void AddToOccupied(CompanionCoverSpot _spot)
     {
-        if (_unOccupiedCoverSpots.Contains(_spot) && !_occupiedCoverSpots.Contains(_spot))
+        if (_freeCompanionCoverSpots.Contains(_spot) && !_lockCompanionCoverSpots.Contains(_spot))
         {
-            _unOccupiedCoverSpots.Remove(_spot);
-            _occupiedCoverSpots.Add(_spot);
+            _freeCompanionCoverSpots.Remove(_spot);
+            _lockCompanionCoverSpots.Add(_spot);
         }
     }
     private void AddToUnoccupied(CompanionCoverSpot _spot)
     {
-        if (_occupiedCoverSpots.Contains(_spot) && !_unOccupiedCoverSpots.Contains(_spot))
+        if (_lockCompanionCoverSpots.Contains(_spot) && !_freeCompanionCoverSpots.Contains(_spot))
         {
-            _occupiedCoverSpots.Remove(_spot);
-            _unOccupiedCoverSpots.Add(_spot);
+            _lockCompanionCoverSpots.Remove(_spot);
+            _freeCompanionCoverSpots.Add(_spot);
         }
     }
      
@@ -35,7 +35,7 @@ public class CompanionCoverManager : MonoBehaviour
 
         Vector3 _characterPosition = _character.transform.position;
 
-        CompanionCoverSpot[] _possibleCoverSpots = _unOccupiedCoverSpots.ToArray();
+        CompanionCoverSpot[] _possibleCoverSpots = _freeCompanionCoverSpots.ToArray();
 
         for (int i = 0; i < _possibleCoverSpots.Length; i++)
         {
@@ -43,7 +43,7 @@ public class CompanionCoverManager : MonoBehaviour
 
             if (!_spot.IsOccupied() // если спот свободен
                 && Vector3.Distance(_characterPosition, _spot.transform.position) <= 10f  // если дистанция до спота менее 10 метров
-                /*&& CanSeeEnemyFromSpot(_target, _spot)*/)  // если со спота видно врага
+                && CanSeeEnemyFromSpot(_target, _spot))  // если со спота видно врага
             {
                 if (_bestCover == null)
                 {
@@ -71,13 +71,13 @@ public class CompanionCoverManager : MonoBehaviour
     }
 
 
-    private bool CanSeeEnemyFromSpot(Team _target, CompanionCoverSpot _spot)
+    private bool CanSeeEnemyFromSpot(GameObject _target, CompanionCoverSpot _spot)
     {
         bool _canSeeIt = false;
 
-        Vector3 _enemyPosition = _target.Eyes.position;
+        Vector3 _enemyPosition = _target.GetComponent<AIBaseBehavior>().Eyes.position;
 
-        float _averageEyesPosition = 1.8f;
+        float _averageEyesPosition = 1.4f;
 
         Vector3 _possibleSpotPosition = new Vector3(_spot.transform.position.x, _spot.transform.position.y + _averageEyesPosition, _spot.transform.position.z); 
 
@@ -86,7 +86,7 @@ public class CompanionCoverManager : MonoBehaviour
         if (Physics.Raycast(_possibleSpotPosition, _enemyPosition, out _hit, Mathf.Infinity))
         {
             //если рейкаст попал в цель, то мы знаем, что можем его увидеть
-            if (_hit.transform == _target.Eyes.transform)  //??
+            if (_hit.transform == _target.GetComponent<AIBaseBehavior>().Eyes)  
             {
                 _canSeeIt = true;
             }
