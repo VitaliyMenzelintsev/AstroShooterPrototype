@@ -4,26 +4,22 @@ using UnityEngine;
 public class BulletGun : BaseGun
 {
     [Header("Gun Settings")]
-    private float _punchDamage;
+    protected float _punchDamage;
     [SerializeField]
-    private float _bulletSpeed = 200;
+    protected float _bulletSpeed = 200;
     [SerializeField]
-    private bool _addBulletSpread = false;
-    [SerializeField]
-    private Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
-    [SerializeField]
-    private TrailRenderer _bulletTrail;
+    protected TrailRenderer _bulletTrail;
 
     [Header("Recoil")]
     [SerializeField]
-    private Vector2 _kickMinMax = new Vector2(0.05f, 0.2f);
+    protected Vector2 _kickMinMax = new Vector2(0.05f, 0.2f);
     [SerializeField]
-    private Vector2 _recoilAngleMinMax = new Vector2(5, 8);
-    private float _recoilBackTime = 0.1f;
-    private Vector3 _recoilSmoothDampVelocity;
-    private float _recoilRotSmoothDampVelocity;
-    private float _recoilAngle;
-    private Vector3 _gunOriginPosition;
+    protected Vector2 _recoilAngleMinMax = new Vector2(5, 8);
+    protected float _recoilBackTime = 0.1f;
+    protected Vector3 _recoilSmoothDampVelocity;
+    protected float _recoilRotSmoothDampVelocity;
+    protected float _recoilAngle;
+    protected Vector3 _gunOriginPosition;
 
 
     public override void Start()
@@ -44,7 +40,7 @@ public class BulletGun : BaseGun
         _recoilAngle = Mathf.SmoothDamp(_recoilAngle, 0, ref _recoilRotSmoothDampVelocity, _recoilBackTime);
         transform.localEulerAngles = transform.localEulerAngles + Vector3.left * _recoilAngle;
     }
-     
+
 
     public override void Shoot(Vector3 _aimPoint)
     {
@@ -58,30 +54,34 @@ public class BulletGun : BaseGun
 
             Recoil();
 
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
+           
+                Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-            Ray _ray = new Ray(_barrelPoint.position, _direction);
+                Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
-            RaycastHit _hit;
+                RaycastHit _hit;
 
-            if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
-            {
-                ShootRender(_hit.point);
+                if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
+                {
+                    ShootRender(_hit.point);
 
-                _lastShootTime = Time.time;
+                    _lastShootTime = Time.time;
 
-                if (_hit.collider.gameObject.GetComponent<Vitals>())
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+                    if (_hit.collider != null
+                        && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
+                        _damageableObject.GetHit(_damage);
 
-                if (_hit.collider.GetComponent<Team>())
-                    CurrentTarget = _hit.collider.GetComponent<Team>().gameObject;
-            }
-            else
-            {
-                ShootRender(_aimPoint);
+                    if (_hit.collider.TryGetComponent(out ITeamable _targetableObject)
+                        && _targetableObject != null)
+                        CurrentTarget = _hit.collider.gameObject;
+                }
+                else
+                {
+                    ShootRender(_aimPoint);
 
-                _lastShootTime = Time.time;
-            }
+                    _lastShootTime = Time.time;
+                }
+            
         }
     }
 
@@ -94,9 +94,9 @@ public class BulletGun : BaseGun
 
             if (_lastShootTime + _shootDelay < Time.time)
             {
-                Vector3 _direction = GetDirection(); // определяем направление удара
+                Vector3 _direction = transform.forward; // определяем направление удара
 
-                if (Physics.Raycast(_barrelPoint.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
+                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
                 {
                     _lastShootTime = Time.time;
 
@@ -111,32 +111,15 @@ public class BulletGun : BaseGun
     }
 
 
-    public override Vector3 GetDirection()
-    {
-        Vector3 _direction = _barrelPoint.forward;
-
-        if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
-        {
-            _direction += new Vector3(
-                Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
-                Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
-                Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
-
-            _direction.Normalize();
-        }
-        return _direction;
-    }
-
-
     public override void ShootRender(Vector3 _aimPoint)
     {
-        TrailRenderer _trail = Instantiate(_bulletTrail, _barrelPoint.position, Quaternion.identity);
+        TrailRenderer _trail = Instantiate(_bulletTrail, _barrelOrigin.position, Quaternion.identity);
 
         StartCoroutine(SpawnTrail(_trail, _aimPoint));
     }
 
 
-    private void Recoil()
+    public void Recoil()
     {
         transform.localPosition -= Vector3.forward * Random.Range(_kickMinMax.x, _kickMinMax.y);
         _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
@@ -144,7 +127,7 @@ public class BulletGun : BaseGun
     }
 
 
-    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
+    public IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {
         Vector3 _startPosition = _trail.transform.position;
         float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);

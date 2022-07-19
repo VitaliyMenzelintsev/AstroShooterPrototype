@@ -40,7 +40,7 @@ public abstract class AIBaseBehavior : MonoBehaviour
 
     public void GetNewTarget()
     {
-        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes);
+        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes, true);
     }
 
     public bool IsDistanceCorrect()

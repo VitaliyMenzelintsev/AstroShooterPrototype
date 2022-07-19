@@ -4,45 +4,73 @@ using UnityEngine;
 public class TargetManager : MonoBehaviour
 {
     [SerializeField]
-    private List<GameObject> _allCharacters = new List<GameObject>();
-    
+    private List<GameObject> _allCharactersList = new List<GameObject>();
+    private GameObject[] _allCharactersArray;
+
 
     private void Awake()
     {
-        _allCharacters = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
+        _allCharactersList = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
     }
 
-    public GameObject GetNewTarget(int _myTeamNumber, Transform _myEyesPosition)
+    private void Start()
+    {
+       _allCharactersArray = _allCharactersList.ToArray();
+    }
+
+
+    public GameObject GetNewTarget(int _myTeamNumber, Transform _myEyesPosition, bool _isFindEnemy)
     {
         float _viewDistance = 15f;
 
         GameObject _bestTarget = null;
 
-        for (int i = 0; i < _allCharacters.Count; i++)
+        if (_isFindEnemy) // если ищу врагов
         {
-            GameObject _currentCharacter = _allCharacters[i];
-
-            //выбирать текущего персонажа в качестве цели, только если мы не в одной команде и если у него осталось здоровье
-            if (_currentCharacter != null &&
-                _currentCharacter.GetComponent<Team>().GetTeamNumber() != _myTeamNumber
-                && _currentCharacter.GetComponent<Vitals>().IsAlive()
-                && Vector3.Distance(_myEyesPosition.position, _currentCharacter.transform.position) <= _viewDistance)
+            for (int i = 0; i < _allCharactersArray.Length; i++)
             {
-                
-                //если цель видно
-                if (CanSeeTarget(_currentCharacter, _myEyesPosition))
+                GameObject _currentCharacter = _allCharactersList[i];
+
+                //выбирать текущего персонажа в качестве цели, только если мы не в одной команде и если у него осталось здоровье
+                if (_currentCharacter != null
+                    && IsItMyEnemy(_currentCharacter, _myTeamNumber)
+                    && IsTargetAlive(_currentCharacter)
+                    && IsTargetReachable(_myEyesPosition, _currentCharacter, _viewDistance))
                 {
-                    if (_bestTarget == null)
+
+                    //если цель видно
+                    if (CanSeeTarget(_currentCharacter, _myEyesPosition))
                     {
-                        _bestTarget = _currentCharacter;
-                    }
-                    else
-                    {
-                        //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
-                        if (Vector3.Distance(_currentCharacter.transform.position, _myEyesPosition.position) < Vector3.Distance(_bestTarget.transform.position, _myEyesPosition.position))
+                        if (_bestTarget == null)
                         {
                             _bestTarget = _currentCharacter;
                         }
+                        else
+                        {
+                            //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
+                            if (IsAnotherTargetCloser(_currentCharacter, _myEyesPosition, _bestTarget))
+                            {
+                                _bestTarget = _currentCharacter;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else    // если ищу друзей
+        {
+            for (int i = 0; i < _allCharactersList.Count; i++)
+            {
+                GameObject _currentCharacter = _allCharactersList[i];
+
+                if (_currentCharacter != null
+                    && !IsItMyEnemy(_currentCharacter, _myTeamNumber)
+                    && IsTargetAlive(_currentCharacter)
+                    && IsTargetReachable(_myEyesPosition, _currentCharacter, _viewDistance))
+                {
+                    if (CanSeeTarget(_currentCharacter, _myEyesPosition))
+                    {
+                        _bestTarget = _currentCharacter;
                     }
                 }
             }
@@ -52,7 +80,84 @@ public class TargetManager : MonoBehaviour
     }
 
 
-    private bool CanSeeTarget(GameObject _target, Transform _myEyesPosition)
+    public GameObject[] GetNearestAllies(int _myTeamNumber, float _distanceToLockate, Transform _viewPoint)
+    {
+        List<GameObject> _myAlliesList = new List<GameObject>();
+
+        for(int i = 0; i < _allCharactersArray.Length; i++)
+        {
+            GameObject _currentCharacter = _allCharactersList[i];
+
+            if (!IsItMyEnemy(_currentCharacter, _myTeamNumber)
+                && IsTargetAlive(_currentCharacter)
+                && IsTargetReachable(_viewPoint, _currentCharacter, _distanceToLockate))
+            {
+                _myAlliesList.Add(_allCharactersArray[i]);
+            }
+        }
+
+        GameObject[] _myAlliesArray = _myAlliesList.ToArray();
+
+        return _myAlliesArray;
+    }
+
+
+    public bool IsAnotherTargetCloser(GameObject _currentCharacter, Transform _myEyesPosition, GameObject _bestTarget)
+    {
+        if (Vector3.Distance(_currentCharacter.transform.position, _myEyesPosition.position) < Vector3.Distance(_bestTarget.transform.position, _myEyesPosition.position))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    public bool IsItMyEnemy(GameObject _target, int _myTeamNumber)
+    {
+        if (_target.GetComponent<Team>().GetTeamNumber() != _myTeamNumber)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+
+    public bool IsTargetAlive(GameObject _target)
+    {
+        if (_target.GetComponent<Vitals>().IsAlive())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+
+    public bool IsTargetReachable(Transform _myEyesPosition, GameObject _enemyPosition, float _viewDistance)
+    {
+        if (Vector3.Distance(_myEyesPosition.position, _enemyPosition.transform.position) <= _viewDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+
+
+    public bool CanSeeTarget(GameObject _target, Transform _myEyesPosition)
     {
         bool _canSeeIt = false;
 

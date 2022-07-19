@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2208bb2bb4feba442b421ab4519c7789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barrelPoint: {fileID: 5383225196553336530}
+  _barrelOrigin: {fileID: 5383225196553336530}
   _magazineCapacity: 100
   _reloadTime: 0.1
   _msBetweenShots: 100
@@ -104,6 +104,9 @@ MonoBehaviour:
   _shootDelay: 2.12
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 0
+  _addBulletSpread: 0
+  _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
+  _distance: 55
   CurrentTarget: {fileID: 0}
 --- !u!1 &5384486056493359228
 GameObject:
@@ -262,6 +265,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 250
   _currentHealth: 100
+  _ressurectHealth: 80
   _damageMultiplier: 1
 --- !u!114 &5469794294766487151
 MonoBehaviour:
@@ -275,15 +279,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac5b970561845a747831670dbb9acaca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentTarget: {fileID: 0}
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 5383225196553336530}
-  _followPoint: {fileID: 0}
-  _player: {fileID: 0}
+  CurrentTarget: {fileID: 0}
+  _myTeamNumber: 0
   _currentGun: {fileID: 3239440531487501003}
   _minAttackDistance: 0.5
   _maxAttackDistance: 1.5
+  _followPoint: {fileID: 0}
+  _player: {fileID: 0}
 --- !u!135 &1503665260722634062
 SphereCollider:
   m_ObjectHideFlags: 0

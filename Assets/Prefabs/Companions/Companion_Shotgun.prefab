@@ -1936,8 +1936,8 @@ GameObject:
   - component: {fileID: 3937586668711955916}
   - component: {fileID: 3937586668711955917}
   - component: {fileID: 6914673975370171443}
-  - component: {fileID: 387875689936527343}
   - component: {fileID: 4896516897456954544}
+  - component: {fileID: 5738242008061452496}
   m_Layer: 0
   m_Name: Companion_Shotgun
   m_TagString: Character
@@ -2097,6 +2097,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 250
   _currentHealth: 100
+  _ressurectHealth: 80
   _damageMultiplier: 1
 --- !u!114 &3937586668711955917
 MonoBehaviour:
@@ -2110,17 +2111,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0093c3f8e639c4ebc82b9969a36ad6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentTarget: {fileID: 0}
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 4028088492298337573}
-  _followPoint: {fileID: 0}
-  _player: {fileID: 0}
+  CurrentTarget: {fileID: 0}
+  _myTeamNumber: 0
   _currentGun: {fileID: 9043222431910821623}
   _minAttackDistance: 1.5
   _maxAttackDistance: 8
-  _currentCover: {fileID: 0}
-  _allCharacters: []
+  _followPoint: {fileID: 0}
+  _player: {fileID: 0}
   MyActivatedSkill: {fileID: 0}
 --- !u!114 &6914673975370171443
 MonoBehaviour:
@@ -2134,31 +2134,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac5b970561845a747831670dbb9acaca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentTarget: {fileID: 0}
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 4033443794692023815}
-  _followPoint: {fileID: 0}
-  _player: {fileID: 0}
+  CurrentTarget: {fileID: 0}
+  _myTeamNumber: 0
   _currentGun: {fileID: 9043222431910821623}
   _minAttackDistance: 1.5
   _maxAttackDistance: 8
---- !u!114 &387875689936527343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4032379541040932811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5be40504d6b611c4eb3d482630724e7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _myMeleeScript: {fileID: 0}
-  _myRangeScript: {fileID: 0}
-  _myCurrentHealth: 0
-  _myMaxHealth: 0
+  _followPoint: {fileID: 0}
+  _player: {fileID: 0}
 --- !u!135 &4896516897456954544
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2172,6 +2157,22 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5738242008061452496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4032379541040932811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be40504d6b611c4eb3d482630724e7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _myMeleeScript: {fileID: 6914673975370171443}
+  _myRangeScript: {fileID: 3937586668711955917}
+  _myCurrentHealth: 0
+  _myMaxHealth: 0
 --- !u!1 &4032388357857334067
 GameObject:
   m_ObjectHideFlags: 0
@@ -3026,7 +3027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab6cc7f1c30863a479a7a126819e9272, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barrelPoint: {fileID: 1336304648272160302}
+  _barrelOrigin: {fileID: 1336304648272160302}
   _magazineCapacity: 6
   _reloadTime: 1.2
   _msBetweenShots: 800
@@ -3034,7 +3035,14 @@ MonoBehaviour:
   _shootDelay: 0.05
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 1
+  _addBulletSpread: 1
+  _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
+  _distance: 55
   CurrentTarget: {fileID: 0}
+  _bulletSpeed: 200
+  _bulletTrail: {fileID: 1921083361938323580, guid: 87fabc219e8f07544a9de1ce8aebe7a8, type: 3}
+  _kickMinMax: {x: 0.05, y: 0.2}
+  _recoilAngleMinMax: {x: 5, y: 8}
   _barrelPoints:
   - {fileID: 1336304648272160302}
   - {fileID: 4839871069736126101}
@@ -3045,12 +3053,6 @@ MonoBehaviour:
   - {fileID: 4839871070042311190}
   - {fileID: 4839871069969421244}
   - {fileID: 4839871068700872745}
-  _bulletSpeed: 200
-  _addBulletSpread: 1
-  _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
-  _bulletTrail: {fileID: 1921083361938323580, guid: 87fabc219e8f07544a9de1ce8aebe7a8, type: 3}
-  _kickMinMax: {x: 0.05, y: 0.2}
-  _recoilAngleMinMax: {x: 5, y: 8}
 --- !u!1 &9037584452490435387
 GameObject:
   m_ObjectHideFlags: 0
