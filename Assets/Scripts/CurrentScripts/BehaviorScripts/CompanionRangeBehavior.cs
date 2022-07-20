@@ -194,9 +194,9 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        _currentGun.Aim(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position);
+        _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position);  //  действие range combat
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);  //  действие range combat
     }
 
 

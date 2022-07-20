@@ -7,7 +7,7 @@ public class RoomActivator : MonoBehaviour
     private void Start()
     {
         for (int i = 0; i < Enemies.Length; i++)
-            Enemies[i].GetComponent<AIBaseBehavior>().enabled = false;
+            Enemies[i].GetComponent<BaseAIBehavior>().enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -15,7 +15,7 @@ public class RoomActivator : MonoBehaviour
         if (other.gameObject.GetComponent<PlayerController>())
         {
             for (int i = 0; i < Enemies.Length; i++)
-                Enemies[i].GetComponent<AIBaseBehavior>().enabled = true;
+                Enemies[i].GetComponent<BaseAIBehavior>().enabled = true;
         }
 
         this.gameObject.SetActive(false);

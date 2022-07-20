@@ -76,7 +76,7 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
 
         //_currentGun.Aim(_currentTarget.Eyes.position);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
     }
 
     public override void StateSkill(bool _isESkill, GameObject _target)

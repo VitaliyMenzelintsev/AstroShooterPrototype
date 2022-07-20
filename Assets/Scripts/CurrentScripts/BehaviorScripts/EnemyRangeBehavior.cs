@@ -11,7 +11,6 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
     private CoverManager _coverManager;
-    [SerializeField]
     private EnemyCoverSpot _currentCover = null;
 
 
@@ -116,9 +115,9 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        _currentGun.Aim(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position);
+        _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position); //  действие range combat
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position); //  действие range combat
     }
 
 

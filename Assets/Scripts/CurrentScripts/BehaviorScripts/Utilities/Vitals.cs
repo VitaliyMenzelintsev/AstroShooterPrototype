@@ -14,7 +14,7 @@ public class Vitals : MonoBehaviour, IDamageable, IHealeable, IRessurectable
     {
         _currentHealth = _startHealth;
     }
-
+     
 
     public bool IsAlive() => _currentHealth > 0;
 

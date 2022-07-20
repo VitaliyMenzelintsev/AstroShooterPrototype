@@ -78,7 +78,7 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
         transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
     }
 
 

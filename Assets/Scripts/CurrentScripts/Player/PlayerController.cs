@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : BaseCharacter
 {
     [HideInInspector]
     public Team MyTeam;
@@ -266,7 +266,7 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < _companions.Length; i++)
         {
 
-            _companions[i].GetComponent<AIBaseBehavior>().StateSkill(false, _currentTarget);
+            _companions[i].GetComponent<BaseAIBehavior>().StateSkill(false, _currentTarget);
         }
     }
 
@@ -281,5 +281,12 @@ public class PlayerController : MonoBehaviour
     private void Reload()
     {
         _currentGun.Reload();
+    }
+
+    public void SpeedChange(float _value)
+    {
+        _walkSpeed += _value;
+        _crouchSpeed += _value;
+        _sprintSpeed += _value;
     }
 }

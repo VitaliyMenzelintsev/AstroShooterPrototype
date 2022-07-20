@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public abstract class EnemyBaseBehavior : AIBaseBehavior
+public abstract class EnemyBaseBehavior : BaseAIBehavior
 {
-    public Transform Antenna;
+    public Transform BuffPoint;
 
-    public Transform GetAntenna()
+    public Transform GetBuffPoint()
     {
-        return Antenna;
+        return BuffPoint;
     }
 }

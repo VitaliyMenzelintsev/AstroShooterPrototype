@@ -12,7 +12,7 @@ public class LaserGun : BaseGun
     {
         base.Start();
 
-        _lineRenderer = GetComponent<LineRenderer>();
+        //_lineRenderer = GetComponent<LineRenderer>();
 
         _lineRenderer.enabled = false;
 

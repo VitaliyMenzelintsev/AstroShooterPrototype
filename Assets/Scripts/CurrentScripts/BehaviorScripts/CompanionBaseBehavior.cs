@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class CompanionBaseBehavior : AIBaseBehavior
+public abstract class CompanionBaseBehavior : BaseAIBehavior
 {
    
 }

@@ -23,99 +23,51 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
-
-        StartCoroutine(StateUpdate());
     }
 
 
-    private IEnumerator StateUpdate()
+    private void FixedUpdate()
     {
-        while (true)
+        if (MyVitals.IsAlive())
         {
-
-            if (MyVitals.IsAlive())
+            if (IsTargetAlive())
             {
-                if (IsTargetAlive())
+                if (IsDistanceCorrect())
                 {
-                    if (IsDistanceCorrect())
-                    {
-                        StateCombat();
-                    }
-                    else
-                    {
-                        StateInvestigate();
-                    }
-
+                    StateCombat();
                 }
                 else
                 {
-                    GetNewTarget();
-
-                    if (IsTargetAlive())
-                    {
-                        StateIdle();
-                    }
-                    else
-                    {
-                        if (IsPlayerFar())
-                        {
-                            StateFollowThePlayer();
-                        }
-                        else
-                        {
-                            StateIdle();
-                        }
-                    }
+                    StateInvestigate();
                 }
+
             }
             else
             {
-                StateDeath();
+                GetNewTarget();
+
+                if (IsTargetAlive())
+                {
+                    StateIdle();
+                }
+                else
+                {
+                    if (IsPlayerFar())
+                    {
+                        StateFollowThePlayer();
+                    }
+                    else
+                    {
+                        StateIdle();
+                    }
+                }
             }
         }
+        else
+        {
+            StateDeath();
+        }
     }
-    //private void FixedUpdate()
-    //{
-    //    if (MyVitals.IsAlive())
-    //    {
-    //        if (IsTargetAlive())
-    //        {
-    //            if (IsDistanceCorrect())
-    //            {
-    //                StateCombat();
-    //            }
-    //            else
-    //            {
-    //                StateInvestigate();
-    //            }
-
-    //        }
-    //        else
-    //        {
-    //            GetNewTarget();
-
-    //            if (IsTargetAlive())
-    //            {
-    //                StateIdle();
-    //            }
-    //            else
-    //            {
-    //                if (IsPlayerFar())
-    //                {
-    //                    StateFollowThePlayer();
-    //                }
-    //                else
-    //                {
-    //                    StateIdle();
-    //                }
-    //            }
-    //        }
-    //    }
-    //    else
-    //    {
-    //        StateDeath();
-    //    }
-    //}
 
 
 
@@ -189,7 +141,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<AIBaseBehavior>().Eyes.position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
     }
 
 

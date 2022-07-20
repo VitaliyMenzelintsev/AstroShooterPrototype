@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class TargetManager : MonoBehaviour
 {
-    [SerializeField]
-    private List<GameObject> _allCharactersList = new List<GameObject>();
-    private GameObject[] _allCharactersArray;
+
+    public List<GameObject> _allCharactersList = new List<GameObject>();
+
+    public GameObject[] _allCharactersArray;
 
 
     private void Awake()
@@ -13,9 +14,10 @@ public class TargetManager : MonoBehaviour
         _allCharactersList = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
     }
 
+
     private void Start()
     {
-       _allCharactersArray = _allCharactersList.ToArray();
+        _allCharactersArray = GameObject.FindGameObjectsWithTag("Character");
     }
 
 
@@ -27,9 +29,9 @@ public class TargetManager : MonoBehaviour
 
         if (_isFindEnemy) // если ищу врагов
         {
-            for (int i = 0; i < _allCharactersArray.Length; i++)
+            for (int i = 0; i < _allCharactersArray.Length; i++)   // 111
             {
-                GameObject _currentCharacter = _allCharactersList[i];
+                GameObject _currentCharacter = _allCharactersArray[i];
 
                 //выбирать текущего персонажа в качестве цели, только если мы не в одной команде и если у него осталось здоровье
                 if (_currentCharacter != null
@@ -59,9 +61,9 @@ public class TargetManager : MonoBehaviour
         }
         else    // если ищу друзей
         {
-            for (int i = 0; i < _allCharactersList.Count; i++)
+            for (int i = 0; i < _allCharactersArray.Length; i++)
             {
-                GameObject _currentCharacter = _allCharactersList[i];
+                GameObject _currentCharacter = _allCharactersArray[i];
 
                 if (_currentCharacter != null
                     && !IsItMyEnemy(_currentCharacter, _myTeamNumber)
@@ -80,17 +82,18 @@ public class TargetManager : MonoBehaviour
     }
 
 
-    public GameObject[] GetNearestAllies(int _myTeamNumber, float _distanceToLockate, Transform _viewPoint)
+    public GameObject[] GetNearestAllies(int _myTeamNumber, float _distanceToLockate, Transform _viewPoint, GameObject _me)
     {
         List<GameObject> _myAlliesList = new List<GameObject>();
 
-        for(int i = 0; i < _allCharactersArray.Length; i++)
+        for (int i = 0; i < _allCharactersArray.Length; i++)  // 111
         {
-            GameObject _currentCharacter = _allCharactersList[i];
+            GameObject _currentCharacter = _allCharactersArray[i];
 
             if (!IsItMyEnemy(_currentCharacter, _myTeamNumber)
                 && IsTargetAlive(_currentCharacter)
-                && IsTargetReachable(_viewPoint, _currentCharacter, _distanceToLockate))
+                && IsTargetReachable(_viewPoint, _currentCharacter, _distanceToLockate)
+                && _currentCharacter != _me)
             {
                 _myAlliesList.Add(_allCharactersArray[i]);
             }
@@ -113,6 +116,7 @@ public class TargetManager : MonoBehaviour
             return false;
         }
     }
+
 
 
     public bool IsItMyEnemy(GameObject _target, int _myTeamNumber)
@@ -143,9 +147,9 @@ public class TargetManager : MonoBehaviour
     }
 
 
-    public bool IsTargetReachable(Transform _myEyesPosition, GameObject _enemyPosition, float _viewDistance)
+    public bool IsTargetReachable(Transform _myPosition, GameObject _targetPosition, float _viewDistance)
     {
-        if (Vector3.Distance(_myEyesPosition.position, _enemyPosition.transform.position) <= _viewDistance)
+        if (Vector3.Distance(_myPosition.position, _targetPosition.transform.position) <= _viewDistance)
         {
             return true;
         }
@@ -169,10 +173,9 @@ public class TargetManager : MonoBehaviour
 
         float _rayDistance = 45f;
 
-        //направить луч на текущего врага
         if (Physics.Raycast(_myEyesPosition.position, _directionTowardsEnemy, out _hit, _rayDistance))
         {
-            //если рейкаст попал в цель, то мы знаем, что можем его увидеть
+            
             if (_hit.transform == _target.transform)
             {
                 _canSeeIt = true;
