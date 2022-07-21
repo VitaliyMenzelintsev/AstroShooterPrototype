@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2208bb2bb4feba442b421ab4519c7789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barrelOrigin: {fileID: 0}
+  _barrelOrigin: {fileID: 7152121082195403113}
   _magazineCapacity: 100
   _reloadTime: 0.1
   _msBetweenShots: 2667

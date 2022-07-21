@@ -8,11 +8,11 @@ using UnityEngine.AI;
 public class PlayerController : BaseCharacter
 {
     [SerializeField, Range(1, 6)]
-    private float _walkSpeed = 3.4f;
+    private float _walkSpeed = 4.4f;
     [SerializeField, Range(1, 6)]
-    private float _crouchSpeed = 2.6f;
+    private float _crouchSpeed = 3.6f;
     [SerializeField, Range(1, 6)]
-    private float _sprintSpeed = 4.0f;
+    private float _sprintSpeed = 5.0f;
     [SerializeField, Range(1, 6)]
     private float _currentSpeed;
     private float _rotationSpeed = 5f;
@@ -44,13 +44,11 @@ public class PlayerController : BaseCharacter
     private int _moveZ;
     private int _shootAnimation;
 
+    private Vector3 _move;
     private Vector2 _blendVector;
     private Vector2 _animationVelocity;
     [SerializeField]
     private GameObject[] _companions;
-
-    private Vector3 _newBlendY;
-    private Vector3 _newBlendX;
 
 
     private void Awake()
@@ -119,16 +117,22 @@ public class PlayerController : BaseCharacter
 
         // "смягчение" данных input, чтобы анимации были плавнее
         _blendVector = Vector2.SmoothDamp(_blendVector, _input, ref _animationVelocity, _animationSmoothTime);
-        Vector3 _move = new Vector3(_blendVector.x, 0, _blendVector.y);
+       _move = new Vector3(_blendVector.x, 0, _blendVector.y);
 
 
         // движение относительно камеры
-        _move = _move.x * _cameraTransform.right.normalized + _move.z * _cameraTransform.forward.normalized;
+        _move = _move.x * _cameraTransform.right.normalized + _move.z * _cameraTransform.forward.normalized * 2;
         _move.y = 0f;
-        _controller.Move(_move * Time.deltaTime * _currentSpeed);
 
-        _newBlendY = transform.InverseTransformDirection(_input);
-        _newBlendX = transform.InverseTransformDirection(_move);  // не плохо получилось
+        _controller.Move(_move * Time.fixedDeltaTime * _currentSpeed);
+
+
+        Vector3 _localMove = transform.InverseTransformDirection(_move);
+
+        // передача в аниматор данных инпута
+        _animator.SetFloat(_moveX, _localMove.x);
+        _animator.SetFloat(_moveZ, _localMove.z);
+
     }
 
 
@@ -139,6 +143,7 @@ public class PlayerController : BaseCharacter
         Quaternion targetRotation = Quaternion.LookRotation(_lookPoint - transform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
     }
+
 
 
     private void CursorDetermination()
@@ -160,12 +165,6 @@ public class PlayerController : BaseCharacter
     }
 
 
-    private void SetAnimation()
-    {
-        // передача в аниматор данных инпута
-        _animator.SetFloat(_moveX, _newBlendX.x);
-        _animator.SetFloat(_moveZ, _newBlendY.y);
-    }
 
     private void SetSpeed()
     {
@@ -188,7 +187,16 @@ public class PlayerController : BaseCharacter
 
 
 
+    private void SetAnimation()
+    {
 
+        //Vector2 _localMoveX = transform.InverseTransformDirection(_blendVector);
+        //Vector2 _localMoveY = transform.InverseTransformDirection(_in);
+
+        //// передача в аниматор данных инпута
+        //_animator.SetFloat(_moveX, _localMoveX.x);
+        //_animator.SetFloat(_moveZ, _localMoveY.y);
+    }
 
 
 
