@@ -49,8 +49,8 @@ public class PlayerController : BaseCharacter
     [SerializeField]
     private GameObject[] _companions;
 
-
-    // Попытка сделать анимации
+    private Vector3 _newBlendY;
+    private Vector3 _newBlendX;
 
 
     private void Awake()
@@ -126,6 +126,9 @@ public class PlayerController : BaseCharacter
         _move = _move.x * _cameraTransform.right.normalized + _move.z * _cameraTransform.forward.normalized;
         _move.y = 0f;
         _controller.Move(_move * Time.deltaTime * _currentSpeed);
+
+        _newBlendY = transform.InverseTransformDirection(_input);
+        _newBlendX = transform.InverseTransformDirection(_move);  // не плохо получилось
     }
 
 
@@ -157,19 +160,12 @@ public class PlayerController : BaseCharacter
     }
 
 
-
     private void SetAnimation()
     {
         // передача в аниматор данных инпута
-        _animator.SetFloat(_moveX, _blendVector.x);
-        _animator.SetFloat(_moveZ, _blendVector.y);
+        _animator.SetFloat(_moveX, _newBlendX.x);
+        _animator.SetFloat(_moveZ, _newBlendY.y);
     }
-
-
-
-
-
-
 
     private void SetSpeed()
     {
@@ -189,6 +185,10 @@ public class PlayerController : BaseCharacter
             _currentSpeed = _walkSpeed;
         }
     }
+
+
+
+
 
 
 
