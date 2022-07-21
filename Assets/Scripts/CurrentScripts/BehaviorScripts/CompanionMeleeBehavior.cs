@@ -1,21 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
-[RequireComponent(typeof(Animator))]
 
 public class CompanionMeleeBehavior : CompanionBaseBehavior
 {
-    [SerializeField]
-    private Transform _followPoint;
-    [SerializeField]
-    private Transform _player;
-    private NavMeshAgent _navMeshAgent;
-    private Animator _characterAnimator;
-
     public override void Start()
     {
         base.Start();
@@ -144,19 +132,6 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
     }
 
-
-
-    private bool IsPlayerFar()
-    {
-        if (Vector3.Distance(transform.position, _player.transform.position) > 3f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 
 
     public override void StateSkill(bool _isESkill, GameObject _target)

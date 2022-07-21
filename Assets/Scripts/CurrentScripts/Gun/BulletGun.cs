@@ -54,34 +54,33 @@ public class BulletGun : BaseGun
 
             Recoil();
 
-           
-                Vector3 _direction = GetDirection(); // определяем направление стрельбы
+            Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-                Ray _ray = new Ray(_barrelOrigin.position, _direction);
+            Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
-                RaycastHit _hit;
+            RaycastHit _hit;
 
-                if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
-                {
-                    ShootRender(_hit.point);
+            if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
+            {
+                ShootRender(_hit.point);
 
-                    _lastShootTime = Time.time;
+                _lastShootTime = Time.time;
 
-                    if (_hit.collider != null
-                        && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
-                        _damageableObject.GetHit(_damage);
+                if (_hit.collider != null
+                    && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
+                    _damageableObject.GetHit(_damage);
 
-                    if (_hit.collider.TryGetComponent(out ITeamable _targetableObject)
-                        && _targetableObject != null)
-                        CurrentTarget = _hit.collider.gameObject;
-                }
-                else
-                {
-                    ShootRender(_aimPoint);
+                if (_hit.collider.TryGetComponent(out ITeamable _targetableObject)
+                    && _targetableObject != null)
+                    CurrentTarget = _hit.collider.gameObject;
+            }
+            else
+            {
+                ShootRender(_aimPoint);
 
-                    _lastShootTime = Time.time;
-                }
-            
+                _lastShootTime = Time.time;
+            }
+
         }
     }
 

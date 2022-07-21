@@ -7,21 +7,17 @@ using UnityEngine.AI;
 
 public class PlayerController : BaseCharacter
 {
-    [HideInInspector]
-    public Team MyTeam;
-    [HideInInspector]
-    public Vitals MyVitals;
-    [SerializeField]
+    [SerializeField, Range(1, 6)]
     private float _walkSpeed = 3.4f;
-    [SerializeField]
+    [SerializeField, Range(1, 6)]
     private float _crouchSpeed = 2.6f;
-    [SerializeField]
+    [SerializeField, Range(1, 6)]
     private float _sprintSpeed = 4.0f;
+    [SerializeField, Range(1, 6)]
     private float _currentSpeed;
     private float _rotationSpeed = 5f;
     private Transform _cameraTransform;
-    [SerializeField]
-    private BaseGun _currentGun;
+
     private float _animationSmoothTime = 0.2f;  // смягчение скорости для анимации
 
     private float _gravityValue = -9.81f;
@@ -53,22 +49,20 @@ public class PlayerController : BaseCharacter
     [SerializeField]
     private GameObject[] _companions;
 
-    [SerializeField]
-    public GameObject _currentTarget = null;
+
+    // Попытка сделать анимации
 
 
     private void Awake()
     {
-        MyVitals = GetComponent<Vitals>();
-
+        _cameraTransform = Camera.main.transform;
         _controller = GetComponent<CharacterController>();
         _playerInput = GetComponent<PlayerInput>();
-        _cameraTransform = Camera.main.transform;
 
+        _shootAction = _playerInput.actions["Shoot"];
         _moveAction = _playerInput.actions["Move"];
         _crouchAction = _playerInput.actions["Crouch"];
         _sprintAction = _playerInput.actions["Sprint"];
-        _shootAction = _playerInput.actions["Shoot"];
         _reloadAction = _playerInput.actions["Reload"];
         _healPartyAction = _playerInput.actions["HealParty"];
         _skillEButtonAction = _playerInput.actions["EButtonSkill"];
@@ -79,6 +73,7 @@ public class PlayerController : BaseCharacter
         _moveX = Animator.StringToHash("MoveX");
         _moveZ = Animator.StringToHash("MoveZ");
     }
+
 
     private void FixedUpdate()
     {
@@ -100,8 +95,9 @@ public class PlayerController : BaseCharacter
         RotationTowardsCursor();
 
 
-        _currentTarget = _currentGun.CurrentTarget;
+        GetNewTarget();
     }
+
 
 
     private void Move()
@@ -118,19 +114,61 @@ public class PlayerController : BaseCharacter
         _controller.Move(_playerVelocity * Time.deltaTime);
 
 
-        Vector2 input = _moveAction.ReadValue<Vector2>();
+        Vector2 _input = _moveAction.ReadValue<Vector2>();
 
 
         // "смягчение" данных input, чтобы анимации были плавнее
-        _blendVector = Vector2.SmoothDamp(_blendVector, input, ref _animationVelocity, _animationSmoothTime);
-        Vector3 move = new Vector3(_blendVector.x, 0, _blendVector.y);
+        _blendVector = Vector2.SmoothDamp(_blendVector, _input, ref _animationVelocity, _animationSmoothTime);
+        Vector3 _move = new Vector3(_blendVector.x, 0, _blendVector.y);
 
 
         // движение относительно камеры
-        move = move.x * _cameraTransform.right.normalized + move.z * _cameraTransform.forward.normalized;
-        move.y = 0f;
-        _controller.Move(move * Time.deltaTime * _currentSpeed);
+        _move = _move.x * _cameraTransform.right.normalized + _move.z * _cameraTransform.forward.normalized;
+        _move.y = 0f;
+        _controller.Move(_move * Time.deltaTime * _currentSpeed);
     }
+
+
+    private void RotationTowardsCursor()
+    {
+        Vector3 _lookPoint = _viewPoint;
+        _lookPoint.y = transform.position.y;
+        Quaternion targetRotation = Quaternion.LookRotation(_lookPoint - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+    }
+
+
+    private void CursorDetermination()
+    {
+        Ray _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        RaycastHit _hit;
+        float _rayDistance = 50f;
+
+        if (Physics.Raycast(_ray, out _hit, _rayDistance))
+        {
+            _viewPoint = _hit.point;
+
+            if (_hit.collider != null
+                     && _hit.collider.GetComponent<Vitals>())      // TryGetComponent(out IDamageable _damageableObject)
+            {
+                CurrentTarget = _hit.collider.gameObject;
+            }
+        }
+    }
+
+
+
+    private void SetAnimation()
+    {
+        // передача в аниматор данных инпута
+        _animator.SetFloat(_moveX, _blendVector.x);
+        _animator.SetFloat(_moveZ, _blendVector.y);
+    }
+
+
+
+
+
 
 
     private void SetSpeed()
@@ -153,33 +191,11 @@ public class PlayerController : BaseCharacter
     }
 
 
-    private void SetAnimation()
+
+    private new void GetNewTarget()
     {
-        // передача в аниматор данных инпута
-        _animator.SetFloat(_moveX, _blendVector.x);
-        _animator.SetFloat(_moveZ, _blendVector.y);
-    }
-
-
-    private void CursorDetermination()
-    {
-        Ray _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        RaycastHit _hit;
-        float _rayDistance = 50f;
-
-        if (Physics.Raycast(_ray, out _hit, _rayDistance))
-        {
-            _viewPoint = _hit.point;
-        }
-    }
-
-
-    private void RotationTowardsCursor()
-    {
-        Vector3 _lookPoint = _viewPoint;
-        _lookPoint.y = transform.position.y;
-        Quaternion targetRotation = Quaternion.LookRotation(_lookPoint - transform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+        if(CurrentTarget == null)
+        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes, true);
     }
 
 
@@ -205,11 +221,13 @@ public class PlayerController : BaseCharacter
     }
 
 
+
     private void ShootGun()
     {
         _animator.CrossFade(_shootAnimation, _animationSmoothTime);
         _currentGun.Shoot(_viewPoint);
     }
+
 
 
     private void HealParty()
@@ -231,6 +249,7 @@ public class PlayerController : BaseCharacter
 
 
 
+
     private void SpeedUpParty() //если нажата кнопка увеличивается скорость напарников
     {
         for (int i = 0; i < _companions.Length; i++)
@@ -238,6 +257,7 @@ public class PlayerController : BaseCharacter
             _companions[i].GetComponent<NavMeshAgent>().speed += 1.5f;
         }
     }
+
 
 
 
@@ -250,25 +270,29 @@ public class PlayerController : BaseCharacter
     //}
 
 
+
     private void ActivateESkill()
     {
         for (int i = 0; i < _companions.Length; i++)
         {
             //if(_currentGun.CurrentTarget != null)
             Debug.Log("Игрок отдал приказ применить способность");
-            _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, _currentTarget);
+            _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, CurrentTarget);
 
         }
     }
+
+
 
     private void ActivateQSkill()
     {
         for (int i = 0; i < _companions.Length; i++)
         {
 
-            _companions[i].GetComponent<BaseAIBehavior>().StateSkill(false, _currentTarget);
+            _companions[i].GetComponent<BaseAIBehavior>().StateSkill(false, CurrentTarget);
         }
     }
+
 
 
     private void Aim(Vector3 _aimPoint)
@@ -278,10 +302,13 @@ public class PlayerController : BaseCharacter
     }
 
 
+
     private void Reload()
     {
         _currentGun.Reload();
     }
+
+
 
     public void SpeedChange(float _value)
     {

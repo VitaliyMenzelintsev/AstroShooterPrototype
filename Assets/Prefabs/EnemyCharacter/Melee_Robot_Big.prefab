@@ -4899,7 +4899,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7152121081994634648}
-  m_LocalRotation: {x: -0, y: 0.70263267, z: -0, w: 0.7115528}
+  m_LocalRotation: {x: 0, y: 0.7026313, z: 0, w: 0.7115541}
   m_LocalPosition: {x: 13.62, y: -0.53953004, z: -20.29}
   m_LocalScale: {x: 1.4, y: 1.4, z: 1.4}
   m_ConstrainProportionsScale: 1
@@ -4942,7 +4942,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
-  m_Speed: 0.34
+  m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -4994,7 +4994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startHealth: 700000
+  _startHealth: 700
   _currentHealth: 100
   _ressurectHealth: 80
   _damageMultiplier: 1

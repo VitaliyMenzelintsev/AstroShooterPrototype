@@ -4,20 +4,21 @@ using UnityEngine;
 public class TargetManager : MonoBehaviour
 {
 
-    public List<GameObject> _allCharactersList = new List<GameObject>();
+    //public List<GameObject> _allCharactersList = new List<GameObject>();
 
     public GameObject[] _allCharactersArray;
 
 
     private void Awake()
     {
-        _allCharactersList = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
+        //_allCharactersList = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
+        _allCharactersArray = GameObject.FindGameObjectsWithTag("Character");
     }
 
 
     private void Start()
     {
-        _allCharactersArray = GameObject.FindGameObjectsWithTag("Character");
+       
     }
 
 
@@ -95,7 +96,7 @@ public class TargetManager : MonoBehaviour
                 && IsTargetReachable(_viewPoint, _currentCharacter, _distanceToLockate)
                 && _currentCharacter != _me)
             {
-                _myAlliesList.Add(_allCharactersArray[i]);
+                _myAlliesList.Add(_currentCharacter);
             }
         }
 

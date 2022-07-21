@@ -1,29 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
-using System;
-
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
-[RequireComponent(typeof(Animator))]
 
 public class CompanionRangeBehavior : CompanionBaseBehavior
 {
-    [SerializeField]
-    private Transform _followPoint;
-    [SerializeField]
-    private Transform _player;
-    private NavMeshAgent _navMeshAgent;
-    private Animator _characterAnimator;
-    private CoverManager _coverManager;
-    private CompanionCoverSpot _currentCover = null;
-
-
-    // skill 
-    public BaseActivatedSkill MyActivatedSkill; // в это поле в инспекторе кладём нужный скилл
-
-
     public override void Start()
     {
         base.Start();
@@ -229,19 +208,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     private bool IsMeleeDistance()
     {
         if (Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _minAttackDistance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
-    private bool IsPlayerFar()
-    {
-        if (Vector3.Distance(transform.position, _player.transform.position) > 2.5f)
         {
             return true;
         }
