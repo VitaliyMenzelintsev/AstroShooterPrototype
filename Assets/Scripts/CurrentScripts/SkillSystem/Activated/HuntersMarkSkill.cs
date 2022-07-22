@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HuntersMarkSkill : BaseActivatedSkill
@@ -19,11 +17,11 @@ public class HuntersMarkSkill : BaseActivatedSkill
     private Transform _firepoint;       // назначается в инспекторе
     [SerializeField]
     private LineRenderer _lineRenderer; // назначается в инспекторе
-    private bool _isActivated = false;
+    private bool _isActivate = false;
 
     private void Update()
     {
-        if (_isActivated)
+        if (_isActivate)
         {
             LaserRender();
 
@@ -39,11 +37,10 @@ public class HuntersMarkSkill : BaseActivatedSkill
 
     public override void Activation(bool _isEButtonSkill, GameObject _target) // проверка завершённости кулдауна
     {
-        if (!_IsIAmEButtonSkill
-            && !_isEButtonSkill
+        if (!_isEButtonSkill
             && _isCooldownOver)
         {
-            _isActivated = true;
+            _isActivate = true;
 
             _isCooldownOver = false;
 
@@ -68,7 +65,7 @@ public class HuntersMarkSkill : BaseActivatedSkill
     {
         _myTarget.GetComponent<Vitals>()._damageMultiplier -= _damageIncrease;
         _myTarget.GetComponentInChildren<ParticleSystem>().Stop();
-        _isActivated = false;
+        _isActivate = false;
     }
 
     protected void CooldownChanger() // переключатель кулдауна

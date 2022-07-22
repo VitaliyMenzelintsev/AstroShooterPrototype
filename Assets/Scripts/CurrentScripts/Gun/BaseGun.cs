@@ -25,7 +25,7 @@ public abstract class BaseGun : MonoBehaviour
     protected Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
     [SerializeField]
     protected float _distance = 55f;
-
+    protected int _myOwnerTeamNumber;
 
     protected float _lastShootTime = 0;
     protected bool _isReloading;
@@ -38,6 +38,7 @@ public abstract class BaseGun : MonoBehaviour
     public virtual void Start()
     {
         _bulletsInMagazine = _magazineCapacity;
+        _myOwnerTeamNumber = GetComponentInParent<Team>().GetTeamNumber();
     }
 
 
@@ -94,7 +95,6 @@ public abstract class BaseGun : MonoBehaviour
 
             _shootingParticle.Play();
 
-
             Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
             Ray _ray = new Ray(_barrelOrigin.position, _direction);
@@ -108,12 +108,11 @@ public abstract class BaseGun : MonoBehaviour
                 _lastShootTime = Time.time;
 
                 if (_hit.collider != null
-                    && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
+                    && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
+                    && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
+                    && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
                     _damageableObject.GetHit(_damage);
 
-                if (_hit.collider.TryGetComponent(out ITeamable _targetableObject)
-                    && _targetableObject != null)
-                    CurrentTarget = _hit.collider.gameObject;
             }
             else
             {

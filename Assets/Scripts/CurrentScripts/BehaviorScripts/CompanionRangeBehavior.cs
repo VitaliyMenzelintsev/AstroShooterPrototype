@@ -78,20 +78,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         }
     }
 
-    public override void StateSkill(bool _isESkill, GameObject _target)
-    {
-
-        if (MyVitals.IsAlive())
-        {
-            //if(_target == null)
-            //{
-            //    _target = CurrentTarget.gameObject;
-            //}
-
-            MyActivatedSkill.Activation(_isESkill, _target);
-        }
-
-    }
 
 
     private void StateCombat()

@@ -1,10 +1,6 @@
 using UnityEngine.AI;
 using UnityEngine;
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
-
 public class EnemyDroneBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;

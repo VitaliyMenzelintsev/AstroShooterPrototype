@@ -36,8 +36,7 @@ public class SlowdownSkill : BaseActivatedSkill
 
     public override void Activation(bool _isEButtonSkill, GameObject _target) // проверка завершённости кулдауна
     {
-        if (_IsIAmEButtonSkill
-            && _isEButtonSkill
+        if (_isEButtonSkill
             && _isCooldownOver)
         {
             _isActivated = true;

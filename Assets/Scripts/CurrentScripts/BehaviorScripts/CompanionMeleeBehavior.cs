@@ -134,8 +134,12 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
 
 
+
     public override void StateSkill(bool _isESkill, GameObject _target)
     {
-        throw new System.NotImplementedException();
+        if (MyVitals.IsAlive())
+        {
+            MyActivatedSkill.Activation(_isESkill, _target);
+        }
     }
 }

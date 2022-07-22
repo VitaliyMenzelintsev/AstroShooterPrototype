@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 5469794294766487150}
   - component: {fileID: 5469794294766487151}
   - component: {fileID: 1503665260722634062}
+  - component: {fileID: 1532256919363164219}
   m_Layer: 0
   m_Name: Companion_Melee
   m_TagString: Character
@@ -289,6 +290,7 @@ MonoBehaviour:
   _maxAttackDistance: 1.5
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
+  MyActivatedSkill: {fileID: 1532256919363164219}
 --- !u!135 &1503665260722634062
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -302,6 +304,22 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1532256919363164219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5384490190743141140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54328bc0497ffad46aacf868fbe0ac85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _IsIAmEButtonSkill: 1
+  _skillDuration: 8
+  _skillCooldown: 40
+  _shieldPrefab: {fileID: 5315008200801232332, guid: a4b8e309b70efca4594a49da8465c18e, type: 3}
 --- !u!1 &5384512063852086788
 GameObject:
   m_ObjectHideFlags: 0

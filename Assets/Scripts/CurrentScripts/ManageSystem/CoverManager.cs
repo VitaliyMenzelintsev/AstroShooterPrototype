@@ -8,7 +8,7 @@ public class CoverManager : MonoBehaviour
     List<CompanionCoverSpot> _freeCompanionCoverSpots = new List<CompanionCoverSpot>();
     List<CompanionCoverSpot> _lockCompanionCoverSpots = new List<CompanionCoverSpot>();
 
-
+    
     private void Awake()
     {
         _freeEnemyCoverSpots = new List<EnemyCoverSpot>(GameObject.FindObjectsOfType<EnemyCoverSpot>());
@@ -121,6 +121,21 @@ public class CoverManager : MonoBehaviour
             _lockCompanionCoverSpots.Remove(_spot);
             _freeCompanionCoverSpots.Add(_spot);
         }
+    }
+
+
+    public void AddTemporaryCoverSpots(CompanionCoverSpot _spot)
+    {
+        _freeCompanionCoverSpots.Add(_spot);
+    }
+
+    public void RemoveTemporaryCoverSpots(CompanionCoverSpot _spot)
+    {
+        if(_freeCompanionCoverSpots.Contains(_spot))
+        _freeCompanionCoverSpots.Remove(_spot);
+
+        if (_lockCompanionCoverSpots.Contains(_spot))
+            _lockCompanionCoverSpots.Remove(_spot);
     }
 
 

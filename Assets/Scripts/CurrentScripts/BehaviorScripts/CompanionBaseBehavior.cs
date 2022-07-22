@@ -28,4 +28,12 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
             return false;
         }
     }
+
+    public override void StateSkill(bool _isESkill, GameObject _target)
+    {
+        if (MyVitals.IsAlive())
+        {
+            MyActivatedSkill.Activation(_isESkill, _target);
+        }
+    }
 }

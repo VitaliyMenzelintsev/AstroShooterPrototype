@@ -100,8 +100,12 @@ public class DamageDecreaseLaser : MonoBehaviour
         {
             AddToDisactivated(_activatedAllies[i]);
         }
-    }
 
+        for (int i = 0; i < _laserRender.Length; i++)
+        {
+            _laserRender[i].enabled = false;
+        }
+    }
 
 
     private void AddToDisactivated(GameObject _currentCharacter)

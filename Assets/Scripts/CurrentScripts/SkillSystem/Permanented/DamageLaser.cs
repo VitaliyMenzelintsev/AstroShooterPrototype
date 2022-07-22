@@ -25,19 +25,32 @@ public class DamageLaser : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _currentTarget = _myOwner.GetMyTarget();
-
-        if (_currentTarget != null
-            && Vector3.Distance(transform.position, _currentTarget.transform.position) <= _skillDistance
-            && _currentTarget.GetComponent<Vitals>().IsAlive())
+        if (this.gameObject.GetComponent<Vitals>().IsAlive())
         {
-            LaserActon(true);
-            RotateLaserOrigins();
+            _currentTarget = _myOwner.GetMyTarget();
+
+            if (_currentTarget != null
+                && Vector3.Distance(transform.position, _currentTarget.transform.position) <= _skillDistance
+                && _currentTarget.GetComponent<Vitals>().IsAlive())
+            {
+                LaserActon(true);
+                RotateLaserOrigins();
+            }
+            else
+            {
+                LaserActon(false);
+            }
         }
         else
         {
-            LaserActon(false);
+            for (int i = 0; i < _laserRender.Length; i++)
+            {
+                _laserRender[i].enabled = false;
+            }
+
+            Destroy(this);
         }
+        
     }
 
 

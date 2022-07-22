@@ -15,7 +15,7 @@ public class PlayerController : BaseCharacter
     private float _sprintSpeed = 5.0f;
     [SerializeField, Range(1, 6)]
     private float _currentSpeed;
-    private float _rotationSpeed = 5f;
+    private float _rotationSpeed = 7f;
     private Transform _cameraTransform;
 
     private float _animationSmoothTime = 0.2f;  // смягчение скорости для анимации
@@ -125,14 +125,6 @@ public class PlayerController : BaseCharacter
         _move.y = 0f;
 
         _controller.Move(_move * Time.fixedDeltaTime * _currentSpeed);
-
-
-        Vector3 _localMove = transform.InverseTransformDirection(_move);
-
-        // передача в аниматор данных инпута
-        _animator.SetFloat(_moveX, _localMove.x);
-        _animator.SetFloat(_moveZ, _localMove.z);
-
     }
 
 
@@ -165,6 +157,12 @@ public class PlayerController : BaseCharacter
     }
 
 
+    public Vector3 GetViewPoint()
+    {
+        return _viewPoint;
+    }
+
+
 
     private void SetSpeed()
     {
@@ -189,13 +187,11 @@ public class PlayerController : BaseCharacter
 
     private void SetAnimation()
     {
+        Vector3 _localMove = transform.InverseTransformDirection(_move);
 
-        //Vector2 _localMoveX = transform.InverseTransformDirection(_blendVector);
-        //Vector2 _localMoveY = transform.InverseTransformDirection(_in);
-
-        //// передача в аниматор данных инпута
-        //_animator.SetFloat(_moveX, _localMoveX.x);
-        //_animator.SetFloat(_moveZ, _localMoveY.y);
+        // передача в аниматор данных инпута
+        _animator.SetFloat(_moveX, _localMove.x);
+        _animator.SetFloat(_moveZ, _localMove.z);
     }
 
 
@@ -283,10 +279,8 @@ public class PlayerController : BaseCharacter
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-            //if(_currentGun.CurrentTarget != null)
             Debug.Log("Игрок отдал приказ применить способность");
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, CurrentTarget);
-
         }
     }
 
@@ -297,7 +291,7 @@ public class PlayerController : BaseCharacter
         for (int i = 0; i < _companions.Length; i++)
         {
 
-            _companions[i].GetComponent<BaseAIBehavior>().StateSkill(false, CurrentTarget);
+            _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(false, CurrentTarget);
         }
     }
 
