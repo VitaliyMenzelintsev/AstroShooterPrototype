@@ -94,6 +94,18 @@ public class PlayerController : BaseCharacter
 
 
         GetNewTarget();
+
+
+        Shooting();
+    }
+
+
+    private void Shooting()
+    {
+        if (_shootAction.inProgress)
+        {
+            ShootGun();
+        }
     }
 
 
@@ -206,7 +218,7 @@ public class PlayerController : BaseCharacter
 
     private void OnEnable()
     {
-        _shootAction.performed += _ => ShootGun();
+        //_shootAction.performed += _ => ShootGun();
         _reloadAction.performed += _ => Reload();
         _healPartyAction.performed += _ => HealParty();
         _skillEButtonAction.performed += _ => ActivateESkill();
@@ -217,7 +229,7 @@ public class PlayerController : BaseCharacter
 
     private void OnDisable()
     {
-        _shootAction.performed -= _ => ShootGun();
+        /*_shootAction.performed -= _ => ShootGun()*/;
         _reloadAction.performed -= _ => Reload();
         _healPartyAction.performed -= _ => HealParty();
         _skillEButtonAction.performed -= _ => ActivateESkill();

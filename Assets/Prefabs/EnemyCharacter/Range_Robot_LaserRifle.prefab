@@ -354,7 +354,7 @@ MonoBehaviour:
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
   _distance: 55
   CurrentTarget: {fileID: 0}
-  _lineRenderer: {fileID: 0}
+  _lineRenderer: {fileID: 7526491722398991572, guid: 095300b792ab2bc4fbb86c3da3ec0e94, type: 3}
 --- !u!1 &1568545644420443483
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,8 +36,6 @@ public class ShieldSkill : BaseActivatedSkill
 
     public override void Operation() // действие
     {
-        Debug.Log("ўит установлен");
-
         _spawnPosition = GameObject.FindObjectOfType<PlayerController>().GetViewPoint();
 
         GameObject _myShield = Instantiate(_shieldPrefab, _spawnPosition, Quaternion.identity);

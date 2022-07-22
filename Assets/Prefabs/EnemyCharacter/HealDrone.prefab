@@ -200,6 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 100
   _currentHealth: 100
+  _ressurectHealth: 80
   _damageMultiplier: 1
 --- !u!114 &6963662445653786267
 MonoBehaviour:
@@ -216,11 +217,12 @@ MonoBehaviour:
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 7010502294075035456}
+  CurrentTarget: {fileID: 0}
+  _myTeamNumber: 0
   _currentGun: {fileID: 3226983963206693302}
-  _currentTarget: {fileID: 0}
   _minAttackDistance: 2
   _maxAttackDistance: 3
-  _allCharacters: []
+  BuffPoint: {fileID: 0}
 --- !u!1 &7010502292272766217
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,7 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac39f3eb2dca0c64d834b7a0244b88bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barrelPoint: {fileID: 7010502293789832411}
+  _barrelOrigin: {fileID: 0}
   _magazineCapacity: 100
   _reloadTime: 1.2
   _msBetweenShots: 100
@@ -274,9 +276,10 @@ MonoBehaviour:
   _shootDelay: 0.05
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 1
-  CurrentTarget: {fileID: 0}
   _addBulletSpread: 0
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
+  _distance: 55
+  CurrentTarget: {fileID: 0}
   _lineRenderer: {fileID: 0}
 --- !u!1 &7010502293789832410
 GameObject:
@@ -356,7 +359,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7010502294098029072
 Transform:
   m_ObjectHideFlags: 0
@@ -384,8 +387,8 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.22895159, g: 0.990566, b: 0.32208607, a: 1}
-  m_Intensity: 2.12
-  m_Range: 10
+  m_Intensity: 1
+  m_Range: 5
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10

@@ -18,7 +18,8 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
     {
         if (MyVitals.IsAlive())
         {
-            if (IsTargetAlive())
+            if (IsTargetAlive() 
+                && IsTargetNeedHeal())
             {
                 if (IsDistanceCorrect())
                 {
@@ -59,6 +60,16 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
 
     }
 
+
+    private bool IsTargetNeedHeal()
+    {
+        if (CurrentTarget.GetComponent<Vitals>().IsNeedHealing())
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     private void StateInvestigate()
     {

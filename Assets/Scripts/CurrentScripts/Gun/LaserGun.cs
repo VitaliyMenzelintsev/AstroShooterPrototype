@@ -67,7 +67,9 @@ public class LaserGun : BaseGun
         }
         else
         {
-            _lineRenderer.enabled = false;
+            _lineRenderer.SetPosition(1, _barrelOrigin.position);
+
+            //_lineRenderer.enabled = false;
         }
     }
 

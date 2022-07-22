@@ -267,7 +267,7 @@ MonoBehaviour:
   _startHealth: 250
   _currentHealth: 100
   _ressurectHealth: 80
-  _damageMultiplier: 1
+  _damageMultiplier: 0.9
 --- !u!114 &5469794294766487151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,6 +320,7 @@ MonoBehaviour:
   _skillDuration: 8
   _skillCooldown: 40
   _shieldPrefab: {fileID: 5315008200801232332, guid: a4b8e309b70efca4594a49da8465c18e, type: 3}
+  _myOwnerTeamNumber: 0
 --- !u!1 &5384512063852086788
 GameObject:
   m_ObjectHideFlags: 0

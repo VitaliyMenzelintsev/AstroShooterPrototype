@@ -22,7 +22,6 @@ public class Projectile : MonoBehaviour
     private void FixedUpdate()
     {
         transform.Translate(Vector3.forward * _speed * Time.deltaTime);
-        //transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime, speed);
         SphereCast();
     }
 
@@ -30,22 +29,15 @@ public class Projectile : MonoBehaviour
     {
         RaycastHit _hit;
 
-        if (Physics.SphereCast(transform.position, 0.1f, Vector3.forward, out _hit, 0.1f))
+        if (Physics.SphereCast(transform.position, 0.2f, Vector3.forward, out _hit, 0.01f))
         {
             if (_hit.collider != null
                       && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
             {
                 _damageableObject.GetHit(_damage);
-                //if (_hit.collider.gameObject.GetComponent<BaseAIBehavior>())
-                //{
-                //    _speedManager.TemporarilyAIChange(_hit.collider.gameObject, true, _speedDecrease, _slowdownDuration);
-                //}
-                //else if (_hit.collider.gameObject.GetComponent<PlayerController>())
-                //{
-                //    _speedManager.TemporarilyPlayerChange(_hit.collider.gameObject, true, _speedDecrease, _slowdownDuration);
-                //}
+                Destroy(this.gameObject);
             }
-            Destroy(this.gameObject/*, 0.1f*/);
+            Destroy(this.gameObject);
         }
     }
 }
