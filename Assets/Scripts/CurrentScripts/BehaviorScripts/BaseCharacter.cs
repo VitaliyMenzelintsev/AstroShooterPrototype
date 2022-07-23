@@ -42,6 +42,11 @@ public abstract class BaseCharacter : MonoBehaviour
     } 
 
 
+    public float GetMaxAttackDistance()
+    {
+        return _maxAttackDistance;
+    }
+
     public GameObject GetMyTarget()
     {
         return CurrentTarget;

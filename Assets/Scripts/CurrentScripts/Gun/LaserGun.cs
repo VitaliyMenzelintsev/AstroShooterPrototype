@@ -6,28 +6,40 @@ public class LaserGun : BaseGun
     private float _punchDamage;
     [SerializeField]
     private LineRenderer _lineRenderer;
-
+    private float _maxDistance;
+    private Vector3 _myTarget;
 
     public override void Start()
     {
         base.Start();
 
-        //_lineRenderer = GetComponent<LineRenderer>();
-
         _lineRenderer.enabled = false;
 
         _punchDamage = _damage / 2;
+
+        _maxDistance = gameObject.GetComponentInParent<BaseCharacter>().GetMaxAttackDistance();
+
     }
+
+
 
     public override void LateUpdate()
     {
         base.LateUpdate();
+
+        if (_myTarget != null
+            && Vector3.Distance(this.gameObject.transform.position, _myTarget) > _maxDistance - 0.5f)
+        {
+            _lineRenderer.enabled = false;
+        }
     }
 
     public override void Shoot(Vector3 _aimPoint)
     {
         if (IsGunReady())
         {
+            _myTarget = _aimPoint;
+
             _bulletsInMagazine--;
 
             _nextShotTime = Time.time + _msBetweenShots / 1000;
@@ -40,36 +52,36 @@ public class LaserGun : BaseGun
 
             RaycastHit _hit;
 
+            _lineRenderer.SetPosition(0, _barrelOrigin.position);
 
-            if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
+            if (Physics.Raycast(_ray, out _hit, _maxDistance))   // если попали во что-то
             {
                 _lastShootTime = Time.time;
 
                 if (_hit.collider != null
                     && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
                 {
-                    _damageableObject.GetHit(_damage);
-
                     _lineRenderer.enabled = true;
 
-                    ShootRender(_hit.point);
+                    _damageableObject.GetHit(_damage);
+
+                    _lineRenderer.SetPosition(1, _hit.point);
+
                 }
+                else
+                {
+                    _lineRenderer.enabled = false;
+                }
+
             }
             else
             {
-                //_lineRenderer.enabled = false;
-
-                ShootRender(_aimPoint);
-
-                _lastShootTime = Time.time;
+                _lineRenderer.enabled = false;
             }
-
         }
-        else
+        else 
         {
-            _lineRenderer.SetPosition(1, _barrelOrigin.position);
-
-            //_lineRenderer.enabled = false;
+            _lineRenderer.enabled = false;
         }
     }
 
@@ -100,7 +112,6 @@ public class LaserGun : BaseGun
 
     public override void ShootRender(Vector3 _aimPoint)
     {
-        _lineRenderer.SetPosition(0, _barrelOrigin.position);
-        _lineRenderer.SetPosition(1, _aimPoint);
+
     }
 }

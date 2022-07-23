@@ -354,7 +354,7 @@ MonoBehaviour:
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
   _distance: 55
   CurrentTarget: {fileID: 0}
-  _lineRenderer: {fileID: 7526491722398991572, guid: 095300b792ab2bc4fbb86c3da3ec0e94, type: 3}
+  _lineRenderer: {fileID: 0}
 --- !u!1 &1568545644420443483
 GameObject:
   m_ObjectHideFlags: 0
@@ -5599,7 +5599,7 @@ MonoBehaviour:
   _myTeamNumber: 0
   _currentGun: {fileID: 2694233798444959959}
   _minAttackDistance: 0
-  _maxAttackDistance: 16
+  _maxAttackDistance: 10
   BuffPoint: {fileID: 1888702841272731234}
 --- !u!114 &8409626054815813788
 MonoBehaviour:
