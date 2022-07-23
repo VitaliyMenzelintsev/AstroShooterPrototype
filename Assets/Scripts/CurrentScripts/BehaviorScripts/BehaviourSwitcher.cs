@@ -16,22 +16,18 @@ public class BehaviourSwitcher : MonoBehaviour
     {
         _myMeleeScript = GetComponent<CompanionBaseBehavior>();
         _myRangeScript = GetComponent<CompanionBaseBehavior>();
-
-        InvokeRepeating("HealthChecker", 2f, 0.5f);
     }
 
 
-    private void HealthChecker()
+    private void FixedUpdate()
     {
         _myCurrentHealth = GetComponent<Vitals>().GetCurrentHealth();
         _myMaxHealth = GetComponent<Vitals>().GetMaxHealth();
 
-        if (_myCurrentHealth <= _myMaxHealth / 3)
+        if (_myCurrentHealth <= _myMaxHealth / 2)
         {
             _myMeleeScript.enabled  = false;
             _myRangeScript.enabled = true;
-
-
         }
         else
         {

@@ -7,7 +7,7 @@ public class DamageDecreaseLaser : MonoBehaviour
     public GameObject[] _alliesArray;
     private TargetManager _targetManager;
     private Transform _laserPosition;
-    private float _skillDistance = 15f;
+    private float _skillDistance = 12f;
     [SerializeField]
     private float _damageDecrease = 0.3f;
 
@@ -46,17 +46,18 @@ public class DamageDecreaseLaser : MonoBehaviour
             {
                 GameObject _currentCharacter = _alliesArray[i].gameObject;
 
-                if (_currentCharacter != null
-                    && _targetManager.IsTargetAlive(_currentCharacter)
-                    && _targetManager.IsTargetReachable(this.gameObject.transform, _currentCharacter, _skillDistance)
-                    && _targetManager.CanSeeTarget(_currentCharacter, _laserPosition))
-                {
-                    Transform _myLaserTarget = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
+                GameObject _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().gameObject;
 
-                    if (_myLaserTarget != null) // таким незамысловатым образом происходит проверка иерархиии противников, могут ли они принимать луч усиления
+                if (_currentCharacter != null
+                   && _targetManager.IsTargetAlive(_currentCharacter)
+                   && _targetManager.IsTargetReachable(_laserPosition, _currentCharacter, _skillDistance)
+                   && _targetManager.CanSeeTarget(_currentCharacter, _laserPosition))
+                {
+                    if (_buffPoint != null) // таким незамысловатым образом происходит проверка иерархиии противников, могут ли они принимать луч усиления
                     {
                         AddToActivated(_currentCharacter);
-                        _laserRender[i].enabled = true;
+                        //_laserRender[i].enabled = true;
+                        Debug.Log("Активирую лазер номер " + i);
                         _laserRender[i].SetPosition(0, _laserPosition.position);
                         _laserRender[i].SetPosition(1, _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().position);
                     }
@@ -64,9 +65,8 @@ public class DamageDecreaseLaser : MonoBehaviour
                 else
                 {
                     AddToDisactivated(_currentCharacter);
-
-                    _laserRender[i].enabled = false;
                 }
+
             }
         }
         else
