@@ -116,9 +116,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startHealth: 300
-  _currentHealth: 100
-  _ressurectHealth: 300
+  _startHealth: 600
+  _currentHealth: 600
+  _ressurectHealth: 600
   _damageMultiplier: 1
 --- !u!114 &4622083302382664337
 MonoBehaviour:
@@ -138,6 +138,7 @@ MonoBehaviour:
   - {fileID: 8944657881158019088}
   - {fileID: 8944657880395715548}
   - {fileID: 8944657881810639212}
+  _myOwnerTeamNumber: 0
 --- !u!1 &8944657880227764701
 GameObject:
   m_ObjectHideFlags: 0

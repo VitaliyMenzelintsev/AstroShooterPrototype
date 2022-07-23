@@ -759,7 +759,7 @@ GameObject:
   - component: {fileID: 1333582193485500297}
   - component: {fileID: 1333582193485500309}
   - component: {fileID: 1333582193485500308}
-  - component: {fileID: 8537402704112823115}
+  - component: {fileID: 1006195902144221749}
   m_Layer: 0
   m_Name: Companion_Pistol
   m_TagString: Character
@@ -846,7 +846,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.25
-  m_Speed: 3.2
+  m_Speed: 3.6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -884,9 +884,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startHealth: 100
+  _startHealth: 250
   _currentHealth: 100
-  _ressurectHealth: 80
+  _ressurectHealth: 250
   _damageMultiplier: 1
 --- !u!114 &1333582193485500309
 MonoBehaviour:
@@ -910,7 +910,7 @@ MonoBehaviour:
   _maxAttackDistance: 13
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
-  MyActivatedSkill: {fileID: 8537402704112823115}
+  MyActivatedSkill: {fileID: 0}
 --- !u!135 &1333582193485500308
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -924,7 +924,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8537402704112823115
+--- !u!114 &1006195902144221749
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -933,14 +933,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1333582193485500303}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdf9327b54c3dae4e8f8ed0a29afb71c, type: 3}
+  m_Script: {fileID: 11500000, guid: 280de2328a64b224c8b16e9ff8c2ddda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _IsIAmEButtonSkill: 0
-  _skillDuration: 5
-  _skillCooldown: 8
+  _skillDuration: 4
+  _skillCooldown: 9
   _myTarget: {fileID: 0}
-  _damageIncrease: 0.4
   _partToRotate: {fileID: 4008548550741362665}
   _firepoint: {fileID: 7739920936180265959}
   _lineRenderer: {fileID: 0}

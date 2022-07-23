@@ -19,7 +19,6 @@ public class PlayerController : BaseCharacter
     private Transform _cameraTransform;
 
     private float _animationSmoothTime = 0.2f;  // смягчение скорости для анимации
-
     private float _gravityValue = -9.81f;
 
     private CharacterController _controller;
@@ -48,7 +47,7 @@ public class PlayerController : BaseCharacter
     private Vector2 _blendVector;
     private Vector2 _animationVelocity;
     [SerializeField]
-    private GameObject[] _companions;
+    private CompanionBaseBehavior[] _companions;
 
 
     private void Awake()
@@ -138,6 +137,7 @@ public class PlayerController : BaseCharacter
 
         _controller.Move(_move * Time.fixedDeltaTime * _currentSpeed);
     }
+
 
 
     private void RotationTowardsCursor()
@@ -302,7 +302,6 @@ public class PlayerController : BaseCharacter
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(false, CurrentTarget);
         }
     }

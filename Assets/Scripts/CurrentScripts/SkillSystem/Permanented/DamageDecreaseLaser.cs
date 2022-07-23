@@ -46,18 +46,17 @@ public class DamageDecreaseLaser : MonoBehaviour
             {
                 GameObject _currentCharacter = _alliesArray[i].gameObject;
 
-                GameObject _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().gameObject;
-
                 if (_currentCharacter != null
                    && _targetManager.IsTargetAlive(_currentCharacter)
                    && _targetManager.IsTargetReachable(_laserPosition, _currentCharacter, _skillDistance)
                    && _targetManager.CanSeeTarget(_currentCharacter, _laserPosition))
                 {
+                    GameObject _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().gameObject;
+
                     if (_buffPoint != null) // таким незамысловатым образом происходит проверка иерархиии противников, могут ли они принимать луч усиления
                     {
                         AddToActivated(_currentCharacter);
                         //_laserRender[i].enabled = true;
-                        Debug.Log("Активирую лазер номер " + i);
                         _laserRender[i].SetPosition(0, _laserPosition.position);
                         _laserRender[i].SetPosition(1, _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().position);
                     }

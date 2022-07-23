@@ -93,6 +93,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
+
     private void OnTriggerEnter(Collider other)
     {
         GetNewTarget();
@@ -110,6 +112,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
     private void StateDeath()
     {
         _characterAnimator.SetBool("Move", false);
@@ -120,12 +123,14 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
     private void StateIdle()
     {
         _characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetBool("HasEnemy", false);
     }
+
 
 
     private void StateFollowThePlayer()
@@ -141,6 +146,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
     private void StateMoveToCover()
     {
         _characterAnimator.SetBool("Move", true);
@@ -149,6 +155,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _navMeshAgent.SetDestination(_currentCover.transform.position);            // действие move to cover
     }
+
 
 
     private void StateRangeCombat()
@@ -165,6 +172,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
     private void StateMeleeCombat()
     {
         ExitCover();
@@ -175,6 +183,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _currentGun.Punch();
     }
+
 
 
     private bool IsRangeDistance()
@@ -191,6 +200,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
     private bool IsMeleeDistance()
     {
         if (Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _minAttackDistance)
@@ -204,11 +214,13 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
+
     private void ExitCover()
     {
         if (_currentCover != null)
             _coverManager.ExitCover(ref _currentCover);
     }
+
 
 
     private bool IsNotInCover()
@@ -222,6 +234,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
             return false;
         }
     }
+
 
 
     private bool IsCoverExist()

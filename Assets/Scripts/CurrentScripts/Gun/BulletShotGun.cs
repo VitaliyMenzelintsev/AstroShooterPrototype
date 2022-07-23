@@ -5,6 +5,7 @@ public class BulletShotGun : BulletGun
 {
     [SerializeField]
     private Transform[] _barrelPoints;
+    private Vector3 _shootPoint;
 
 
     public override void Start()
@@ -37,39 +38,52 @@ public class BulletShotGun : BulletGun
 
             _shootingParticle.Play();
 
-            Recoil();
+            //Aim(_aimPoint);
 
-            for (int i = 0; i < _barrelPoints.Length; i++)
+            _shootPoint = _aimPoint;
+
+            Invoke("DamageDeal", _shootDelay);
+        }
+    }
+
+    private void DamageDeal()
+    {
+        for (int i = 0; i < _barrelPoints.Length; i++)
+        {
+            /*_direction[i] = GetDirection();*/ // определяем направление стрельбы
+
+            Vector3 _direction;
+            _direction = _barrelPoints[i].forward += new Vector3(
+            Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
+            Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
+            Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
+
+            _direction.Normalize();
+
+            Ray _ray = new Ray(_barrelPoints[i].position, _direction);
+
+            RaycastHit _hit;
+
+            if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
             {
-                Vector3 _direction = GetDirection(); // определяем направление стрельбы
+                ShootRender(_hit.point);
 
-                Ray _ray = new Ray(_barrelPoints[i].position, _direction);
+                _lastShootTime = Time.time;
 
-                RaycastHit _hit;
+                if (_hit.collider != null
+                      && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
+                      && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
+                      && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
+                    _damageableObject.GetHit(_damage);
+            }
+            else
+            {
+                ShootRender(_shootPoint);
 
-                if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
-                {
-                    ShootRender(_hit.point);
-
-                    _lastShootTime = Time.time;
-
-                    if (_hit.collider != null
-                          && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
-                          && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
-                          && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
-                        _damageableObject.GetHit(_damage);
-
-                    //if (_hit.collider.TryGetComponent(out ITeamable _targetableObject)
-                    //    && _targetableObject != null)
-                    //    CurrentTarget = _hit.collider.gameObject;
-                }
-                else
-                {
-                    ShootRender(_aimPoint);
-
-                    _lastShootTime = Time.time;
-                }
+                _lastShootTime = Time.time;
             }
         }
+
+        Recoil();
     }
 }

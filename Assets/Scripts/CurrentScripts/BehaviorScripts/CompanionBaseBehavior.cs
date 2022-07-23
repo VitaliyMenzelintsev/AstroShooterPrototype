@@ -31,7 +31,7 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
 
     public override void StateSkill(bool _isESkill, GameObject _target)
     {
-        if (MyVitals.IsAlive())
+        if (GetComponent<Vitals>().IsAlive())
         {
             MyActivatedSkill.Activation(_isESkill, _target);
         }

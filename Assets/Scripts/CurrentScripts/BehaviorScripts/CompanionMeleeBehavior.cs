@@ -129,17 +129,22 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(CurrentTarget.transform);
 
+        _currentGun.Aim(CurrentTarget.transform.position); /* перенёс в Shoot в самом оружии*/
+
+
         _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
     }
 
 
 
 
-    public override void StateSkill(bool _isESkill, GameObject _target)
-    {
-        if (MyVitals.IsAlive())
-        {
-            MyActivatedSkill.Activation(_isESkill, _target);
-        }
-    }
+    //public override void StateSkill(bool _isESkill, GameObject _target)
+    //{
+    //    if (MyVitals.IsAlive())
+    //    {
+
+    //        Debug.Log("sDGdsfg");
+    //        MyActivatedSkill.Activation(_isESkill, _target);
+    //    }
+    //}
 }
