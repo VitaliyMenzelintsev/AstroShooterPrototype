@@ -17,9 +17,12 @@ public class SlowdownSkill : BaseActivatedSkill
     [SerializeField]
     private LineRenderer _lineRenderer; // назначается в инспекторе
     private bool _isActivated = false;
+    [SerializeField]
     private Collider[] _targets;
     [SerializeField]
     private int _myOwnerTeamNumber;
+    [SerializeField]
+    private LineRenderer[] _lineRenderers;
 
     private void Update()
     {
@@ -61,17 +64,13 @@ public class SlowdownSkill : BaseActivatedSkill
 
     public override void Operation() // действие
     {
-        //Debug.Log("Способность замедлила" + _myTarget.name);
-        //RaycastHit[] _targets;
-
         Vector3 _viewPoint = GameObject.FindObjectOfType<PlayerController>().GetViewPoint();
 
         _targets = Physics.OverlapSphere(_viewPoint, 2.5f);
 
         for(int i = 0; i < _targets.Length; i++)
         {
-            if(_targets[i].GetComponent<NavMeshAgent>()
-                && _targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
+            if(_targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
                 && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
             _targets[i].GetComponent<NavMeshAgent>().speed -= 2f;
         }
@@ -81,30 +80,63 @@ public class SlowdownSkill : BaseActivatedSkill
     {
         _isActivated = false;
 
+        Debug.Log("Способность завершила действие");
+
         for (int i = 0; i < _targets.Length; i++)
         {
             _targets[i].GetComponent<NavMeshAgent>().speed += 2f;
-            _lineRenderer.SetPosition(1, _firepoint.position);
+            _lineRenderers[i].SetPosition(1, _firepoint.position);
         }
 
-        Debug.Log("Способность завершила действие");
 
-        //_myTarget.GetComponent<NavMeshAgent>().speed += 2f;
+        for(int i = 0; i < _lineRenderers.Length; i++)
+        {
+            if (_lineRenderers[i].enabled == true)
+            {
+                _lineRenderers[i].enabled = false;
+            }
+        }
     }
+
+
+
+    private void LaserRender()  // отрисовка лазера
+    {
+        for(int i = 0; i < _lineRenderers.Length; i++)
+        {
+            if (_targets[i] != null
+                && _targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
+                && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber
+                && _targets[i].gameObject.TryGetComponent(out IDamageable _damageableObject)
+                && _damageableObject.IsAlive())
+            {
+                if (_lineRenderers[i].enabled == false)
+                {
+                    _lineRenderers[i].enabled = true;
+                }
+
+
+                _lineRenderers[i].SetPosition(0, _firepoint.position);
+                _lineRenderers[i].SetPosition(1, new Vector3(_targets[i].transform.position.x, _targets[i].transform.position.y + 1.2f, _targets[i].transform.position.z));
+            }
+            else
+            {
+                if (_lineRenderers[i].enabled == true)
+                {
+                    _lineRenderers[i].enabled = false;
+                }
+            }
+        }
+    }
+
+
 
     protected void CooldownChanger() // переключатель кулдауна
     {
         _isCooldownOver = true;
     }
 
-    private void LaserRender()  // отрисовка лазера
-    {
-        for (int i = 0; i < _targets.Length; i++)
-        {
-            _lineRenderer.SetPosition(0, _firepoint.position);
-            _lineRenderer.SetPosition(1, new Vector3(_targets[i].transform.position.x, _targets[i].transform.position.y + 1.2f, _targets[i].transform.position.z));
-        }
-    }
+
 
     private void RotateLaserOrigin()
     {

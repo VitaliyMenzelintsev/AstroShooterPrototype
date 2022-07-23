@@ -116,7 +116,11 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _characterAnimator.SetBool("Move", true);
 
-        _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
+        float _bestDistance = _maxAttackDistance - _minAttackDistance;
+
+        Vector3 _firePosition = (CurrentTarget.transform.position - transform.position) * _bestDistance;
+
+        _navMeshAgent.SetDestination(_firePosition); // действие Investigate
     }
 
 
@@ -129,7 +133,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Aim(CurrentTarget.transform.position); /* перенёс в Shoot в самом оружии*/
+        _currentGun.Aim(CurrentTarget.transform.position);
 
 
         _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
