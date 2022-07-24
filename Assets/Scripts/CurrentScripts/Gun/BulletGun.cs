@@ -77,8 +77,10 @@ public class BulletGun : BaseGun
                 ShootRender(_aimPoint);
 
                 _lastShootTime = Time.time;
-            }
 
+                
+            }
+            //_shootingParticle.Stop();
         }
     }
 

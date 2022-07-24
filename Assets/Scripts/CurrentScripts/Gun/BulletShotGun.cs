@@ -8,6 +8,7 @@ public class BulletShotGun : BulletGun
     private Vector3 _shootPoint;
 
 
+
     public override void Start()
     {
         base.Start();
@@ -36,10 +37,6 @@ public class BulletShotGun : BulletGun
 
             _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-            _shootingParticle.Play();
-
-            //Aim(_aimPoint);
-
             _shootPoint = _aimPoint;
 
             Invoke("DamageDeal", _shootDelay);
@@ -66,6 +63,8 @@ public class BulletShotGun : BulletGun
 
             if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
             {
+                _shootingParticle.Play();
+
                 ShootRender(_hit.point);
 
                 _lastShootTime = Time.time;
@@ -78,6 +77,8 @@ public class BulletShotGun : BulletGun
             }
             else
             {
+                _shootingParticle.Play();
+
                 ShootRender(_shootPoint);
 
                 _lastShootTime = Time.time;

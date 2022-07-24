@@ -19,7 +19,8 @@ GameObject:
   - component: {fileID: 6963662445653786269}
   - component: {fileID: 6963662445653786268}
   - component: {fileID: 6963662445653786267}
-  m_Layer: 0
+  - component: {fileID: -2820645685297125333}
+  m_Layer: 8
   m_Name: HealDrone
   m_TagString: Character
   m_Icon: {fileID: 0}
@@ -108,15 +109,15 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 2
+  m_AngularSpeed: 500
+  m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 6.39
   m_BaseOffset: 5.66
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
 --- !u!65 &6963662445653786274
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -223,6 +224,19 @@ MonoBehaviour:
   _minAttackDistance: 2
   _maxAttackDistance: 3
   BuffPoint: {fileID: 0}
+--- !u!114 &-2820645685297125333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6986766183373513972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e854514216344a4e975667f8d37e483, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FXEplosion: {fileID: 2676408268667737841, guid: a7a270442e0ee23408f195f7534ea8c1, type: 3}
 --- !u!1 &7010502292272766217
 GameObject:
   m_ObjectHideFlags: 0

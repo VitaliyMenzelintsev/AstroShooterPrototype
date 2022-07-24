@@ -222,7 +222,8 @@ GameObject:
   - component: {fileID: 1147898629373639786}
   - component: {fileID: 1147898629373639702}
   - component: {fileID: 5092937459713049169}
-  m_Layer: 0
+  - component: {fileID: -4791326680264754607}
+  m_Layer: 8
   m_Name: Range_Robot_Pistol
   m_TagString: Character
   m_Icon: {fileID: 0}
@@ -282,15 +283,15 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_AngularSpeed: 500
+  m_StoppingDistance: 0.2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
 --- !u!136 &5438214952258691455
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -354,8 +355,9 @@ MonoBehaviour:
   _myTeamNumber: 0
   _currentGun: {fileID: 6088266737122412218}
   _minAttackDistance: 0
-  _maxAttackDistance: 16
+  _maxAttackDistance: 12
   BuffPoint: {fileID: 1747214667333883735}
+  _currentCover: {fileID: 0}
 --- !u!114 &5092937459713049169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,6 +374,19 @@ MonoBehaviour:
   - m_Rig: {fileID: 5567897037655161380}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &-4791326680264754607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144856776976502075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e854514216344a4e975667f8d37e483, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FXEplosion: {fileID: 2676408268667737841, guid: a7a270442e0ee23408f195f7534ea8c1, type: 3}
 --- !u!1 &1144871776423649061
 GameObject:
   m_ObjectHideFlags: 0

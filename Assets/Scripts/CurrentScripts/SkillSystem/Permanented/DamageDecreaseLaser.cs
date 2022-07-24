@@ -15,7 +15,7 @@ public class DamageDecreaseLaser : MonoBehaviour
     public Vitals MyVitals;
 
 
-    public List<GameObject> _activatedAllies = new List<GameObject>();
+    List<GameObject> _activatedAllies = new List<GameObject>();
     List<GameObject> _disactivatedAllies = new List<GameObject>();
 
 
@@ -37,7 +37,7 @@ public class DamageDecreaseLaser : MonoBehaviour
         StartSkill();
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate()  // на старте раскидать по активейтд и дизактивейтед, а в апдейте пробегаться по обоим спискам и менять отрисовку вкл-выкл
     {
         if (MyVitals.IsAlive()
             && _alliesArray != null)
@@ -58,7 +58,11 @@ public class DamageDecreaseLaser : MonoBehaviour
                         AddToActivated(_currentCharacter);
                         //_laserRender[i].enabled = true;
                         _laserRender[i].SetPosition(0, _laserPosition.position);
-                        _laserRender[i].SetPosition(1, _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().position);
+                        _laserRender[i].SetPosition(1, _buffPoint.transform.position);
+                    }
+                    else
+                    {
+                        AddToDisactivated(_currentCharacter);
                     }
                 }
                 else

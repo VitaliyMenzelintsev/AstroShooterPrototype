@@ -48,6 +48,8 @@ public class PlayerController : BaseCharacter
     private Vector2 _animationVelocity;
     [SerializeField]
     private CompanionBaseBehavior[] _companions;
+    [SerializeField]
+    private LayerMask _layerMask;
 
 
     private void Awake()
@@ -153,10 +155,11 @@ public class PlayerController : BaseCharacter
     private void CursorDetermination()
     {
         Ray _ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+       
         RaycastHit _hit;
         float _rayDistance = 50f;
 
-        if (Physics.Raycast(_ray, out _hit, _rayDistance))
+        if (Physics.Raycast(_ray, out _hit, _rayDistance, _layerMask))
         {
             _viewPoint = _hit.point;
 
@@ -167,6 +170,7 @@ public class PlayerController : BaseCharacter
             }
         }
     }
+
 
 
     public Vector3 GetViewPoint()

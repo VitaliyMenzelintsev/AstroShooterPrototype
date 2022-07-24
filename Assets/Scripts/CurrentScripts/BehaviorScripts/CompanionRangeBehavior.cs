@@ -12,6 +12,9 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         _characterAnimator = GetComponent<Animator>();
 
         _coverManager = GameObject.FindObjectOfType<CoverManager>();
+
+        _navMeshAgent.stoppingDistance = 0.2f;
+
     }
 
 
@@ -64,6 +67,27 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
                 StateIdle();
             }
         }
+
+        SetAnimations();
+
+        CheckStoppingDistance();
+
+    }
+
+
+    private void SetAnimations()
+    {
+        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+    }
+
+
+
+    private void CheckStoppingDistance()
+    {
+        if(_navMeshAgent.stoppingDistance != 0.2f)
+        {
+            _navMeshAgent.stoppingDistance = 0.2f;
+        }
     }
 
     private bool IsFollowPointFar()
@@ -115,7 +139,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateDeath()
     {
-        _characterAnimator.SetBool("Move", false);
+        //_characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetBool("Dead", true);
 
@@ -126,7 +150,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateIdle()
     {
-        _characterAnimator.SetBool("Move", false);
+        //_characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetBool("HasEnemy", false);
     }
@@ -137,7 +161,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         ExitCover();
 
-        _characterAnimator.SetBool("Move", true);
+        //_characterAnimator.SetBool("Move", true);
 
         _characterAnimator.SetBool("HasEnemy", false);
 
@@ -149,7 +173,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateMoveToCover()
     {
-        _characterAnimator.SetBool("Move", true);
+        //_characterAnimator.SetBool("Move", true);
 
         _characterAnimator.SetBool("HasEnemy", true);
 
@@ -162,7 +186,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         transform.LookAt(CurrentTarget.transform);
 
-        _characterAnimator.SetBool("Move", false);
+        //_characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetTrigger("Fire");
 
@@ -177,7 +201,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         ExitCover();
 
-        _characterAnimator.SetBool("Move", false);
+        //_characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetTrigger("Punch");  // действие melee combat
 

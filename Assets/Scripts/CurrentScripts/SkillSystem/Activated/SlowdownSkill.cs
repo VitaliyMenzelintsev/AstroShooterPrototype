@@ -14,39 +14,25 @@ public class SlowdownSkill : BaseActivatedSkill
     private Transform _partToRotate;   // назначается в инспекторе
     [SerializeField]
     private Transform _firepoint;       // назначается в инспекторе
-    [SerializeField]
-    private LineRenderer _lineRenderer; // назначается в инспекторе
     private bool _isActivated = false;
     [SerializeField]
     private Collider[] _targets;
     [SerializeField]
     private int _myOwnerTeamNumber;
     [SerializeField]
-    private LineRenderer[] _lineRenderers;
+    private ParticleSystem  _fxExplosion;
+    [SerializeField]
+    private float _damage = 70f;
 
-    private void Update()
-    {
-        if(_isActivated)
-        {
-            LaserRender();
+    public LayerMask _layerMask;
 
-            RotateLaserOrigin();
 
-            _lineRenderer.enabled = true;
-        }
-        else
-        {
-            _lineRenderer.enabled = false;
-        }
-    }
 
     public override void Activation(bool _isEButtonSkill, GameObject _target) // проверка завершённости кулдауна
     {
         if (!_isEButtonSkill
             && _isCooldownOver)
         {
-            _isActivated = true;
-
             _isCooldownOver = false;
 
             _myOwnerTeamNumber = GetComponent<Team>().GetTeamNumber();
@@ -66,13 +52,18 @@ public class SlowdownSkill : BaseActivatedSkill
     {
         Vector3 _viewPoint = GameObject.FindObjectOfType<PlayerController>().GetViewPoint();
 
-        _targets = Physics.OverlapSphere(_viewPoint, 2.5f);
+        _targets = Physics.OverlapSphere(_viewPoint, 2.5f, _layerMask);
+
+        Instantiate(_fxExplosion, _viewPoint, Quaternion.identity);
 
         for(int i = 0; i < _targets.Length; i++)
         {
-            if(_targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
+            if (_targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
                 && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
+
             _targets[i].GetComponent<NavMeshAgent>().speed -= 2f;
+            _targets[i].GetComponent<Vitals>().GetHit(_damage);
+            _targets[i].GetComponent<SkillTargetFX>().FXPlay();
         }
     }
 
@@ -85,47 +76,7 @@ public class SlowdownSkill : BaseActivatedSkill
         for (int i = 0; i < _targets.Length; i++)
         {
             _targets[i].GetComponent<NavMeshAgent>().speed += 2f;
-            _lineRenderers[i].SetPosition(1, _firepoint.position);
-        }
-
-
-        for(int i = 0; i < _lineRenderers.Length; i++)
-        {
-            if (_lineRenderers[i].enabled == true)
-            {
-                _lineRenderers[i].enabled = false;
-            }
-        }
-    }
-
-
-
-    private void LaserRender()  // отрисовка лазера
-    {
-        for(int i = 0; i < _lineRenderers.Length; i++)
-        {
-            if (_targets[i] != null
-                && _targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
-                && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber
-                && _targets[i].gameObject.TryGetComponent(out IDamageable _damageableObject)
-                && _damageableObject.IsAlive())
-            {
-                if (_lineRenderers[i].enabled == false)
-                {
-                    _lineRenderers[i].enabled = true;
-                }
-
-
-                _lineRenderers[i].SetPosition(0, _firepoint.position);
-                _lineRenderers[i].SetPosition(1, new Vector3(_targets[i].transform.position.x, _targets[i].transform.position.y + 1.2f, _targets[i].transform.position.z));
-            }
-            else
-            {
-                if (_lineRenderers[i].enabled == true)
-                {
-                    _lineRenderers[i].enabled = false;
-                }
-            }
+            _targets[i].GetComponent<SkillTargetFX>().StopFX();
         }
     }
 
@@ -134,13 +85,6 @@ public class SlowdownSkill : BaseActivatedSkill
     protected void CooldownChanger() // переключатель кулдауна
     {
         _isCooldownOver = true;
-    }
-
-
-
-    private void RotateLaserOrigin()
-    {
-        //_partToRotate.LookAt(_myTarget.transform.position);
     }
 }
 

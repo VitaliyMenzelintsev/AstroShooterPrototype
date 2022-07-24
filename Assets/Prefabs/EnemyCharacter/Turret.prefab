@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac39f3eb2dca0c64d834b7a0244b88bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _barrelPoint: {fileID: 2306508515093296771}
+  _barrelOrigin: {fileID: 0}
   _magazineCapacity: 20000
   _reloadTime: 1.2
   _msBetweenShots: 0
@@ -305,9 +305,10 @@ MonoBehaviour:
   _shootDelay: 0
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 1
-  CurrentTarget: {fileID: 0}
   _addBulletSpread: 0
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
+  _distance: 55
+  CurrentTarget: {fileID: 0}
   _lineRenderer: {fileID: 0}
 --- !u!120 &1379450041
 LineRenderer:
@@ -432,7 +433,8 @@ GameObject:
   - component: {fileID: 2306508516182554601}
   - component: {fileID: 2306508516182554600}
   - component: {fileID: 2306508516182554603}
-  m_Layer: 0
+  - component: {fileID: -6459460635216588071}
+  m_Layer: 8
   m_Name: Turret
   m_TagString: Character
   m_Icon: {fileID: 0}
@@ -546,6 +548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 600
   _currentHealth: 100
+  _ressurectHealth: 80
   _damageMultiplier: 1
 --- !u!114 &2306508516182554603
 MonoBehaviour:
@@ -562,12 +565,26 @@ MonoBehaviour:
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
   Eyes: {fileID: 2306508515093296771}
+  CurrentTarget: {fileID: 0}
+  _myTeamNumber: 0
   _currentGun: {fileID: 1379450038}
-  _currentTarget: {fileID: 0}
   _minAttackDistance: 1
   _maxAttackDistance: 13
-  _allCharacters: []
+  BuffPoint: {fileID: 0}
   _partToRotate: {fileID: 2306508516194234000}
+--- !u!114 &-6459460635216588071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2306508516182554602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e854514216344a4e975667f8d37e483, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FXEplosion: {fileID: 2676408268667737841, guid: a7a270442e0ee23408f195f7534ea8c1, type: 3}
 --- !u!1 &2306508516194234003
 GameObject:
   m_ObjectHideFlags: 0

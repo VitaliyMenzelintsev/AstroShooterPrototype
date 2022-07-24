@@ -11,6 +11,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
     private CoverManager _coverManager;
+    [SerializeField]
     private EnemyCoverSpot _currentCover = null;
 
 
@@ -103,6 +104,8 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetBool("HasEnemy", true);
 
+        //transform.LookAt(_currentCover.transform.position);
+
         _navMeshAgent.SetDestination(_currentCover.transform.position);
     }
 
@@ -115,9 +118,17 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position); //  действие range combat
+        _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
+
+        _currentGun.Aim(_fixedAimPosition);
+
+        _currentGun.Shoot(_fixedAimPosition);
+
+        //_currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+
+        //_currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position); //  действие range combat
     }
 
 
@@ -169,7 +180,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
     private bool IsNotInCover()
     {
-        if (Vector3.Distance(transform.position, _currentCover.transform.position) > 0.2F)
+        if (Vector3.Distance(this.gameObject.transform.position, _currentCover.transform.position) > 0.3F)
         {
             return true;
         }

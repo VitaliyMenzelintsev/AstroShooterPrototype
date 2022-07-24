@@ -11,6 +11,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
+
+        //_navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
     }
 
 
@@ -55,7 +57,26 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         {
             StateDeath();
         }
+
+        SetAnimations();
+
+        //CheckStoppingDistance();
     }
+
+
+    private void SetAnimations()
+    {
+        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+    }
+
+
+    //private void CheckStoppingDistance()
+    //{
+    //    if (_navMeshAgent.stoppingDistance != _maxAttackDistance - _minAttackDistance)
+    //    {
+    //        _navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
+    //    }
+    //}
 
 
 
@@ -105,6 +126,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(_player);
 
+        _navMeshAgent.stoppingDistance = 0.2f;
+
         _navMeshAgent.SetDestination(_followPoint.position);            // действие Follow The Player
     }
 
@@ -120,7 +143,9 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         Vector3 _firePosition = (CurrentTarget.transform.position - transform.position) * _bestDistance;
 
-        _navMeshAgent.SetDestination(_firePosition); // действие Investigate
+        _navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
+
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
     }
 
 
@@ -133,10 +158,13 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Aim(CurrentTarget.transform.position);
+        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
 
+        _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+        _currentGun.Aim(_fixedAimPosition);
+
+        _currentGun.Shoot(_fixedAimPosition);
     }
 
 
