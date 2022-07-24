@@ -11,56 +11,51 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
-
-        //_navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
     }
 
 
     private void FixedUpdate()
     {
-        if (MyVitals.IsAlive())
-        {
-            if (IsTargetAlive())
-            {
-                if (IsDistanceCorrect())
-                {
-                    StateCombat();
-                }
-                else
-                {
-                    StateInvestigate();
-                }
-
-            }
-            else
-            {
-                GetNewTarget();
-
-                if (IsTargetAlive())
-                {
-                    StateIdle();
-                }
-                else
-                {
-                    if (IsPlayerFar())
-                    {
-                        StateFollowThePlayer();
-                    }
-                    else
-                    {
-                        StateIdle();
-                    }
-                }
-            }
-        }
-        else
+        if (!MyVitals.IsAlive())
         {
             StateDeath();
+            return;
         }
 
         SetAnimations();
 
-        //CheckStoppingDistance();
+        if (IsTargetAlive())
+        {
+            if (IsDistanceCorrect())
+            {
+                StateCombat();
+            }
+            else
+            {
+                StateInvestigate();
+            }
+
+        }
+        else
+        {
+            GetNewTarget();
+
+            if (IsTargetAlive())
+            {
+                StateIdle();
+            }
+            else
+            {
+                if (IsPlayerFar())
+                {
+                    StateFollowThePlayer();
+                }
+                else
+                {
+                    StateIdle();
+                }
+            }
+        }
     }
 
 
@@ -68,15 +63,6 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
     }
-
-
-    //private void CheckStoppingDistance()
-    //{
-    //    if (_navMeshAgent.stoppingDistance != _maxAttackDistance - _minAttackDistance)
-    //    {
-    //        _navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
-    //    }
-    //}
 
 
 
@@ -100,8 +86,6 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     private void StateDeath()
     {
-        _characterAnimator.SetBool("Move", false);
-
         _characterAnimator.SetBool("Dead", true);
     }
 
@@ -110,18 +94,12 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     private void StateIdle()
     {
         _characterAnimator.SetBool("HasEnemy", false);
-
-        _characterAnimator.SetBool("Move", false);
-
-        _characterAnimator.SetBool("HasEnemy", false);
     }
 
 
 
     private void StateFollowThePlayer()
     {
-        _characterAnimator.SetBool("Move", true);
-
         _characterAnimator.SetBool("HasEnemy", false);
 
         transform.LookAt(_player);
@@ -137,8 +115,6 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetBool("HasEnemy", true);
 
-        _characterAnimator.SetBool("Move", true);
-
         float _bestDistance = _maxAttackDistance - _minAttackDistance;
 
         Vector3 _firePosition = (CurrentTarget.transform.position - transform.position) * _bestDistance;
@@ -152,31 +128,19 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     private void StateCombat()
     {
-        _characterAnimator.SetBool("Move", false);
+        if(CurrentTarget != null)
+        {
+            _characterAnimator.SetTrigger("Fire");
 
-        _characterAnimator.SetTrigger("Fire");
+            transform.LookAt(CurrentTarget.transform);
 
-        transform.LookAt(CurrentTarget.transform);
+            Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
 
-        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
+            _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
 
-        _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
+            _currentGun.Aim(_fixedAimPosition);
 
-        _currentGun.Aim(_fixedAimPosition);
-
-        _currentGun.Shoot(_fixedAimPosition);
+            _currentGun.Shoot(_fixedAimPosition);
+        }
     }
-
-
-
-
-    //public override void StateSkill(bool _isESkill, GameObject _target)
-    //{
-    //    if (MyVitals.IsAlive())
-    //    {
-
-    //        Debug.Log("sDGdsfg");
-    //        MyActivatedSkill.Activation(_isESkill, _target);
-    //    }
-    //}
 }

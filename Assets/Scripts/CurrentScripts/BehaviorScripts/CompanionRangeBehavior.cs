@@ -26,6 +26,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
             return;
         }
 
+        SetAnimations();
+
         if (IsTargetAlive())
         {
             if (!IsCoverExist())
@@ -67,8 +69,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
                 StateIdle();
             }
         }
-
-        SetAnimations();
 
         CheckStoppingDistance();
 
@@ -139,8 +139,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateDeath()
     {
-        //_characterAnimator.SetBool("Move", false);
-
         _characterAnimator.SetBool("Dead", true);
 
         ExitCover();
@@ -150,8 +148,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateIdle()
     {
-        //_characterAnimator.SetBool("Move", false);
-
         _characterAnimator.SetBool("HasEnemy", false);
     }
 
@@ -161,20 +157,15 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         ExitCover();
 
-        //_characterAnimator.SetBool("Move", true);
-
         _characterAnimator.SetBool("HasEnemy", false);
 
         _navMeshAgent.SetDestination(_followPoint.position);      // действие follow the player
-
     }
 
 
 
     private void StateMoveToCover()
     {
-        //_characterAnimator.SetBool("Move", true);
-
         _characterAnimator.SetBool("HasEnemy", true);
 
         _navMeshAgent.SetDestination(_currentCover.transform.position);            // действие move to cover
@@ -185,8 +176,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     private void StateRangeCombat()
     {
         transform.LookAt(CurrentTarget.transform);
-
-        //_characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetTrigger("Fire");
 
@@ -200,8 +189,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     private void StateMeleeCombat()
     {
         ExitCover();
-
-        //_characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetTrigger("Punch");  // действие melee combat
 
