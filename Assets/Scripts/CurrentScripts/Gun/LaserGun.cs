@@ -8,6 +8,7 @@ public class LaserGun : BaseGun
     private LineRenderer _lineRenderer;
     private float _maxDistance;
     private Vector3 _myTarget;
+    private bool _myOwnerIsAlive;
 
     public override void Start()
     {
@@ -19,6 +20,7 @@ public class LaserGun : BaseGun
 
         _maxDistance = gameObject.GetComponentInParent<BaseCharacter>().GetMaxAttackDistance();
 
+        _myOwnerIsAlive = GetComponentInParent<Vitals>().IsAlive(); // ?
     }
 
 
@@ -28,7 +30,8 @@ public class LaserGun : BaseGun
         base.LateUpdate();
 
         if (_myTarget != null
-            && Vector3.Distance(this.gameObject.transform.position, _myTarget) > _maxDistance - 0.5f)
+            || Vector3.Distance(this.gameObject.transform.position, _myTarget) > _maxDistance - 0.5f
+            || !_myOwnerIsAlive)
         {
             _lineRenderer.enabled = false;
         }

@@ -5940,7 +5940,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4031469629187330769}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.0510383e-31, y: 0.09447606, z: 0.12272215}
+  m_LocalPosition: {x: -0, y: 0.094, z: 0.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6854,11 +6854,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
-  m_Speed: 3.6
+  m_Speed: 3.8
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 500
-  m_StoppingDistance: 0.2
+  m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -6893,7 +6893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startHealth: 250
-  _currentHealth: 100
+  _currentHealth: 0
   _ressurectHealth: 250
   _damageMultiplier: 0.9
 --- !u!114 &3937586668711955917
@@ -6914,7 +6914,7 @@ MonoBehaviour:
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 9043222431910821623}
-  _minAttackDistance: 1.5
+  _minAttackDistance: 0.5
   _maxAttackDistance: 13
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
@@ -6933,11 +6933,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  Eyes: {fileID: 4033443794692023815}
+  Eyes: {fileID: 4028088492298337573}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 9043222431910821623}
-  _minAttackDistance: 1.5
+  _minAttackDistance: 0.5
   _maxAttackDistance: 6
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
@@ -6953,7 +6953,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.5
+  m_Radius: 0.3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5738242008061452496
 MonoBehaviour:
@@ -6984,8 +6984,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _IsIAmEButtonSkill: 1
-  _skillDuration: 8
-  _skillCooldown: 20
+  _skillDuration: 9
+  _skillCooldown: 13
   _shieldPrefab: {fileID: 5315008200801232332, guid: a4b8e309b70efca4594a49da8465c18e, type: 3}
   _myOwnerTeamNumber: 0
 --- !u!1 &4032388357857334067

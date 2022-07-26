@@ -47,7 +47,7 @@ public class PlayerController : BaseCharacter
     private Vector2 _blendVector;
     private Vector2 _animationVelocity;
     [SerializeField]
-    private CompanionBaseBehavior[] _companions;
+    private BaseCharacter[] _companions;
     [SerializeField]
     private LayerMask _layerMask;
 
@@ -176,6 +176,12 @@ public class PlayerController : BaseCharacter
     public Vector3 GetViewPoint()
     {
         return _viewPoint;
+    }
+
+
+    public BaseCharacter[] GetCompanions()
+    {
+        return _companions;
     }
 
 
@@ -314,7 +320,7 @@ public class PlayerController : BaseCharacter
 
     private void Aim(Vector3 _aimPoint)
     {
-        Mathf.Clamp(_aimPoint.y, -60, 60);
+        Mathf.Clamp(_aimPoint.y, -45, 45);
         _currentGun.Aim(_aimPoint);
     }
 

@@ -3,16 +3,18 @@ using UnityEngine;
 
 public class CoverManager : MonoBehaviour
 {
-    List<EnemyCoverSpot> _freeEnemyCoverSpots = new List<EnemyCoverSpot>();
-    List<EnemyCoverSpot> _lockEnemyCoverSpots = new List<EnemyCoverSpot>();
-    List<CompanionCoverSpot> _freeCompanionCoverSpots = new List<CompanionCoverSpot>();
-    List<CompanionCoverSpot> _lockCompanionCoverSpots = new List<CompanionCoverSpot>();
+    private List<EnemyCoverSpot> _freeEnemyCoverSpots = new List<EnemyCoverSpot>();
+    private List<EnemyCoverSpot> _lockEnemyCoverSpots = new List<EnemyCoverSpot>();
+    private List<CompanionCoverSpot> _freeCompanionCoverSpots = new List<CompanionCoverSpot>();
+    private List<CompanionCoverSpot> _lockCompanionCoverSpots = new List<CompanionCoverSpot>();
+    private PlayerController _player;
 
     
     private void Awake()
     {
         _freeEnemyCoverSpots = new List<EnemyCoverSpot>(GameObject.FindObjectsOfType<EnemyCoverSpot>());
         _freeCompanionCoverSpots = new List<CompanionCoverSpot>(GameObject.FindObjectsOfType<CompanionCoverSpot>());
+        _player = GameObject.FindObjectOfType<PlayerController>();
     }
 
     private void AddToOccupied(EnemyCoverSpot _spot)
@@ -152,8 +154,8 @@ public class CoverManager : MonoBehaviour
             CompanionCoverSpot _spot = _possibleCoverSpots[i];
 
             if (!_spot.IsOccupied() // если спот свободен
-                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 10f  // если дистанция до спота менее 10 метров
-                /*&& CanSeeEnemyFromSpot(_target, _spot)*/)  // если со спота видно врага
+                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 7f
+                && Vector3.Distance(_player.transform.position, _spot.transform.position) <= 7f)
             {
                 if (_bestCover == null)
                 {

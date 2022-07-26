@@ -59,31 +59,6 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     }
 
 
-    private void SetAnimations()
-    {
-        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
-    }
-
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-        GetNewTarget();
-
-        if (CurrentTarget == null)
-        {
-            MyVitals.GetRessurect();
-
-            StateIdle();
-
-            _characterAnimator.SetBool("Dead", false);
-
-            _characterAnimator.SetBool("HasEnemy", false);
-        }
-    }
-
-
-
     private void StateDeath()
     {
         _characterAnimator.SetBool("Dead", true);
@@ -128,7 +103,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     private void StateCombat()
     {
-        if(CurrentTarget != null)
+        if (CurrentTarget != null)
         {
             _characterAnimator.SetTrigger("Fire");
 
@@ -143,4 +118,33 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
             _currentGun.Shoot(_fixedAimPosition);
         }
     }
+
+
+
+    private void SetAnimations()
+    {
+        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+    }
+
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        GetNewTarget();
+
+        if (CurrentTarget == null)
+        {
+            MyVitals.GetRessurect();
+
+            StateIdle();
+
+            _characterAnimator.SetBool("Dead", false);
+
+            _characterAnimator.SetBool("HasEnemy", false);
+        }
+    }
+
+
+
+  
 }

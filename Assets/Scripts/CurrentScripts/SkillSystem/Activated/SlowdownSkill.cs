@@ -37,8 +37,6 @@ public class SlowdownSkill : BaseActivatedSkill
 
             _myOwnerTeamNumber = GetComponent<Team>().GetTeamNumber();
 
-            //_myTarget = _target;
-
             Operation();
 
             Invoke("StopOperation", _skillDuration);   // время действия способности

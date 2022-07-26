@@ -75,68 +75,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     }
 
 
-    private void SetAnimations()
-    {
-        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
-    }
-
-
-
-    private void CheckStoppingDistance()
-    {
-        if(_navMeshAgent.stoppingDistance != 0.2f)
-        {
-            _navMeshAgent.stoppingDistance = 0.2f;
-        }
-    }
-
-    private bool IsFollowPointFar()
-    {
-        if (Vector3.Distance(transform.position, _followPoint.transform.position) > 0.3f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
-
-    private void StateCombat()
-    {
-        if (IsRangeDistance())
-        {
-            StateRangeCombat();
-        }
-        else if (IsMeleeDistance())
-        {
-            StateMeleeCombat();
-        }
-    }
-
-
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-        GetNewTarget();
-
-        if (CurrentTarget == null)
-        {
-            MyVitals.GetRessurect();
-
-            StateIdle();
-
-            _characterAnimator.SetBool("Dead", false);
-
-            _characterAnimator.SetBool("HasEnemy", false);
-        }
-    }
-
-
-
     private void StateDeath()
     {
         _characterAnimator.SetBool("Dead", true);
@@ -193,6 +131,70 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         _characterAnimator.SetTrigger("Punch");  // действие melee combat
 
         _currentGun.Punch();
+    }
+
+
+
+    private void StateCombat()
+    {
+        if (IsRangeDistance())
+        {
+            StateRangeCombat();
+        }
+        else if (IsMeleeDistance())
+        {
+            StateMeleeCombat();
+        }
+    }
+
+
+
+    private void SetAnimations()
+    {
+        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+    }
+
+
+
+    private void CheckStoppingDistance()
+    {
+        if(_navMeshAgent.stoppingDistance != 0.2f)
+        {
+            _navMeshAgent.stoppingDistance = 0.2f;
+        }
+    }
+
+
+
+    private bool IsFollowPointFar()
+    {
+        if (Vector3.Distance(transform.position, _followPoint.transform.position) > 0.3f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        GetNewTarget();
+
+        if (CurrentTarget == null)
+        {
+            MyVitals.GetRessurect();
+
+            StateIdle();
+
+            _characterAnimator.SetBool("Dead", false);
+
+            _characterAnimator.SetBool("HasEnemy", false);
+        }
     }
 
 
