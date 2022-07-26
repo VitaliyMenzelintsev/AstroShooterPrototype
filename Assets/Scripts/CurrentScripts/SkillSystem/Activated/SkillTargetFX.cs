@@ -34,7 +34,9 @@ public class SkillTargetFX : MonoBehaviour
 
     public void StopFX()
     {
+        if(_myFXExplosion != null)
         _myFXExplosion.Stop();
+
         Destroy(_myFXExplosion);
     }
 }

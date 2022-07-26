@@ -11,6 +11,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
+
+        _navMeshAgent.speed = _speed;
     }
 
 
@@ -62,11 +64,15 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     private void StateDeath()
     {
         _characterAnimator.SetBool("Dead", true);
+
+        if (_navMeshAgent.speed != 0)
+            _navMeshAgent.speed = 0;
+
     }
 
 
 
-    private void StateIdle()
+    public override void StateIdle()
     {
         _characterAnimator.SetBool("HasEnemy", false);
     }
@@ -128,23 +134,19 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
 
 
-    private void OnTriggerEnter(Collider other)
-    {
-        GetNewTarget();
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    GetNewTarget();
 
-        if (CurrentTarget == null)
-        {
-            MyVitals.GetRessurect();
+    //    if (CurrentTarget == null)
+    //    {
+    //        MyVitals.GetRessurect();
 
-            StateIdle();
+    //        StateIdle();
 
-            _characterAnimator.SetBool("Dead", false);
+    //        _characterAnimator.SetBool("Dead", false);
 
-            _characterAnimator.SetBool("HasEnemy", false);
-        }
-    }
-
-
-
-  
+    //        _characterAnimator.SetBool("HasEnemy", false);
+    //    }
+    //}
 }

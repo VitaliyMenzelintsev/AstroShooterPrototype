@@ -47,9 +47,11 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
 
     private void StateDeath()
     {
-        Destroy(GetComponent<CapsuleCollider>());
+        if (_navMeshAgent != null
+        && _navMeshAgent.speed != 0)
+            _navMeshAgent.speed = 0;
 
-        Destroy(GetComponent<NavMeshAgent>());
+        Destroy(GetComponent<CapsuleCollider>());
 
         Destroy(gameObject, 10f);
     }

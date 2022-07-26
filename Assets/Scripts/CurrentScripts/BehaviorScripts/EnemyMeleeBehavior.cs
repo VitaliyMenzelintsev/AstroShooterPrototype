@@ -50,13 +50,15 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
     private void StateDeath()
     {
+        if(_navMeshAgent != null
+           && _navMeshAgent.speed != 0)
+        _navMeshAgent.speed = 0;
+
         _characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetBool("Dead", true);
 
         Destroy(GetComponent<CapsuleCollider>());
-
-        Destroy(GetComponent<NavMeshAgent>());
 
         Destroy(gameObject, 10f);
     }

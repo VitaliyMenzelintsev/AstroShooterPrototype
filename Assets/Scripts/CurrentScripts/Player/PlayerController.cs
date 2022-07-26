@@ -267,6 +267,7 @@ public class PlayerController : BaseCharacter
             else
             {
                 _companions[i].GetComponent<Vitals>().GetRessurect();
+                _companions[i].GetComponent<CompanionBaseBehavior>().GetRessurect();
             }
         }
 
