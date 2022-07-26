@@ -1,22 +1,14 @@
 using UnityEngine.AI;
 using UnityEngine;
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
-
 public class EnemyDroneBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
 
 
-    private void Start()
+    public override void Start()
     {
-        MyTeam = GetComponent<Team>();
-
-        MyVitals = GetComponent<Vitals>();
-
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
+        base.Start();
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
     }
@@ -26,7 +18,8 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
     {
         if (MyVitals.IsAlive())
         {
-            if (IsTargetAlive())
+            if (IsTargetAlive() 
+                && IsTargetNeedHeal())
             {
                 if (IsDistanceCorrect())
                 {
@@ -40,7 +33,7 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
             }
             else
             {
-                _currentTarget = GetNewTarget();
+                GetNewTarget();
 
                 StateIdle();
             }
@@ -68,18 +61,33 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
     }
 
 
+    private bool IsTargetNeedHeal()
+    {
+        if (CurrentTarget.GetComponent<Vitals>().IsNeedHealing())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void StateInvestigate()
     {
-        _navMeshAgent.SetDestination(_currentTarget.transform.position);
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position);
     }
 
 
     private void StateCombat()
     {
-        transform.LookAt(_currentTarget.transform); // смотрим на цель
+        transform.LookAt(CurrentTarget.transform); // смотрим на цель
 
         //_currentGun.Aim(_currentTarget.Eyes.position);
 
-        _currentGun.Shoot(_currentTarget.Eyes.position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+    }
+
+    public override void StateSkill(bool _isESkill, GameObject _target)
+    {
+        throw new System.NotImplementedException();
     }
 }

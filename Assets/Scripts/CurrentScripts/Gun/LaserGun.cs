@@ -5,33 +5,44 @@ public class LaserGun : BaseGun
     [Header("Gun Settings")]
     private float _punchDamage;
     [SerializeField]
-    private bool _addBulletSpread = false;
-    [SerializeField]
-    private Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
-    [SerializeField]
     private LineRenderer _lineRenderer;
+    private float _maxDistance;
+    private Vector3 _myTarget;
+    private bool _myOwnerIsAlive;
 
-     
     public override void Start()
     {
         base.Start();
 
-        _lineRenderer = GetComponent<LineRenderer>();
-
         _lineRenderer.enabled = false;
 
         _punchDamage = _damage / 2;
+
+        _maxDistance = gameObject.GetComponentInParent<BaseCharacter>().GetMaxAttackDistance();
+
+        _myOwnerIsAlive = GetComponentInParent<Vitals>().IsAlive(); // ?
     }
+
+
 
     public override void LateUpdate()
     {
         base.LateUpdate();
+
+        if (_myTarget != null
+            || Vector3.Distance(this.gameObject.transform.position, _myTarget) > _maxDistance - 0.5f
+            || !_myOwnerIsAlive)
+        {
+            _lineRenderer.enabled = false;
+        }
     }
 
     public override void Shoot(Vector3 _aimPoint)
     {
         if (IsGunReady())
         {
+            _myTarget = _aimPoint;
+
             _bulletsInMagazine--;
 
             _nextShotTime = Time.time + _msBetweenShots / 1000;
@@ -40,38 +51,38 @@ public class LaserGun : BaseGun
 
             Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-            Ray _ray = new Ray(_barrelPoint.position, _direction);
+            Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
             RaycastHit _hit;
 
-            if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
+            _lineRenderer.SetPosition(0, _barrelOrigin.position);
+
+            if (Physics.Raycast(_ray, out _hit, _maxDistance))   // если попали во что-то
             {
                 _lastShootTime = Time.time;
 
-                if (_hit.collider.gameObject.GetComponent<Vitals>())
+                if (_hit.collider != null
+                    && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
                 {
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
-
                     _lineRenderer.enabled = true;
 
-                    ShootRender(_hit.point);
+                    _damageableObject.GetHit(_damage);
+
+                    _lineRenderer.SetPosition(1, _hit.point);
+
                 }
                 else
                 {
                     _lineRenderer.enabled = false;
                 }
-                    
+
             }
             else
             {
-                //_lineRenderer.enabled = false;
-
-                ShootRender(_aimPoint);
-
-                _lastShootTime = Time.time;
+                _lineRenderer.enabled = false;
             }
         }
-        else
+        else 
         {
             _lineRenderer.enabled = false;
         }
@@ -88,7 +99,7 @@ public class LaserGun : BaseGun
             {
                 Vector3 _direction = GetDirection(); // определяем направление удара
 
-                if (Physics.Raycast(_barrelPoint.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
+                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
                 {
                     _lastShootTime = Time.time;
 
@@ -102,26 +113,8 @@ public class LaserGun : BaseGun
         }
     }
 
-
-    public override Vector3 GetDirection()
-    {
-        Vector3 _direction = _barrelPoint.forward;
-
-        if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
-        {
-            _direction += new Vector3(
-                Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
-                Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
-                Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
-
-            _direction.Normalize();
-        }
-        return _direction;
-    }
-
     public override void ShootRender(Vector3 _aimPoint)
     {
-        _lineRenderer.SetPosition(0, _barrelPoint.position);
-        _lineRenderer.SetPosition(1, _aimPoint);
+
     }
 }

@@ -9,13 +9,9 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
     private Transform _partToRotate;                                             // определили поворачивающуюся деталь
     private float _turnSpeed = 5f;                                               // скорость поворота башни
 
-    private void Start()
+    public override void Start()
     {
-        MyTeam = GetComponent<Team>();
-
-        MyVitals = GetComponent<Vitals>();
-
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
+        base.Start();
     }
 
 
@@ -36,7 +32,7 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
             }
             else
             {
-                _currentTarget = GetNewTarget();
+                GetNewTarget();
 
                 StateIdle();
             }
@@ -62,7 +58,7 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
 
         LockOnTarget();
 
-        _currentGun.Shoot(_currentTarget.Eyes.position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
 
     }
 
@@ -70,7 +66,7 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
 
     private void LockOnTarget()
     {
-        Vector3 _direction = _currentTarget.transform.position - transform.position;
+        Vector3 _direction = CurrentTarget.transform.position - transform.position;
 
         Quaternion _lookRotation = Quaternion.LookRotation(_direction);
 
@@ -86,4 +82,8 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
         Gizmos.DrawWireSphere(transform.position, _maxAttackDistance);
     }
 
+    public override void StateSkill(bool _isESkill, GameObject _target)
+    {
+        throw new System.NotImplementedException();
+    }
 }

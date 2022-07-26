@@ -1,12 +1,11 @@
-using System.Collections;
 using UnityEngine;
 
 public class BehaviourSwitcher : MonoBehaviour
 {
     [SerializeField]
-    private CompanionMeleeBehavior _myMeleeScript;
+    private CompanionBaseBehavior _myMeleeScript;
     [SerializeField]
-    private CompanionRangeBehavior _myRangeScript;
+    private CompanionBaseBehavior _myRangeScript;
     [SerializeField]
     private float _myCurrentHealth;
     [SerializeField]
@@ -14,24 +13,20 @@ public class BehaviourSwitcher : MonoBehaviour
 
     private void Start()
     {
-        _myMeleeScript = GetComponent<CompanionMeleeBehavior>();
-        _myRangeScript = GetComponent<CompanionRangeBehavior>();
-
-        InvokeRepeating("HealthChecker", 2f, 0.5f);
+        _myMeleeScript = GetComponent<CompanionBaseBehavior>();
+        _myRangeScript = GetComponent<CompanionBaseBehavior>();
     }
 
 
-    private void HealthChecker()
+    private void FixedUpdate()
     {
         _myCurrentHealth = GetComponent<Vitals>().GetCurrentHealth();
         _myMaxHealth = GetComponent<Vitals>().GetMaxHealth();
 
-        if (_myCurrentHealth <= _myMaxHealth / 3)
+        if (_myCurrentHealth <= _myMaxHealth / 2)
         {
             _myMeleeScript.enabled  = false;
             _myRangeScript.enabled = true;
-
-
         }
         else
         {

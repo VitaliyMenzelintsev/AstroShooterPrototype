@@ -1,31 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class BulletShotGun : BaseGun
+public class BulletShotGun : BulletGun
 {
-    [Header("Gun Settings")]
-    private float _punchDamage;
     [SerializeField]
     private Transform[] _barrelPoints;
-    [SerializeField]
-    private float _bulletSpeed = 200;
-    [SerializeField]
-    private bool _addBulletSpread = false;
-    [SerializeField]
-    private Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
-    [SerializeField]
-    private TrailRenderer _bulletTrail;
+    private Vector3 _shootPoint;
 
-    [Header("Recoil")]
-    [SerializeField]
-    private Vector2 _kickMinMax = new Vector2(0.05f, 0.2f);
-    [SerializeField]
-    private Vector2 _recoilAngleMinMax = new Vector2(5, 8);
-    private float _recoilBackTime = 0.1f;
-    private Vector3 _recoilSmoothDampVelocity;
-    private float _recoilRotSmoothDampVelocity;
-    private float _recoilAngle;
-    private Vector3 _gunOriginPosition;
 
 
     public override void Start()
@@ -56,113 +37,54 @@ public class BulletShotGun : BaseGun
 
             _nextShotTime = Time.time + _msBetweenShots / 1000;
 
-            _shootingParticle.Play();
+            _shootPoint = _aimPoint;
 
-            Recoil();
-
-            for (int i = 0; i < _barrelPoints.Length; i++)
-            {
-                Vector3 _direction = GetDirection(); // определяем направление стрельбы
-
-                Ray _ray = new Ray(_barrelPoints[i].position, _direction);
-
-                RaycastHit _hit;
-
-                if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
-                {
-                    ShootRender(_hit.point);
-
-                    _lastShootTime = Time.time;
-
-                    if (_hit.collider.gameObject.GetComponent<Vitals>())
-                        _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
-                }
-                else
-                {
-                    ShootRender(_aimPoint);
-
-                    _lastShootTime = Time.time;
-                }
-            }
+            Invoke("DamageDeal", _shootDelay);
         }
     }
 
-
-    public override void Punch()
+    private void DamageDeal()
     {
-        if (Time.time > _nextShotTime)
+        for (int i = 0; i < _barrelPoints.Length; i++)
         {
-            _nextShotTime = Time.time + _msBetweenShots / 1000;
+            /*_direction[i] = GetDirection();*/ // определяем направление стрельбы
 
-            if (_lastShootTime + _shootDelay < Time.time)
-            {
-                Vector3 _direction = GetDirection(); // определяем направление удара
-
-                if (Physics.Raycast(_barrelPoint.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
-                {
-                    _lastShootTime = Time.time;
-
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_punchDamage);
-                }
-                else
-                {
-                    _lastShootTime = Time.time;
-                }
-            }
-        }
-    }
-
-
-    public override Vector3 GetDirection()
-    {
-        Vector3 _direction = _barrelPoint.forward;
-
-        if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
-        {
-            _direction += new Vector3(
-                Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
-                Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
-                Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
+            Vector3 _direction;
+            _direction = _barrelPoints[i].forward += new Vector3(
+            Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
+            Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
+            Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
 
             _direction.Normalize();
-        }
-        return _direction;
-    }
 
+            Ray _ray = new Ray(_barrelPoints[i].position, _direction);
 
-    public override void ShootRender(Vector3 _aimPoint)
-    {
-        TrailRenderer _trail = Instantiate(_bulletTrail, _barrelPoint.position, Quaternion.identity);
+            RaycastHit _hit;
 
-        StartCoroutine(SpawnTrail(_trail, _aimPoint));
-    }
+            if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
+            {
+                _shootingParticle.Play();
 
+                ShootRender(_hit.point);
 
-    private void Recoil()
-    {
-        transform.localPosition -= Vector3.forward * Random.Range(_kickMinMax.x, _kickMinMax.y);
-        _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
-        _recoilAngle = Mathf.Clamp(_recoilAngle, 0, 25);
-    }
+                _lastShootTime = Time.time;
 
+                if (_hit.collider != null
+                      && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
+                      && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
+                      && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
+                    _damageableObject.GetHit(_damage);
+            }
+            else
+            {
+                _shootingParticle.Play();
 
-    private IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
-    {
-        Vector3 _startPosition = _trail.transform.position;
-        float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);
-        float _remainingDistance = _distance;
+                ShootRender(_shootPoint);
 
-        while (_remainingDistance > 0)
-        {
-            _trail.transform.position = Vector3.Lerp(_startPosition, _hitPoint, 1 - (_remainingDistance / _distance));
-
-            _remainingDistance -= _bulletSpeed * Time.deltaTime;
-
-            yield return null;
+                _lastShootTime = Time.time;
+            }
         }
 
-        _trail.transform.position = _hitPoint;
-
-        Destroy(_trail.gameObject, _trail.time);
+        Recoil();
     }
 }

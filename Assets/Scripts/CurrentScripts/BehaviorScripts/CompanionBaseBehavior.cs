@@ -1,7 +1,39 @@
 using UnityEngine;
+using UnityEngine.AI;
 
-public abstract class CompanionBaseBehavior : MonoBehaviour
+
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Animator))]
+ 
+public abstract class CompanionBaseBehavior : BaseAIBehavior
 {
     [SerializeField]
-    public Team CurrentTarget = null;
+    protected Transform _followPoint;
+    [SerializeField]
+    protected Transform _player;
+    protected NavMeshAgent _navMeshAgent;
+    protected Animator _characterAnimator;
+    protected CoverManager _coverManager;
+    protected CompanionCoverSpot _currentCover = null;
+    public BaseActivatedSkill MyActivatedSkill; // в это поле в инспекторе кладём нужный скилл
+
+    protected bool IsPlayerFar()
+    {
+        if (Vector3.Distance(transform.position, _player.transform.position) > 2.5f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override void StateSkill(bool _isESkill, GameObject _target)
+    {
+        if (GetComponent<Vitals>().IsAlive())
+        {
+            MyActivatedSkill.Activation(_isESkill, _target);
+        }
+    }
 }

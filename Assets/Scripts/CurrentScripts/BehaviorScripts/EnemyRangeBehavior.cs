@@ -10,27 +10,21 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
-    private EnemyCoverManager _coverManager;
+    private CoverManager _coverManager;
     [SerializeField]
     private EnemyCoverSpot _currentCover = null;
 
 
-    public AI_States _state = AI_States.idle;
 
-
-    private void Start()
+    public override void Start()
     {
-        MyTeam = GetComponent<Team>();
-
-        MyVitals = GetComponent<Vitals>();
-
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
+        base.Start();
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _characterAnimator = GetComponent<Animator>();
 
-        _coverManager = GameObject.FindObjectOfType<EnemyCoverManager>();
+        _coverManager = GameObject.FindObjectOfType<CoverManager>();
     }
 
 
@@ -44,7 +38,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
         if (IsTargetAlive())
         {
             if (!IsCoverExist())
-                _currentCover = _coverManager.GetCover(this, _currentTarget);
+                _currentCover = _coverManager.GetCover(this, CurrentTarget);
 
             if (IsCoverExist())
             {
@@ -64,7 +58,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
         }
         else
         {
-            _currentTarget = GetNewTarget();
+            GetNewTarget();
 
             StateIdle();
         }
@@ -110,21 +104,31 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetBool("HasEnemy", true);
 
+        //transform.LookAt(_currentCover.transform.position);
+
         _navMeshAgent.SetDestination(_currentCover.transform.position);
     }
 
 
     private void StateRangeCombat()
     {
-        transform.LookAt(_currentTarget.transform);
+        transform.LookAt(CurrentTarget.transform);
 
         _characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetTrigger("Fire");
 
-        _currentGun.Aim(_currentTarget.Eyes.position);
+        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
 
-        _currentGun.Shoot(_currentTarget.Eyes.position); //  действие range combat
+        _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
+
+        _currentGun.Aim(_fixedAimPosition);
+
+        _currentGun.Shoot(_fixedAimPosition);
+
+        //_currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+
+        //_currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position); //  действие range combat
     }
 
 
@@ -142,7 +146,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
     private bool IsMeleeDistance()
     {
-        if (Vector3.Distance(transform.position, _currentTarget.transform.position) < _minAttackDistance)
+        if (Vector3.Distance(transform.position, CurrentTarget.transform.position) < _minAttackDistance)
         {
             return true;
         }
@@ -155,8 +159,8 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
     private bool IsRangeDistance()
     {
-        if (Vector3.Distance(transform.position, _currentTarget.transform.position) <= _maxAttackDistance
-                && Vector3.Distance(transform.position, _currentTarget.transform.position) >= _minAttackDistance)
+        if (Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _maxAttackDistance
+                && Vector3.Distance(transform.position, CurrentTarget.transform.position) >= _minAttackDistance)
         {
             return true;
         }
@@ -176,7 +180,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
     private bool IsNotInCover()
     {
-        if (Vector3.Distance(transform.position, _currentCover.transform.position) > 0.2F)
+        if (Vector3.Distance(this.gameObject.transform.position, _currentCover.transform.position) > 0.3F)
         {
             return true;
         }
@@ -197,5 +201,10 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
         {
             return false;
         }
+    }
+
+    public override void StateSkill(bool _isESkill, GameObject _target)
+    {
+        throw new System.NotImplementedException();
     }
 }

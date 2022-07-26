@@ -27,16 +27,17 @@ public class MeleeGun : BaseGun
     {
         Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-        Ray _ray = new Ray(_barrelPoint.position, _direction);
+        Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
         RaycastHit _hit;
 
-        if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
+        if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
         {
             _lastShootTime = Time.time;
 
-            if (_hit.collider.gameObject.GetComponent<Vitals>())
-                _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+            if (_hit.collider != null
+                && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
+                _damageableObject.GetHit(_damage);
         }
         else
         {
@@ -46,7 +47,7 @@ public class MeleeGun : BaseGun
 
     public override Vector3 GetDirection()
     {
-        Vector3 _direction = _barrelPoint.forward;
+        Vector3 _direction = transform.forward;
 
         return _direction;
     }

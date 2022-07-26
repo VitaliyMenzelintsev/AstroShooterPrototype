@@ -2,9 +2,9 @@ using System.Collections;
 using UnityEngine;
 
 public abstract class BaseGun : MonoBehaviour
-{ 
+{
     [SerializeField]
-    protected Transform _barrelPoint;
+    protected Transform _barrelOrigin;
     [SerializeField]
     protected int _magazineCapacity;
     [SerializeField]
@@ -19,7 +19,13 @@ public abstract class BaseGun : MonoBehaviour
     protected ParticleSystem _shootingParticle;
     [SerializeField]
     protected bool _isRangeGun = false;
-
+    [SerializeField]
+    protected bool _addBulletSpread = false;
+    [SerializeField]
+    protected Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
+    [SerializeField]
+    protected float _distance = 55f;
+    protected int _myOwnerTeamNumber;
 
     protected float _lastShootTime = 0;
     protected bool _isReloading;
@@ -27,11 +33,12 @@ public abstract class BaseGun : MonoBehaviour
     protected int _bulletsInMagazine;
 
     [HideInInspector]
-    public Team CurrentTarget = null;
+    public GameObject CurrentTarget = null;
 
     public virtual void Start()
     {
         _bulletsInMagazine = _magazineCapacity;
+        _myOwnerTeamNumber = GetComponentInParent<Team>().GetTeamNumber();
     }
 
 
@@ -55,7 +62,21 @@ public abstract class BaseGun : MonoBehaviour
     }
 
 
-    public abstract Vector3 GetDirection();
+    public virtual Vector3 GetDirection()
+    {
+        Vector3 _direction = transform.forward;
+
+        if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
+        {
+            _direction += new Vector3(
+                Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
+                Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
+                Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
+
+            _direction.Normalize();
+        }
+        return _direction;
+    }
 
 
     public abstract void ShootRender(Vector3 _aimPoint);
@@ -76,37 +97,37 @@ public abstract class BaseGun : MonoBehaviour
 
             Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-            Ray _ray = new Ray(_barrelPoint.position, _direction);
+            Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
             RaycastHit _hit;
 
-            if (Physics.Raycast(_ray, out _hit, float.MaxValue))   // если попали во что-то
+            if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
             {
+                ShootRender(_hit.point);
+
                 _lastShootTime = Time.time;
 
-                if(_isRangeGun)
-                    ShootRender(_hit.point);
-               
-                if (_hit.collider.gameObject.GetComponent<Vitals>())
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_damage);
+                if (_hit.collider != null
+                    && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
+                    && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
+                    && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
+                    _damageableObject.GetHit(_damage);
 
-                if (_hit.collider.gameObject.GetComponent<Team>())
-                    CurrentTarget = _hit.collider.gameObject.GetComponent<Team>();
             }
             else
             {
-                if (_isRangeGun)
-                    ShootRender(_aimPoint);
+                ShootRender(_aimPoint);
 
                 _lastShootTime = Time.time;
             }
+
         }
     }
 
 
     public bool IsGunReady()
     {
-        if (!_isReloading 
+        if (!_isReloading
             && Time.time > _nextShotTime
             && _bulletsInMagazine > 0
             && _lastShootTime + _shootDelay < Time.time)

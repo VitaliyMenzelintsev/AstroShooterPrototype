@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
 [RequireComponent(typeof(Animator))]
 
 public class EnemyMeleeBehavior : EnemyBaseBehavior
@@ -11,13 +9,9 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
     private Animator _characterAnimator;
 
 
-    private void Start()
+    public override void Start()
     {
-        MyTeam = GetComponent<Team>();
-
-        MyVitals = GetComponent<Vitals>();
-
-        _allCharacters = GameObject.FindObjectsOfType<Team>();
+        base.Start();
 
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -42,7 +36,7 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
             }
             else
             {
-                _currentTarget = GetNewTarget();
+                GetNewTarget();
 
                 StateIdle();
             }
@@ -82,9 +76,9 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        transform.LookAt(_currentTarget.transform);
+        transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Shoot(_currentTarget.Eyes.position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
     }
 
 
@@ -94,6 +88,11 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetBool("Move", true);
 
-        _navMeshAgent.SetDestination(_currentTarget.transform.position); // действие Investigate
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
+    }
+
+    public override void StateSkill(bool _isESkill, GameObject _target)
+    {
+        throw new System.NotImplementedException();
     }
 }
