@@ -11,14 +11,7 @@ public class TargetManager : MonoBehaviour
 
     private void Awake()
     {
-        //_allCharactersList = new List<GameObject>(GameObject.FindGameObjectsWithTag("Character"));
         _allCharactersArray = GameObject.FindGameObjectsWithTag("Character");
-    }
-
-
-    private void Start()
-    {
-       
     }
 
 
@@ -28,20 +21,17 @@ public class TargetManager : MonoBehaviour
 
         GameObject _bestTarget = null;
 
-        if (_isFindEnemy) // если ищу врагов
+        if (_isFindEnemy) 
         {
-            for (int i = 0; i < _allCharactersArray.Length; i++)   // 111
+            for (int i = 0; i < _allCharactersArray.Length; i++) 
             {
                 GameObject _currentCharacter = _allCharactersArray[i];
 
-                //выбирать текущего персонажа в качестве цели, только если мы не в одной команде и если у него осталось здоровье
                 if (_currentCharacter != null
                     && IsItMyEnemy(_currentCharacter, _myTeamNumber)
                     && IsTargetAlive(_currentCharacter)
                     && IsTargetReachable(_myEyesPosition, _currentCharacter, _viewDistance))
                 {
-
-                    //если цель видно
                     if (CanSeeTarget(_currentCharacter, _myEyesPosition))
                     {
                         if (_bestTarget == null)
@@ -50,7 +40,6 @@ public class TargetManager : MonoBehaviour
                         }
                         else
                         {
-                            //если текущая цель ближе, чем лучшая цель, то выбрать текущую цель 
                             if (IsAnotherTargetCloser(_currentCharacter, _myEyesPosition, _bestTarget))
                             {
                                 _bestTarget = _currentCharacter;
@@ -60,7 +49,7 @@ public class TargetManager : MonoBehaviour
                 }
             }
         }
-        else    // если ищу друзей
+        else    
         {
             for (int i = 0; i < _allCharactersArray.Length; i++)
             {
@@ -119,7 +108,6 @@ public class TargetManager : MonoBehaviour
     }
 
 
-
     public bool IsItMyEnemy(GameObject _target, int _myTeamNumber)
     {
         if (_target.GetComponent<Team>().GetTeamNumber() != _myTeamNumber)
@@ -133,7 +121,6 @@ public class TargetManager : MonoBehaviour
     }
 
 
-
     public bool IsTargetAlive(GameObject _target)
     {
         if (_target.GetComponent<Vitals>().IsAlive())
@@ -144,7 +131,6 @@ public class TargetManager : MonoBehaviour
         {
             return false;
         }
-
     }
 
 
@@ -176,13 +162,11 @@ public class TargetManager : MonoBehaviour
 
         if (Physics.Raycast(_myEyesPosition.position, _directionTowardsEnemy, out _hit, _rayDistance))
         {
-
             if (_hit.transform == _target.transform)
             {
                 _canSeeIt = true;
             }
         }
-
         return _canSeeIt;
     }
 }

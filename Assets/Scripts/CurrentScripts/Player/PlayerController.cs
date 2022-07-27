@@ -211,7 +211,6 @@ public class PlayerController : BaseCharacter
     {
         Vector3 _localMove = transform.InverseTransformDirection(_move);
 
-        // передача в аниматор данных инпута
         _animator.SetFloat(_moveX, _localMove.x);
         _animator.SetFloat(_moveZ, _localMove.z);
     }
@@ -228,7 +227,6 @@ public class PlayerController : BaseCharacter
 
     private void OnEnable()
     {
-        //_shootAction.performed += _ => ShootGun();
         _reloadAction.performed += _ => Reload();
         _healPartyAction.performed += _ => HealParty();
         _skillEButtonAction.performed += _ => ActivateESkill();
@@ -239,7 +237,6 @@ public class PlayerController : BaseCharacter
 
     private void OnDisable()
     {
-        /*_shootAction.performed -= _ => ShootGun()*/;
         _reloadAction.performed -= _ => Reload();
         _healPartyAction.performed -= _ => HealParty();
         _skillEButtonAction.performed -= _ => ActivateESkill();
@@ -273,28 +270,6 @@ public class PlayerController : BaseCharacter
 
         MyVitals.GetHeal(100f);
     }
-
-
-
-
-    private void SpeedUpParty() //если нажата кнопка увеличивается скорость напарников
-    {
-        for (int i = 0; i < _companions.Length; i++)
-        {
-            _companions[i].GetComponent<NavMeshAgent>().speed += 1.5f;
-        }
-    }
-
-
-
-
-    //private void SetPriorityTarget() // по нажатию Space заставляем компаньонов атаковать цель игрока 
-    //{
-    //    for (int i = 0; i < _companions.Length; i++)
-    //    {
-    //        _companions[i].GetComponent<CompanionBaseBehavior>().CurrentTarget = _currentGun.CurrentTarget;
-    //    }
-    //}
 
 
 
