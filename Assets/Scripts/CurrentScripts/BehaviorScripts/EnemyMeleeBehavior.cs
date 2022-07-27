@@ -66,6 +66,8 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
     private void StateIdle()
     {
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("Move", false);
 
         _characterAnimator.SetBool("HasEnemy", false);
@@ -78,6 +80,8 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
+        _navMeshAgent.speed = 0;
+
         transform.LookAt(CurrentTarget.transform);
 
         _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
@@ -86,6 +90,8 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
     private void StateInvestigate()
     {
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("HasEnemy", true);
 
         _characterAnimator.SetBool("Move", true);

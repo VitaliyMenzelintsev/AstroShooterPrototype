@@ -75,6 +75,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     public override void StateIdle()
     {
+        _navMeshAgent.speed = 0;
+
         _characterAnimator.SetBool("HasEnemy", false);
     }
 
@@ -82,6 +84,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     private void StateFollowThePlayer()
     {
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("HasEnemy", false);
 
         transform.LookAt(_player);
@@ -95,6 +99,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     private void StateInvestigate()
     {
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("HasEnemy", true);
 
         float _bestDistance = _maxAttackDistance - _minAttackDistance;
@@ -113,6 +119,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         if (CurrentTarget != null)
         {
             _characterAnimator.SetTrigger("Fire");
+
+            _navMeshAgent.speed = 0;
 
             transform.LookAt(CurrentTarget.transform);
 
@@ -134,20 +142,4 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     }
 
 
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    GetNewTarget();
-
-    //    if (CurrentTarget == null)
-    //    {
-    //        MyVitals.GetRessurect();
-
-    //        StateIdle();
-
-    //        _characterAnimator.SetBool("Dead", false);
-
-    //        _characterAnimator.SetBool("HasEnemy", false);
-    //    }
-    //}
 }

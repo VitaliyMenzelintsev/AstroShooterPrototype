@@ -154,8 +154,8 @@ public class CoverManager : MonoBehaviour
             CompanionCoverSpot _spot = _possibleCoverSpots[i];
 
             if (!_spot.IsOccupied() // если спот свободен
-                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 7f
-                && Vector3.Distance(_player.transform.position, _spot.transform.position) <= 7f)
+                && Vector3.Distance(_characterPosition, _spot.transform.position) <= 5f
+                && Vector3.Distance(_player.transform.position, _spot.transform.position) <= 4f)
             {
                 if (_bestCover == null)
                 {
