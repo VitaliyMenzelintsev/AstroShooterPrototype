@@ -43,6 +43,8 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
     {
         if (MyVitals.IsAlive())
         {
+            GetComponent<CapsuleCollider>().enabled = true;
+
             _characterAnimator.SetBool("Dead", false);
 
             _characterAnimator.SetBool("HasEnemy", false);

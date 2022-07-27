@@ -85,21 +85,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
 
-        //if (MyVitals.IsAlive())
-        //{
-        //    GetNewTarget();
-
-        //    if (CurrentTarget == null)
-        //    {
-        //        MyVitals.GetRessurect();
-
-        //        _characterAnimator.SetBool("Dead", false);
-
-        //        _characterAnimator.SetBool("HasEnemy", false);
-
-        //        StateIdle();
-        //    }
-        //}
+        GetComponent<CapsuleCollider>().enabled = false;
     }
 
 

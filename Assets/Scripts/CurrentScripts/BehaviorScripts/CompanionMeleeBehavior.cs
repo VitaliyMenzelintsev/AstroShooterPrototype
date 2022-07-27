@@ -68,6 +68,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
 
+        GetComponent<CapsuleCollider>().enabled = false;
     }
 
 
