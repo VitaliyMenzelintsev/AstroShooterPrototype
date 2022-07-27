@@ -166,7 +166,7 @@ public class TargetManager : MonoBehaviour
     {
         bool _canSeeIt = false;
 
-        Vector3 _targetPosition = new Vector3(_target.transform.position.x, _target.transform.position.y + 1.2f, _target.transform.position.z);
+        Vector3 _targetPosition = new Vector3(_target.transform.position.x, _target.transform.position.y + 0.5f, _target.transform.position.z);
 
         Vector3 _directionTowardsEnemy = _targetPosition - _myEyesPosition.position;
 

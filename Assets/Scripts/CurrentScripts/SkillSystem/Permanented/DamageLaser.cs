@@ -14,7 +14,7 @@ public class DamageLaser : MonoBehaviour
     [SerializeField]
     private float _skillDistance = 6f;
     [SerializeField]
-    private float _damage = 0.02f; // 0.2f * 50 * 4 = 40 dps с 4х лазеров
+    private float _damage = 0.02f; 
 
 
     private void Start()
@@ -30,8 +30,7 @@ public class DamageLaser : MonoBehaviour
             _currentTarget = _myOwner.GetMyTarget();
 
             if (_currentTarget != null
-                && Vector3.Distance(transform.position, _currentTarget.transform.position) <= _skillDistance
-                && _currentTarget.GetComponent<Vitals>().IsAlive())
+                && Vector3.Distance(this.gameObject.transform.position, _currentTarget.transform.position) <= _skillDistance)
             {
                 LaserActon(true);
                 RotateLaserOrigins();
@@ -47,10 +46,7 @@ public class DamageLaser : MonoBehaviour
             {
                 _laserRender[i].enabled = false;
             }
-
-            Destroy(this);
         }
-        
     }
 
 
@@ -62,7 +58,7 @@ public class DamageLaser : MonoBehaviour
             {
                 _laserRender[i].enabled = true;
                 _laserRender[i].SetPosition(0, _laserPoints[i].position);
-                _laserRender[i].SetPosition(1, _currentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+                _laserRender[i].SetPosition(1, _currentTarget.transform.position);
                 _currentTarget.GetComponent<Vitals>().GetHit(_damage);
             }
         }
@@ -73,8 +69,8 @@ public class DamageLaser : MonoBehaviour
                 _laserRender[i].enabled = false;
             }
         }
-
     }
+
 
     private void RotateLaserOrigins()
     {

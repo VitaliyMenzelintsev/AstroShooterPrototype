@@ -2,9 +2,13 @@ using UnityEngine;
 
 public class MeleeGun : BaseGun
 {
+    //private Vector3 _target;
+    private float _maxAttackDistance;
+
     public override void Start()
     {
         base.Start();
+        _maxAttackDistance = GetComponentInParent<BaseCharacter>().GetMaxAttackDistance();
     }
 
     public override void LateUpdate()
@@ -14,6 +18,8 @@ public class MeleeGun : BaseGun
 
     public override void Shoot(Vector3 _aimPoint)
     {
+        //_target = _aimPoint;
+
         if (IsGunReady())
         {
             _nextShotTime = Time.time + _msBetweenShots / 1000;
@@ -25,24 +31,10 @@ public class MeleeGun : BaseGun
 
     private void DamageDeal()
     {
-        Vector3 _direction = GetDirection(); // определяем направление стрельбы
+        CurrentTarget = GetComponentInParent<BaseCharacter>().GetMyTarget();
 
-        Ray _ray = new Ray(_barrelOrigin.position, _direction);
-
-        RaycastHit _hit;
-
-        if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
-        {
-            _lastShootTime = Time.time;
-
-            if (_hit.collider != null
-                && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
-                _damageableObject.GetHit(_damage);
-        }
-        else
-        {
-            _lastShootTime = Time.time;
-        }
+        if(Vector3.Distance(transform.position, CurrentTarget.transform.position) <= _maxAttackDistance)
+            CurrentTarget.GetComponent<Vitals>().GetHit(_damage);
     }
 
     public override Vector3 GetDirection()

@@ -69,10 +69,7 @@ public class ProjectileGun : BaseGun //
             {
               _lastShootTime = Time.time;
             }
-
         }
-
-        
     }
 
 

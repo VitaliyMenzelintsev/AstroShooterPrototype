@@ -73,18 +73,20 @@ public class LaserGun : BaseGun
                 _lastShootTime = Time.time;
 
                 if (_hit.collider != null
-                    && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
+                    && _hit.collider.GetComponentInParent<Vitals>()
+                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                 {
                     _lineRenderer.enabled = true;
 
-                    _damageableObject.GetHit(_damage);
+                    _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
 
                     _lineRenderer.SetPosition(1, _hit.point);
 
                 }
                 else
                 {
-                    _lineRenderer.enabled = false;
+                    _lineRenderer.SetPosition(1, _hit.point);
+                    //_lineRenderer.enabled = false;
                 }
 
             }

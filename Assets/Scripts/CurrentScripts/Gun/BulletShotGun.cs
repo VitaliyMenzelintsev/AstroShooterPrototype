@@ -47,8 +47,6 @@ public class BulletShotGun : BulletGun
     {
         for (int i = 0; i < _barrelPoints.Length; i++)
         {
-            /*_direction[i] = GetDirection();*/ // определяем направление стрельбы
-
             Vector3 _direction;
             _direction = _barrelPoints[i].forward += new Vector3(
             Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
@@ -70,10 +68,9 @@ public class BulletShotGun : BulletGun
                 _lastShootTime = Time.time;
 
                 if (_hit.collider != null
-                      && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
-                      && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
-                      && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
-                    _damageableObject.GetHit(_damage);
+                    && _hit.collider.GetComponentInParent<Vitals>()
+                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                    _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
             else
             {

@@ -67,20 +67,16 @@ public class BulletGun : BaseGun
                 _lastShootTime = Time.time;
 
                 if (_hit.collider != null
-                          && _hit.collider.TryGetComponent(out IDamageable _damageableObject)
-                          && _hit.collider.TryGetComponent(out ITeamable _targetableObject)
-                          && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
-                    _damageableObject.GetHit(_damage);
+                    && _hit.collider.GetComponentInParent<Vitals>()
+                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                    _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
             else
             {
                 ShootRender(_aimPoint);
 
                 _lastShootTime = Time.time;
-
-                
             }
-            //_shootingParticle.Stop();
         }
     }
 
