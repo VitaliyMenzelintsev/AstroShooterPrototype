@@ -69,7 +69,7 @@ public class BulletShotGun : BulletGun
 
                 if (_hit.collider != null
                     && _hit.collider.GetComponentInParent<Vitals>()
-                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                    && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                     _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
             else

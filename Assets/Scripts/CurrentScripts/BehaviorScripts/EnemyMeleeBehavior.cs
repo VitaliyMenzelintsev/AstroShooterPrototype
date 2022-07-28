@@ -30,7 +30,6 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
                 {
                     StateInvestigate();
                 }
-
             }
             else
             {
@@ -51,9 +50,8 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
     private void StateDeath()
     {
-        if(_navMeshAgent != null
-           && _navMeshAgent.speed != 0)
-        _navMeshAgent.speed = 0;
+        if (_navMeshAgent.speed != 0)
+            _navMeshAgent.speed = 0;
 
         _characterAnimator.SetBool("Move", false);
 
@@ -91,12 +89,19 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
     private void StateInvestigate()
     {
-        _navMeshAgent.speed = _speed;
+        if (Vector3.Distance(_navMeshAgent.transform.position, CurrentTarget.transform.position) <= (_maxAttackDistance - _minAttackDistance) / 2)
+        {
+            _navMeshAgent.speed = 0;
+        }
+        else
+        {
+            _navMeshAgent.speed = _speed;
+        }
 
         _characterAnimator.SetBool("HasEnemy", true);
 
         _characterAnimator.SetBool("Move", true);
 
-        _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position); 
     }
 }

@@ -118,13 +118,9 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position;
+        _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
 
-        _fixedAimPosition.y -= 0.5f;
-
-        _currentGun.Aim(_fixedAimPosition);
-
-        _currentGun.Shoot(_fixedAimPosition);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
 
     }
 

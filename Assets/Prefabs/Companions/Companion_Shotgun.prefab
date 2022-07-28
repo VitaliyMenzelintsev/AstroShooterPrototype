@@ -7025,7 +7025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startHealth: 250
   _currentHealth: 0
-  _ressurectHealth: 250
+  _ressurectHealth: 150
   _damageMultiplier: 0.8
 --- !u!114 &3937586668711955917
 MonoBehaviour:
@@ -7986,7 +7986,7 @@ MonoBehaviour:
   _shootingParticle: {fileID: 1516299636291656051}
   _isRangeGun: 1
   _addBulletSpread: 1
-  _bulletSpreadVariance: {x: 0.03, y: 0.03, z: 0.03}
+  _bulletSpreadVariance: {x: 0.02, y: 0.02, z: 0.02}
   _distance: 55
   CurrentTarget: {fileID: 0}
   _punchDamage: 30

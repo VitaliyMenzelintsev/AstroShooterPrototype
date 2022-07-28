@@ -3,7 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 4f;
+    private float _speed;
     [SerializeField]
     private float _damage = 10f;
     [SerializeField]
@@ -12,16 +12,17 @@ public class Projectile : MonoBehaviour
     private float _slowdownDuration = 1f;
     private SpeedManager _speedManager;
     public Vector3 _aimPoint;
-
+    public LayerMask layerMask;
 
     private void Start()
     {
-        _speedManager = GameObject.FindObjectOfType<SpeedManager>();
+        _speedManager = FindObjectOfType<SpeedManager>();
+        //Destroy(gameObject, 3f);
     }
 
     private void FixedUpdate()
     {
-        transform.Translate(Vector3.forward * _speed * Time.deltaTime);
+        transform.Translate(Vector3.forward * _speed * Time.fixedDeltaTime);
         SphereCast();
     }
 
@@ -29,15 +30,15 @@ public class Projectile : MonoBehaviour
     {
         RaycastHit _hit;
 
-        if (Physics.SphereCast(transform.position, 0.2f, Vector3.forward, out _hit, 0.01f))
+        if (Physics.SphereCast(transform.position, 1f, transform.forward, out _hit, 0.1f, layerMask, QueryTriggerInteraction.UseGlobal))
         {
-            if (_hit.collider != null
-                      && _hit.collider.TryGetComponent(out IDamageable _damageableObject))
+            if (_hit.transform.gameObject.GetComponentInParent<Vitals>())
             {
-                _damageableObject.GetHit(_damage);
-                Destroy(this.gameObject);
+                _hit.transform.gameObject.GetComponentInParent<Vitals>().GetHit(_damage);
+                Destroy(gameObject, 0.2f);
             }
-            Destroy(this.gameObject);
+
+            Destroy(gameObject, 0.2f);
         }
     }
 }

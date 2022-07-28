@@ -15,14 +15,13 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
     protected CompanionCoverSpot _currentCover = null;
     protected float _resAnimationTime = 3.2f;
 
-    protected Collider[] _myColliders;
+    [SerializeField]
+    protected bool _isDead = false;
 
 
     public override void Start()
     {
         base.Start();
-
-        _myColliders = GetComponentsInChildren<Collider>();
     }
 
 
@@ -63,17 +62,17 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
 
             _characterAnimator.SetBool("HasEnemy", false);
 
-            Invoke(nameof(SetSpeed), _resAnimationTime);
-
-            StateIdle();
+            Invoke(nameof(RessurectEnding), _resAnimationTime);
         }
     }
 
 
 
-    protected void SetSpeed()
+    protected void RessurectEnding()
     {
         _navMeshAgent.speed = _speed;
+        //_navMeshAgent.isStopped = false;
+        _isDead = false;
     }
 
 

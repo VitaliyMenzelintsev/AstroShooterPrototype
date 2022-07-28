@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class SpeedManager : MonoBehaviour
-{
+{ 
     
     public void TemporarilyAIChange(GameObject _target, bool _isOn, float _value, float _time)
     {
@@ -32,7 +32,6 @@ public class SpeedManager : MonoBehaviour
         else
         {
             _target.GetComponent<PlayerController>().SpeedChange(-_value);
-            Debug.Log("Дебаф снят");
         }
             
     }

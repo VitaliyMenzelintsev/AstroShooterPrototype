@@ -11,7 +11,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _characterAnimator = GetComponent<Animator>();
 
-        _coverManager = GameObject.FindObjectOfType<CoverManager>();
+        _coverManager = FindObjectOfType<CoverManager>();
 
         _navMeshAgent.stoppingDistance = 0.2f;
 
@@ -29,45 +29,48 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         SetAnimations();
 
-        if (IsTargetAlive())
+        if (!_isDead)
         {
-            if (!IsCoverExist())
-                _currentCover = _coverManager.GetCover(this, CurrentTarget);
-
-            if (IsCoverExist())
+            if (IsTargetAlive())
             {
-                if (IsNotInCover())
+                if (!IsCoverExist())
+                    _currentCover = _coverManager.GetCover(this, CurrentTarget);
+
+                if (IsCoverExist())
                 {
-                    StateMoveToCover();
+                    if (IsNotInCover())
+                    {
+                        StateMoveToCover();
+                    }
+                    else
+                    {
+                        StateCombat();
+                    }
                 }
                 else
                 {
-                    StateCombat();
+                    StateInvestigate();
                 }
             }
             else
             {
-                StateCombat();
-            }
-        }
-        else
-        {
-            GetNewTarget();
+                GetNewTarget();
 
-            if (IsFollowPointFar())
-            {
-                if (IsPlayerFar())
+                if (IsFollowPointFar())
                 {
-                    StateFollowThePlayer();
+                    if (IsPlayerFar())
+                    {
+                        StateFollowThePlayer();
+                    }
+                    else
+                    {
+                        StateIdle();
+                    }
                 }
                 else
                 {
                     StateIdle();
                 }
-            }
-            else
-            {
-                StateIdle();
             }
         }
 
@@ -81,8 +84,14 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         ExitCover();
 
+        if (!_isDead)
+            _isDead = true;
+
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
+
+        //if (_navMeshAgent.isStopped != true)
+        //    _navMeshAgent.isStopped = true;
 
         for (int i = 0; i < _myColliders.Length; i++)
         {
@@ -94,6 +103,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     public override void StateIdle()
     {
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("HasEnemy", false);
     }
 
@@ -103,7 +114,15 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         ExitCover();
 
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("HasEnemy", false);
+
+        transform.LookAt(_player);
+
+        //_navMeshAgent.isStopped = false;
+
+        //_navMeshAgent.stoppingDistance = 0.2f;
 
         _navMeshAgent.SetDestination(_followPoint.position);
     }
@@ -112,6 +131,10 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateMoveToCover()
     {
+        //_navMeshAgent.isStopped = false;
+
+        _navMeshAgent.speed = _speed;
+
         _characterAnimator.SetBool("HasEnemy", true);
 
         _navMeshAgent.SetDestination(_currentCover.transform.position);
@@ -121,6 +144,10 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateRangeCombat()
     {
+        //_navMeshAgent.isStopped = true;
+
+        _navMeshAgent.speed = 0;
+
         transform.LookAt(CurrentTarget.transform);
 
         _characterAnimator.SetTrigger("Fire");
@@ -134,9 +161,13 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateMeleeCombat()
     {
+        _navMeshAgent.speed = 0;
+
         ExitCover();
 
         _characterAnimator.SetTrigger("Punch");
+
+        transform.LookAt(CurrentTarget.transform);
 
         _currentGun.Punch();
     }
@@ -153,6 +184,23 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         {
             StateMeleeCombat();
         }
+    }
+
+
+    private void StateInvestigate()
+    {
+        if (Vector3.Distance(_navMeshAgent.transform.position, CurrentTarget.transform.position) <= (_maxAttackDistance - _minAttackDistance) / 2)
+        {
+            _navMeshAgent.speed = 0;
+        }
+        else
+        {
+            _navMeshAgent.speed = _speed;
+        }
+
+        _characterAnimator.SetBool("HasEnemy", true);
+
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position);
     }
 
 

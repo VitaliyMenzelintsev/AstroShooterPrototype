@@ -16,18 +16,17 @@ public class BulletGun : BaseGun
     protected Vector2 _kickMinMax = new(0.05f, 0.2f);
     [SerializeField]
     protected Vector2 _recoilAngleMinMax = new(5, 8);
-    protected float _recoilBackTime = 0.1f;
+    protected Vector3 _gunOriginPosition;
     protected Vector3 _recoilSmoothDampVelocity;
+    protected float _recoilBackTime = 0.1f;
     protected float _recoilRotSmoothDampVelocity;
     protected float _recoilAngle;
-    protected Vector3 _gunOriginPosition;
-
+    
 
     public override void Start()
     {
         base.Start();
 
-        
         _gunOriginPosition = transform.localPosition;
     }
 
@@ -57,7 +56,7 @@ public class BulletGun : BaseGun
 
             Vector3 _direction = GetDirection();
 
-            Ray _ray = new(_barrelOrigin.position, _direction);
+            Ray _ray = new(_barrelOrigin.position, _aimPoint - _barrelOrigin.position  /*_direction*/);
 
             if (Physics.Raycast(_ray, out RaycastHit _hit, _distance))   
             {
@@ -66,7 +65,7 @@ public class BulletGun : BaseGun
                 _lastShootTime = Time.time;
 
                 if (_hit.collider.GetComponentInParent<Vitals>()
-                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                    && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                     _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
             else
@@ -114,7 +113,7 @@ public class BulletGun : BaseGun
 
     public void Recoil()
     {
-        transform.localPosition -= Vector3.forward * Random.Range(_kickMinMax.x, _kickMinMax.y);
+        transform.localPosition -= Vector3.back * Random.Range(_kickMinMax.x, _kickMinMax.y);
         _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
         _recoilAngle = Mathf.Clamp(_recoilAngle, 0, 25);
     }
@@ -122,7 +121,7 @@ public class BulletGun : BaseGun
 
     public IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {
-        Vector3 _startPosition = _trail.transform.position;
+        Vector3 _startPosition = _barrelOrigin.position /*_trail.transform.position*/;
         float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);
         float _remainingDistance = _distance;
 

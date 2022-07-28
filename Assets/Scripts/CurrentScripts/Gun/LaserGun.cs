@@ -27,7 +27,7 @@ public class LaserGun : BaseGun
     {
         base.LateUpdate();
 
-        if (Vector3.Distance(this.gameObject.transform.position, _myTarget) > (_maxDistance - 0.5f))
+        if (Vector3.Distance(gameObject.transform.position, _myTarget) > (_maxDistance - 0.5f))
         {
             _lineRenderer.enabled = false;
         }
@@ -60,7 +60,7 @@ public class LaserGun : BaseGun
 
             _shootingParticle.Play();
 
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
+            Vector3 _direction = GetDirection(); 
 
             Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
@@ -68,13 +68,13 @@ public class LaserGun : BaseGun
 
             _lineRenderer.SetPosition(0, _barrelOrigin.position);
 
-            if (Physics.Raycast(_ray, out _hit, _maxDistance))   // если попали во что-то
+            if (Physics.Raycast(_ray, out _hit, _maxDistance))   
             {
                 _lastShootTime = Time.time;
 
                 if (_hit.collider != null
                     && _hit.collider.GetComponentInParent<Vitals>()
-                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                    && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                 {
                     _lineRenderer.enabled = true;
 
@@ -85,8 +85,8 @@ public class LaserGun : BaseGun
                 }
                 else
                 {
-                    _lineRenderer.SetPosition(1, _hit.point);
-                    //_lineRenderer.enabled = false;
+                    //_lineRenderer.SetPosition(1, _barrelOrigin.position);
+                    _lineRenderer.enabled = false;
                 }
 
             }
@@ -102,6 +102,7 @@ public class LaserGun : BaseGun
     }
 
 
+
     public override void Punch()
     {
         if (Time.time > _nextShotTime)
@@ -110,9 +111,9 @@ public class LaserGun : BaseGun
 
             if (_lastShootTime + _shootDelay < Time.time)
             {
-                Vector3 _direction = GetDirection(); // определяем направление удара
+                Vector3 _direction = GetDirection(); 
 
-                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
+                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))   
                 {
                     _lastShootTime = Time.time;
 
@@ -126,8 +127,6 @@ public class LaserGun : BaseGun
         }
     }
 
-    public override void ShootRender(Vector3 _aimPoint)
-    {
 
-    }
+    public override void ShootRender(Vector3 _aimPoint) { }
 }

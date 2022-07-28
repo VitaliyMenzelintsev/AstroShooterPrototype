@@ -346,7 +346,7 @@ MonoBehaviour:
   _magazineCapacity: 100
   _reloadTime: 1.2
   _msBetweenShots: 0
-  _damage: 0.5
+  _damage: 0.35
   _shootDelay: 0
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}
   _isRangeGun: 1
@@ -5595,6 +5595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
+  _speed: 3.2
   Head: {fileID: 4464848928397419480}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
@@ -5602,7 +5603,6 @@ MonoBehaviour:
   _minAttackDistance: 0
   _maxAttackDistance: 12
   BuffPoint: {fileID: 1888702841272731234}
-  _currentCover: {fileID: 0}
 --- !u!114 &8409626054815813788
 MonoBehaviour:
   m_ObjectHideFlags: 0

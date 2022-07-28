@@ -9,7 +9,7 @@ public abstract class BaseCharacter : MonoBehaviour, IVisible
     [HideInInspector]
     public Vitals MyVitals;
     [HideInInspector]
-    public float _speed = 3.8f;
+    public float _speed = 3.2f;
     [SerializeField]
     protected Transform Head;
     //[SerializeField]
@@ -23,7 +23,8 @@ public abstract class BaseCharacter : MonoBehaviour, IVisible
     [SerializeField]
     protected float _maxAttackDistance = 12f;
     protected TargetManager _targetManager;
-  
+    protected Collider[] _myColliders;
+
 
 
     public virtual void Start()
@@ -35,6 +36,8 @@ public abstract class BaseCharacter : MonoBehaviour, IVisible
         _myTeamNumber = MyTeam.GetTeamNumber();
 
         _targetManager = GameObject.FindObjectOfType<TargetManager>();
+
+        _myColliders = GetComponentsInChildren<Collider>();
     }
 
 

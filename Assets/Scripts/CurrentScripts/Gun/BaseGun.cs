@@ -49,6 +49,12 @@ public abstract class BaseGun : MonoBehaviour
     }
 
 
+    public int BulletsInMagazine()
+    {
+        return _bulletsInMagazine;
+    }
+
+
     public void Reload()
     {
         if (!_isReloading && _bulletsInMagazine != _magazineCapacity)
@@ -58,6 +64,7 @@ public abstract class BaseGun : MonoBehaviour
 
     public void Aim(Vector3 _aimPoint)
     {
+        Mathf.Clamp(_aimPoint.y, -45, 45);
         transform.LookAt(_aimPoint);
     }
 

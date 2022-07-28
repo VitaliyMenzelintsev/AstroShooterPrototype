@@ -51,13 +51,13 @@ public class ProjectileGun : BaseGun //
 
             Recoil();
 
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
+            Vector3 _direction = GetDirection(); 
 
             Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
             RaycastHit _hit;
 
-            if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
+            if (Physics.Raycast(_ray, out _hit, _distance))   
             {
                 Quaternion fireRotation = Quaternion.LookRotation(transform.forward); // возможно лучше Quaternion identity в instantiate
 

@@ -168,6 +168,10 @@ public class PlayerController : BaseCharacter
             {
                 CurrentTarget = _hit.collider.gameObject;
             }
+            else
+            {
+                CurrentTarget = null;
+            }
         }
     }
 
@@ -277,7 +281,6 @@ public class PlayerController : BaseCharacter
     {
         for (int i = 0; i < _companions.Length; i++)
         {
-            Debug.Log("Игрок отдал приказ применить способность");
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, CurrentTarget);
         }
     }
@@ -296,7 +299,6 @@ public class PlayerController : BaseCharacter
 
     private void Aim(Vector3 _aimPoint)
     {
-        Mathf.Clamp(_aimPoint.y, -45, 45);
         _currentGun.Aim(_aimPoint);
     }
 

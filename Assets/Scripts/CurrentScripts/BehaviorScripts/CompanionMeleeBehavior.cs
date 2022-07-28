@@ -65,8 +65,16 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetBool("Dead", true);
 
-        if (_navMeshAgent.speed != 0)
-            _navMeshAgent.speed = 0;
+        //if (_navMeshAgent.speed != 0)
+        //    _navMeshAgent.speed = 0;
+
+
+        if (_isDead)
+            _isDead = true;
+
+        if (_navMeshAgent.isStopped != true)
+            _navMeshAgent.isStopped = true;
+
 
         for (int i = 0; i < _myColliders.Length; i++)
         {
@@ -78,7 +86,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     public override void StateIdle()
     {
-        _navMeshAgent.speed = 0;
+        //_navMeshAgent.speed = 0;
 
         _characterAnimator.SetBool("HasEnemy", false);
     }
@@ -93,48 +101,49 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(_player);
 
+        _navMeshAgent.isStopped = false;
+
         _navMeshAgent.stoppingDistance = 0.2f;
 
-        _navMeshAgent.SetDestination(_followPoint.position);            
+        _navMeshAgent.SetDestination(_followPoint.position);
     }
 
 
 
     private void StateInvestigate()
     {
+        if (Vector3.Distance(_navMeshAgent.transform.position, CurrentTarget.transform.position) <= (_maxAttackDistance - _minAttackDistance) / 2)
+        {
+            _navMeshAgent.isStopped = true;
+        }
+
         _navMeshAgent.speed = _speed;
 
         _characterAnimator.SetBool("HasEnemy", true);
 
-        //float _bestDistance = _maxAttackDistance - _minAttackDistance;
+        _navMeshAgent.stoppingDistance = (_maxAttackDistance - _minAttackDistance) / 2;
 
-        //Vector3 _firePosition = (CurrentTarget.transform.position - transform.position) * _bestDistance;
-
-        _navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
-
-        _navMeshAgent.SetDestination(CurrentTarget.transform.position); 
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position);
     }
 
 
 
     private void StateCombat()
     {
-        if (CurrentTarget != null)
-        {
-            _characterAnimator.SetTrigger("Fire");
+        _characterAnimator.SetTrigger("Fire");
 
-            _navMeshAgent.speed = 0;
+        _navMeshAgent.speed = 0;
 
-            transform.LookAt(CurrentTarget.transform);
+        transform.LookAt(CurrentTarget.transform);
 
-            Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position;
+        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position;
 
-            _fixedAimPosition.y -= 0.5f;
+        _fixedAimPosition.y -= 0.3f;
 
-            _currentGun.Aim(_fixedAimPosition);
+        _currentGun.Aim(_fixedAimPosition);
 
-            _currentGun.Shoot(_fixedAimPosition);
-        }
+        _currentGun.Shoot(_fixedAimPosition);
+
     }
 
 
