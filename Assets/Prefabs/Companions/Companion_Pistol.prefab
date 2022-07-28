@@ -797,7 +797,6 @@ GameObject:
   - component: {fileID: 1335924316084971055}
   - component: {fileID: 1333582193485500311}
   - component: {fileID: 1428036007039587103}
-  - component: {fileID: 1333582193485500298}
   - component: {fileID: 1333582193485500299}
   - component: {fileID: 1333582193485500296}
   - component: {fileID: 1333582193485500297}
@@ -865,20 +864,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!136 &1333582193485500298
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1333582193485500303}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.25
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!195 &1333582193485500299
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -914,7 +899,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _teamNumber: 1
-  Eyes: {fileID: 1335989225286041969}
 --- !u!114 &1333582193485500297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -927,7 +911,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac19f4785a5710543ba6f63bb3395592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _startHealth: 250
+  _startHealth: 200
   _currentHealth: 0
   _ressurectHealth: 250
   _damageMultiplier: 1
@@ -945,15 +929,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  Eyes: {fileID: 1335989225286041969}
+  _speed: 3.8
+  Head: {fileID: 1339097230204124809}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 4951684120146128928}
   _minAttackDistance: 1.5
   _maxAttackDistance: 13
+  MyActivatedSkill: {fileID: 1006195902144221749}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
-  MyActivatedSkill: {fileID: 1006195902144221749}
 --- !u!114 &1006195902144221749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2362,8 +2347,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4954765324615596613}
-  m_LocalRotation: {x: 0.23849256, y: -0.2353473, z: -0.59091246, w: -0.7338635}
-  m_LocalPosition: {x: -0.473, y: 0.357, z: 0.341}
+  m_LocalRotation: {x: 0.24493468, y: -0.24378881, z: -0.588257, w: -0.73111403}
+  m_LocalPosition: {x: -0.45199996, y: 0.46000004, z: 0.30699998}
   m_LocalScale: {x: 0.872093, y: 0.87209314, z: 0.87209314}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2375,7 +2360,7 @@ Transform:
   - {fileID: 9034121289441924101}
   m_Father: {fileID: 1335972460270465725}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -38.916, y: 4.686, z: 76.026}
+  m_LocalEulerAnglesHint: {x: -40.164, y: 5.128, z: 75.765}
 --- !u!33 &4951684120146128929
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2450,6 +2435,7 @@ MonoBehaviour:
   _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
   _distance: 55
   CurrentTarget: {fileID: 0}
+  _punchDamage: 30
   _bulletSpeed: 200
   _bulletTrail: {fileID: 1921083361938323580, guid: 434dc2a8b152dcf41aff1e13876fc714, type: 3}
   _kickMinMax: {x: 0.1, y: 0.5}

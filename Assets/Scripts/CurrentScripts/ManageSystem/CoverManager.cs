@@ -77,7 +77,7 @@ public class CoverManager : MonoBehaviour
     {
         bool _canSeeIt = false;
 
-        Vector3 _enemyPosition = _target.GetComponent<BaseCharacter>().GetEyesPosition().position;
+        Vector3 _enemyPosition = _target.GetComponent<BaseCharacter>().GetHeadTransform().position;
 
         float _averageEyesPosition = 1.4f;
 
@@ -88,7 +88,7 @@ public class CoverManager : MonoBehaviour
         if (Physics.Raycast(_possibleSpotPosition, _enemyPosition, out _hit, Mathf.Infinity))
         {
             //если рейкаст попал в цель, то мы знаем, что можем его увидеть
-            if (_hit.transform == _target.GetComponent<BaseCharacter>().GetEyesPosition())  
+            if (_hit.transform == _target.GetComponent<BaseCharacter>().GetHeadTransform())  
             {
                 _canSeeIt = true;
             }
@@ -187,7 +187,7 @@ public class CoverManager : MonoBehaviour
     {
         bool _canSeeIt = false;
 
-        Vector3 _enemyPosition = _target.GetComponent<BaseCharacter>().GetEyesPosition().position;
+        Vector3 _enemyPosition = _target.GetComponent<BaseCharacter>().GetHeadTransform().position;
 
         float _averageEyesPosition = 1.4f;
 
@@ -198,7 +198,7 @@ public class CoverManager : MonoBehaviour
         if (Physics.Raycast(_possibleSpotPosition, _enemyPosition, out _hit, Mathf.Infinity))
         {
             //если рейкаст попал в цель, то мы знаем, что можем его увидеть
-            if (_hit.transform == _target.GetComponent<BaseCharacter>().GetEyesPosition())
+            if (_hit.transform == _target.GetComponent<BaseCharacter>().GetHeadTransform())
             {
                 _canSeeIt = true;
             }

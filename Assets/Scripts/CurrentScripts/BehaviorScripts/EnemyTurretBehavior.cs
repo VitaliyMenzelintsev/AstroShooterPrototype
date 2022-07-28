@@ -1,18 +1,13 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
-
 public class EnemyTurretBehavior : EnemyBaseBehavior
 {
     [SerializeField]
-    private Transform _partToRotate;                                             // определили поворачивающуюся деталь
-    private float _turnSpeed = 5f;                                               // скорость поворота башни
+    private Transform _partToRotate;                                          
+    private readonly float _turnSpeed = 5f;                                        
 
-    public override void Start()
-    {
-        base.Start();
-    }
+
+    public override void Start()  { base.Start(); }
 
 
     private void FixedUpdate()
@@ -43,23 +38,25 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
         }
     }
 
+
+    public override void StateSkill(bool _isESkill, GameObject _target) { }
+
+
     private void StateDeath()
     {
         Destroy(this, 3f);
     }
 
-    private void StateIdle()
-    {
-       
-    }
+
+    private void StateIdle() { }
+
+
 
     private void StateRangeCombat()
     {
-
         LockOnTarget();
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
-
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
     }
 
 
@@ -72,7 +69,7 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
 
         Vector3 _rotation = Quaternion.Lerp(_partToRotate.rotation, _lookRotation, Time.deltaTime * _turnSpeed).eulerAngles;
 
-        _partToRotate.rotation = Quaternion.Euler(0f, _rotation.y, 0f);             // задаём вращение верхушке башни (X и Z freeze)
+        _partToRotate.rotation = Quaternion.Euler(0f, _rotation.y, 0f);    
     }
 
 
@@ -80,10 +77,5 @@ public class EnemyTurretBehavior : EnemyBaseBehavior
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _maxAttackDistance);
-    }
-
-    public override void StateSkill(bool _isESkill, GameObject _target)
-    {
-        throw new System.NotImplementedException();
     }
 }

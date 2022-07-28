@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Animator))]
-
 public class EnemyMeleeBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
@@ -48,6 +46,9 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
     }
 
 
+    public override void StateSkill(bool _isESkill, GameObject _target) { }
+
+
     private void StateDeath()
     {
         if(_navMeshAgent != null
@@ -84,7 +85,7 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
 
         transform.LookAt(CurrentTarget.transform);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
     }
 
 
@@ -97,10 +98,5 @@ public class EnemyMeleeBehavior : EnemyBaseBehavior
         _characterAnimator.SetBool("Move", true);
 
         _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
-    }
-
-    public override void StateSkill(bool _isESkill, GameObject _target)
-    {
-        throw new System.NotImplementedException();
     }
 }

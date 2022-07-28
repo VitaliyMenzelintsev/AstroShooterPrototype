@@ -22,7 +22,7 @@ public abstract class BaseGun : MonoBehaviour
     [SerializeField]
     protected bool _addBulletSpread = false;
     [SerializeField]
-    protected Vector3 _bulletSpreadVariance = new Vector3(0.05f, 0.05f, 0.05f);
+    protected Vector3 _bulletSpreadVariance = new(0.05f, 0.05f, 0.05f);
     [SerializeField]
     protected float _distance = 55f;
     protected int _myOwnerTeamNumber;
@@ -97,7 +97,7 @@ public abstract class BaseGun : MonoBehaviour
 
             Vector3 _direction = GetDirection(); // определяем направление стрельбы
 
-            Ray _ray = new Ray(_barrelOrigin.position, _direction);
+            Ray _ray = new(_barrelOrigin.position, _direction);
 
             RaycastHit _hit;
 
@@ -109,7 +109,7 @@ public abstract class BaseGun : MonoBehaviour
 
                 if (_hit.collider != null
                    && _hit.collider.GetComponentInParent<Vitals>()
-                    && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                   && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                     _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
             else

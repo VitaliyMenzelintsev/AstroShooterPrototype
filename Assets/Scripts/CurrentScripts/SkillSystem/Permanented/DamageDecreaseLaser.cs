@@ -3,62 +3,64 @@ using UnityEngine;
 
 public class DamageDecreaseLaser : MonoBehaviour
 {
-    public int _myTeamNumber;
-    public GameObject[] _alliesArray;
-    private TargetManager _targetManager;
-    private Transform _laserPosition;
+    [SerializeField]
+    private GameObject[] _alliesArray/* = new GameObject[10]*/;
+
+    [SerializeField]
     private float _skillDistance = 12f;
     [SerializeField]
     private float _damageDecrease = 0.3f;
+    private int _myTeamNumber;
 
-    [HideInInspector]
-    public Vitals MyVitals;
+    private TargetManager _targetManager;
+    private Transform _laserPosition;
+    private Vitals _myVitals;
 
-
-    List<GameObject> _activatedAllies = new List<GameObject>();
-    List<GameObject> _disactivatedAllies = new List<GameObject>();
-
-
-    public LineRenderer[] _laserRender = new LineRenderer[10];
+    private List<GameObject> _activatedAllies = new();
+    private List<GameObject> _disactivatedAllies = new();
+    [SerializeField]
+    private LineRenderer[] _laserRender = new LineRenderer[10];
 
 
     private void Start()
     {
-        _targetManager = GameObject.FindObjectOfType<TargetManager>();
+        _targetManager = FindObjectOfType<TargetManager>();
 
         _myTeamNumber = GetComponent<Team>().GetTeamNumber();
 
-        _laserPosition = this.gameObject.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
+        _laserPosition = gameObject.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
 
-        _alliesArray = _targetManager.GetNearestAllies(_myTeamNumber, _skillDistance, _laserPosition, this.gameObject);
+        _alliesArray = _targetManager.GetNearestAllies(_myTeamNumber, _skillDistance, _laserPosition, gameObject);
 
-        MyVitals = GetComponent<Vitals>();
+        _myVitals = GetComponent<Vitals>();
 
         StartSkill();
     }
 
-    private void FixedUpdate()  // на старте раскидать по активейтд и дизактивейтед, а в апдейте пробегаться по обоим спискам и менять отрисовку вкл-выкл
+
+    private void FixedUpdate() 
     {
-        if (MyVitals.IsAlive()
+        _myVitals = GetComponent<Vitals>();
+
+        if (_myVitals.IsAlive()
             && _alliesArray != null)
         {
             for (int i = 0; i < _alliesArray.Length; i++)
             {
-                GameObject _currentCharacter = _alliesArray[i].gameObject;
+                GameObject _currentCharacter = _alliesArray[i];
 
                 if (_currentCharacter != null
                    && _targetManager.IsTargetAlive(_currentCharacter)
-                   && _targetManager.IsTargetReachable(_laserPosition, _currentCharacter, _skillDistance)
+                   && _targetManager.IsDistanceCorrect(_currentCharacter, _laserPosition, _skillDistance)
                    && _targetManager.CanSeeTarget(_currentCharacter, _laserPosition))
                 {
-                    GameObject _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint().gameObject;
+                    Transform _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
 
-                    if (_buffPoint != null) // таким незамысловатым образом происходит проверка иерархиии противников, могут ли они принимать луч усиления
+                    if (_buffPoint != null) 
                     {
                         AddToActivated(_currentCharacter);
-                        //_laserRender[i].enabled = true;
                         _laserRender[i].SetPosition(0, _laserPosition.position);
-                        _laserRender[i].SetPosition(1, _buffPoint.transform.position);
+                        _laserRender[i].SetPosition(1, _buffPoint.position);
                     }
                     else
                     {
@@ -69,7 +71,6 @@ public class DamageDecreaseLaser : MonoBehaviour
                 {
                     AddToDisactivated(_currentCharacter);
                 }
-
             }
         }
         else
@@ -83,7 +84,7 @@ public class DamageDecreaseLaser : MonoBehaviour
     {
         for (int i = 0; i < _alliesArray.Length; i++)
         {
-            GameObject _currentCharacter = _alliesArray[i].gameObject;
+            GameObject _currentCharacter = _alliesArray[i];
 
             Transform _myLaserTarget = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
 

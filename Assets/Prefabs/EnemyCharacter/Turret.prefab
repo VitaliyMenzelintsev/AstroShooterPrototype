@@ -310,6 +310,7 @@ MonoBehaviour:
   _distance: 55
   CurrentTarget: {fileID: 0}
   _lineRenderer: {fileID: 0}
+  _myOwnerIsAlive: 0
 --- !u!120 &1379450041
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -533,7 +534,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _teamNumber: 2
-  Eyes: {fileID: 2306508515093296771}
 --- !u!114 &2306508516182554600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -564,7 +564,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  Eyes: {fileID: 2306508515093296771}
+  Head: {fileID: 2306508515093296771}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 1379450038}

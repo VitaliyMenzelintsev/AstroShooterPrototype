@@ -3,12 +3,9 @@ using UnityEngine;
 
 public class TargetManager : MonoBehaviour
 {
-
-    //public List<GameObject> _allCharactersList = new List<GameObject>();
-
     public GameObject[] _allCharactersArray;
 
-
+     
     private void Awake()
     {
         _allCharactersArray = GameObject.FindGameObjectsWithTag("Character");
@@ -30,7 +27,7 @@ public class TargetManager : MonoBehaviour
                 if (_currentCharacter != null
                     && IsItMyEnemy(_currentCharacter, _myTeamNumber)
                     && IsTargetAlive(_currentCharacter)
-                    && IsTargetReachable(_myEyesPosition, _currentCharacter, _viewDistance))
+                    && IsDistanceCorrect(_currentCharacter, _myEyesPosition, _viewDistance))
                 {
                     if (CanSeeTarget(_currentCharacter, _myEyesPosition))
                     {
@@ -58,7 +55,7 @@ public class TargetManager : MonoBehaviour
                 if (_currentCharacter != null
                     && !IsItMyEnemy(_currentCharacter, _myTeamNumber)
                     && IsTargetAlive(_currentCharacter)
-                    && IsTargetReachable(_myEyesPosition, _currentCharacter, _viewDistance))
+                    && IsDistanceCorrect(_currentCharacter, _myEyesPosition, _viewDistance))
                 {
                     if (CanSeeTarget(_currentCharacter, _myEyesPosition))
                     {
@@ -74,15 +71,15 @@ public class TargetManager : MonoBehaviour
 
     public GameObject[] GetNearestAllies(int _myTeamNumber, float _distanceToLockate, Transform _viewPoint, GameObject _me)
     {
-        List<GameObject> _myAlliesList = new List<GameObject>();
+        List<GameObject> _myAlliesList = new();
 
-        for (int i = 0; i < _allCharactersArray.Length; i++)  // 111
+        for (int i = 0; i < _allCharactersArray.Length; i++) 
         {
             GameObject _currentCharacter = _allCharactersArray[i];
 
             if (!IsItMyEnemy(_currentCharacter, _myTeamNumber)
                 && IsTargetAlive(_currentCharacter)
-                && IsTargetReachable(_viewPoint, _currentCharacter, _distanceToLockate)
+                && IsDistanceCorrect(_currentCharacter, _viewPoint, _distanceToLockate)
                 && _currentCharacter != _me)
             {
                 _myAlliesList.Add(_currentCharacter);
@@ -134,9 +131,9 @@ public class TargetManager : MonoBehaviour
     }
 
 
-    public bool IsTargetReachable(Transform _myPosition, GameObject _targetPosition, float _viewDistance)
+    public bool IsDistanceCorrect(GameObject _target, Transform _myTransform, float _viewDistance)
     {
-        if (Vector3.Distance(_myPosition.position, _targetPosition.transform.position) <= _viewDistance)
+        if (Vector3.Distance(_myTransform.position, _target.transform.position) <= _viewDistance)
         {
             return true;
         }
@@ -144,25 +141,25 @@ public class TargetManager : MonoBehaviour
         {
             return false;
         }
-
     }
 
 
-    public bool CanSeeTarget(GameObject _target, Transform _myEyesPosition)
+    public bool CanSeeTarget(GameObject _target, Transform _myEyes)
     {
         bool _canSeeIt = false;
 
-        Vector3 _targetPosition = new Vector3(_target.transform.position.x, _target.transform.position.y + 0.5f, _target.transform.position.z);
+        Transform _visibleTarget = _target.GetComponent<IVisible>().GetHeadTransform();
 
-        Vector3 _directionTowardsEnemy = _targetPosition - _myEyesPosition.position;
+        Vector3 _directionTowardsTarget = _visibleTarget.position - _myEyes.position;
 
-        RaycastHit _hit;
+        float _rayDistance = 25f;
 
-        float _rayDistance = 45f;
-
-        if (Physics.Raycast(_myEyesPosition.position, _directionTowardsEnemy, out _hit, _rayDistance))
+        if (Physics.Raycast(_myEyes.position, _directionTowardsTarget, out RaycastHit _hit, _rayDistance))
         {
-            if (_hit.transform == _target.transform)
+            IVisible _visible = _hit.collider.GetComponentInParent<IVisible>();
+
+            if (_visible != null
+                && _visibleTarget == _visible.GetHeadTransform())
             {
                 _canSeeIt = true;
             }

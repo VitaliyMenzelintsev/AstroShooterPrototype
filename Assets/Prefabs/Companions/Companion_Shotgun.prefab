@@ -5350,8 +5350,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.4092073, y: 0.27837747, z: 0.3819752}
-  m_Center: {x: -0.20460372, y: 0.025450483, z: 0.00000055134296}
+  m_Size: {x: 0.5027123, y: 0.27837747, z: 0.3819752}
+  m_Center: {x: -0.25135604, y: 0.025450505, z: 0.0000005552007}
 --- !u!1 &4030918233851087043
 GameObject:
   m_ObjectHideFlags: 0
@@ -6906,7 +6906,6 @@ GameObject:
   - component: {fileID: 4028207088724063917}
   - component: {fileID: 3937586668711955919}
   - component: {fileID: 3937586668711955918}
-  - component: {fileID: 3937586668711955913}
   - component: {fileID: 3937586668711955914}
   - component: {fileID: 3937586668711955915}
   - component: {fileID: 3937586668711955916}
@@ -6977,20 +6976,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 4839871068963052545}
     m_Active: 1
   m_Effectors: []
---- !u!136 &3937586668711955913
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4032379541040932811}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.3
-  m_Height: 1.8
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!195 &3937586668711955914
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -7026,7 +7011,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _teamNumber: 1
-  Eyes: {fileID: 4028088492298337573}
 --- !u!114 &3937586668711955916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7042,7 +7026,7 @@ MonoBehaviour:
   _startHealth: 250
   _currentHealth: 0
   _ressurectHealth: 250
-  _damageMultiplier: 0.9
+  _damageMultiplier: 0.8
 --- !u!114 &3937586668711955917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7057,15 +7041,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  Eyes: {fileID: 4028088492298337573}
+  _speed: 3.8
+  Head: {fileID: 4033314591789026321}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 9043222431910821623}
   _minAttackDistance: 0.5
   _maxAttackDistance: 13
+  MyActivatedSkill: {fileID: 8416590095043496749}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
-  MyActivatedSkill: {fileID: 8416590095043496749}
 --- !u!114 &6914673975370171443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7080,15 +7065,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  Eyes: {fileID: 4028088492298337573}
+  _speed: 3.8
+  Head: {fileID: 4033314591789026321}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 9043222431910821623}
   _minAttackDistance: 0.5
   _maxAttackDistance: 6
+  MyActivatedSkill: {fileID: 8416590095043496749}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
-  MyActivatedSkill: {fileID: 8416590095043496749}
 --- !u!114 &5738242008061452496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8003,6 +7989,7 @@ MonoBehaviour:
   _bulletSpreadVariance: {x: 0.03, y: 0.03, z: 0.03}
   _distance: 55
   CurrentTarget: {fileID: 0}
+  _punchDamage: 30
   _bulletSpeed: 200
   _bulletTrail: {fileID: 1921083361938323580, guid: 87fabc219e8f07544a9de1ce8aebe7a8, type: 3}
   _kickMinMax: {x: 0.05, y: 0.2}

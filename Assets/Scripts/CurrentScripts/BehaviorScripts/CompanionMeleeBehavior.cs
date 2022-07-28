@@ -68,7 +68,10 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
 
-        GetComponent<CapsuleCollider>().enabled = false;
+        for (int i = 0; i < _myColliders.Length; i++)
+        {
+            _myColliders[i].enabled = false;
+        }
     }
 
 
@@ -92,7 +95,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _navMeshAgent.stoppingDistance = 0.2f;
 
-        _navMeshAgent.SetDestination(_followPoint.position);            // действие Follow The Player
+        _navMeshAgent.SetDestination(_followPoint.position);            
     }
 
 
@@ -103,13 +106,13 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _characterAnimator.SetBool("HasEnemy", true);
 
-        float _bestDistance = _maxAttackDistance - _minAttackDistance;
+        //float _bestDistance = _maxAttackDistance - _minAttackDistance;
 
-        Vector3 _firePosition = (CurrentTarget.transform.position - transform.position) * _bestDistance;
+        //Vector3 _firePosition = (CurrentTarget.transform.position - transform.position) * _bestDistance;
 
         _navMeshAgent.stoppingDistance = _maxAttackDistance - _minAttackDistance;
 
-        _navMeshAgent.SetDestination(CurrentTarget.transform.position); // действие Investigate
+        _navMeshAgent.SetDestination(CurrentTarget.transform.position); 
     }
 
 
@@ -124,9 +127,9 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
             transform.LookAt(CurrentTarget.transform);
 
-            Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
+            Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position;
 
-            _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
+            _fixedAimPosition.y -= 0.5f;
 
             _currentGun.Aim(_fixedAimPosition);
 
@@ -140,6 +143,4 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
     }
-
-
 }

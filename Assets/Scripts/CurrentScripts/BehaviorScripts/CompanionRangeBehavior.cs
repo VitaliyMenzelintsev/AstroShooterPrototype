@@ -72,7 +72,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         }
 
         CheckStoppingDistance();
-
     }
 
 
@@ -85,7 +84,10 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
 
-        GetComponent<CapsuleCollider>().enabled = false;
+        for (int i = 0; i < _myColliders.Length; i++)
+        {
+            _myColliders[i].enabled = false;
+        }
     }
 
 
@@ -103,7 +105,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _characterAnimator.SetBool("HasEnemy", false);
 
-        _navMeshAgent.SetDestination(_followPoint.position);      // действие follow the player
+        _navMeshAgent.SetDestination(_followPoint.position);
     }
 
 
@@ -112,7 +114,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetBool("HasEnemy", true);
 
-        _navMeshAgent.SetDestination(_currentCover.transform.position);            // действие move to cover
+        _navMeshAgent.SetDestination(_currentCover.transform.position);
     }
 
 
@@ -123,9 +125,9 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
+        _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
 
-        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);  //  действие range combat
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
     }
 
 
@@ -134,7 +136,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         ExitCover();
 
-        _characterAnimator.SetTrigger("Punch");  // действие melee combat
+        _characterAnimator.SetTrigger("Punch");
 
         _currentGun.Punch();
     }
@@ -164,7 +166,7 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void CheckStoppingDistance()
     {
-        if(_navMeshAgent.stoppingDistance != 0.2f)
+        if (_navMeshAgent.stoppingDistance != 0.2f)
         {
             _navMeshAgent.stoppingDistance = 0.2f;
         }
@@ -184,24 +186,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         }
     }
 
-
-
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    GetNewTarget();
-
-    //    if (CurrentTarget == null)
-    //    {
-    //        MyVitals.GetRessurect();
-
-    //        StateIdle();
-
-    //        _characterAnimator.SetBool("Dead", false);
-
-    //        _characterAnimator.SetBool("HasEnemy", false);
-    //    }
-    //}
 
 
 

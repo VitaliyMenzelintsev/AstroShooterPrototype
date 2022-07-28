@@ -15,32 +15,43 @@ public class Vitals : MonoBehaviour, IDamageable, IHealeable, IRessurectable
         _currentHealth = _startHealth;
     }
      
+     
 
     public bool IsAlive() => _currentHealth > 0;
+
 
 
     public bool IsNeedHealing() => IsAlive() && _currentHealth < _startHealth;
 
 
+
     public void GetHit(float _damage)
     {
-        _currentHealth -= _damageMultiplier *_damage;
+        _currentHealth -= _damageMultiplier * _damage;
     }
+
+
 
     public float GetMaxHealth()
     {
         return _startHealth;
     }
 
+
+
     public float GetCurrentHealth()
     {
         return _currentHealth;
     }
 
+
+
     public void GetHeal(float _heal)
     {
         _currentHealth += _heal;
     }
+
+
 
     public void GetRessurect()
     {

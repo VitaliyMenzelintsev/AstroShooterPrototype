@@ -2,11 +2,9 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Animator))]
-
 public abstract class CompanionBaseBehavior : BaseAIBehavior
 {
+    public BaseActivatedSkill MyActivatedSkill;
     [SerializeField]
     protected Transform _followPoint;
     [SerializeField]
@@ -15,9 +13,18 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
     protected Animator _characterAnimator;
     protected CoverManager _coverManager;
     protected CompanionCoverSpot _currentCover = null;
-    protected float _speed = 3.8f;
     protected float _resAnimationTime = 3.2f;
-    public BaseActivatedSkill MyActivatedSkill; // в это поле в инспекторе кладём нужный скилл
+
+    protected Collider[] _myColliders;
+
+
+    public override void Start()
+    {
+        base.Start();
+
+        _myColliders = GetComponentsInChildren<Collider>();
+    }
+
 
     protected bool IsPlayerFar()
     {
@@ -31,6 +38,8 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
         }
     }
 
+
+
     public override void StateSkill(bool _isESkill, GameObject _target)
     {
         if (GetComponent<Vitals>().IsAlive())
@@ -39,26 +48,35 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
         }
     }
 
+
+
     public void GetRessurect()
     {
         if (MyVitals.IsAlive())
         {
-            GetComponent<CapsuleCollider>().enabled = true;
+            for (int i = 0; i < _myColliders.Length; i++)
+            {
+                _myColliders[i].enabled = true;
+            }
 
             _characterAnimator.SetBool("Dead", false);
 
             _characterAnimator.SetBool("HasEnemy", false);
 
-            Invoke("SetSpeed", _resAnimationTime);
+            Invoke(nameof(SetSpeed), _resAnimationTime);
 
             StateIdle();
         }
     }
 
+
+
     protected void SetSpeed()
     {
         _navMeshAgent.speed = _speed;
     }
+
+
 
     public abstract void StateIdle();
 }

@@ -319,7 +319,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _teamNumber: 2
-  Eyes: {fileID: 1148123420998331587}
 --- !u!114 &1147898629373639786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,7 +349,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  Eyes: {fileID: 1148123420998331587}
+  Head: {fileID: 1148160087735005461}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 6088266737122412218}

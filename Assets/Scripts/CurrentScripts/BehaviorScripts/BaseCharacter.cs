@@ -2,26 +2,28 @@ using UnityEngine;
 
 [RequireComponent(typeof(Team))]
 [RequireComponent(typeof(Vitals))]
-public abstract class BaseCharacter : MonoBehaviour
+public abstract class BaseCharacter : MonoBehaviour, IVisible
 {
     [HideInInspector]
     public Team MyTeam;
     [HideInInspector]
     public Vitals MyVitals;
+    [HideInInspector]
+    public float _speed = 3.8f;
     [SerializeField]
-    protected Transform Eyes;
-    [SerializeField]
-    protected GameObject CurrentTarget = null;
-    protected TargetManager _targetManager;
+    protected Transform Head;
+    //[SerializeField]
+    public GameObject CurrentTarget = null;
     [SerializeField]
     protected int _myTeamNumber;
     [SerializeField]
-    public BaseGun _currentGun;
+    protected BaseGun _currentGun;
     [SerializeField]
     protected float _minAttackDistance = 1.5f;
     [SerializeField]
-    protected float _maxAttackDistance = 13f;
-
+    protected float _maxAttackDistance = 12f;
+    protected TargetManager _targetManager;
+  
 
 
     public virtual void Start()
@@ -36,9 +38,9 @@ public abstract class BaseCharacter : MonoBehaviour
     }
 
 
-    public Transform GetEyesPosition()
+    public Transform GetHeadTransform()
     {
-        return Eyes;
+        return Head;
     } 
 
 
@@ -46,6 +48,7 @@ public abstract class BaseCharacter : MonoBehaviour
     {
         return _maxAttackDistance;
     }
+
 
     public GameObject GetMyTarget()
     {
@@ -55,7 +58,7 @@ public abstract class BaseCharacter : MonoBehaviour
 
     protected void GetNewTarget()
     {
-        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes, true);
+        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Head, true);
     }
 
 

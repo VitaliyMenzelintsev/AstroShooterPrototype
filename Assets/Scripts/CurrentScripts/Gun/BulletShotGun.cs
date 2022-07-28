@@ -39,7 +39,7 @@ public class BulletShotGun : BulletGun
 
             _shootPoint = _aimPoint;
 
-            Invoke("DamageDeal", _shootDelay);
+            Invoke(nameof(DamageDeal), _shootDelay);
         }
     }
 
@@ -55,7 +55,7 @@ public class BulletShotGun : BulletGun
 
             _direction.Normalize();
 
-            Ray _ray = new Ray(_barrelPoints[i].position, _direction);
+            Ray _ray = new(_barrelPoints[i].position, _direction);
 
             RaycastHit _hit;
 

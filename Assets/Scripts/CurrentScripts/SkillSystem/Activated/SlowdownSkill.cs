@@ -39,9 +39,9 @@ public class SlowdownSkill : BaseActivatedSkill
 
             Operation();
 
-            Invoke("StopOperation", _skillDuration);   // время действия способности
+            Invoke(nameof(StopOperation), _skillDuration);   // время действия способности
 
-            Invoke("CooldownChanger", _skillCooldown); // кулдаун применения
+            Invoke(nameof(CooldownChanger), _skillCooldown); // кулдаун применения
             
         }
     }
@@ -59,7 +59,7 @@ public class SlowdownSkill : BaseActivatedSkill
             if (_targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
                 && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
 
-            _targets[i].GetComponent<NavMeshAgent>().speed -= 2f;
+            _targets[i].GetComponent<BaseCharacter>()._speed -= 2f;      // перестало работать, потому что каждое состояние жёстко задаёт скорость
             _targets[i].GetComponent<Vitals>().GetHit(_damage);
             _targets[i].GetComponent<SkillTargetFX>().FXPlay();
         }
@@ -73,8 +73,11 @@ public class SlowdownSkill : BaseActivatedSkill
 
         for (int i = 0; i < _targets.Length; i++)
         {
-            _targets[i].GetComponent<NavMeshAgent>().speed += 2f;
-            _targets[i].GetComponent<SkillTargetFX>().StopFX();
+            if(_targets[i] != null)
+            {
+                _targets[i].GetComponent<BaseCharacter>()._speed += 2f;
+                _targets[i].GetComponent<SkillTargetFX>().StopFX();
+            }
         }
     }
 

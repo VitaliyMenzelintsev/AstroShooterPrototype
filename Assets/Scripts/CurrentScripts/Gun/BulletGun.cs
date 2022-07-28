@@ -4,7 +4,8 @@ using UnityEngine;
 public class BulletGun : BaseGun
 {
     [Header("Gun Settings")]
-    protected float _punchDamage;
+    
+    public float _punchDamage = 30;
     [SerializeField]
     protected float _bulletSpeed = 200;
     [SerializeField]
@@ -12,9 +13,9 @@ public class BulletGun : BaseGun
 
     [Header("Recoil")]
     [SerializeField]
-    protected Vector2 _kickMinMax = new Vector2(0.05f, 0.2f);
+    protected Vector2 _kickMinMax = new(0.05f, 0.2f);
     [SerializeField]
-    protected Vector2 _recoilAngleMinMax = new Vector2(5, 8);
+    protected Vector2 _recoilAngleMinMax = new(5, 8);
     protected float _recoilBackTime = 0.1f;
     protected Vector3 _recoilSmoothDampVelocity;
     protected float _recoilRotSmoothDampVelocity;
@@ -26,7 +27,7 @@ public class BulletGun : BaseGun
     {
         base.Start();
 
-        _punchDamage = _damage / 2;
+        
         _gunOriginPosition = transform.localPosition;
     }
 
@@ -54,20 +55,17 @@ public class BulletGun : BaseGun
 
             Recoil();
 
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
+            Vector3 _direction = GetDirection();
 
-            Ray _ray = new Ray(_barrelOrigin.position, _direction);
+            Ray _ray = new(_barrelOrigin.position, _direction);
 
-            RaycastHit _hit;
-
-            if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
+            if (Physics.Raycast(_ray, out RaycastHit _hit, _distance))   
             {
                 ShootRender(_hit.point);
 
                 _lastShootTime = Time.time;
 
-                if (_hit.collider != null
-                    && _hit.collider.GetComponentInParent<Vitals>()
+                if (_hit.collider.GetComponentInParent<Vitals>()
                     && _hit.collider.GetComponent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                     _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
@@ -89,13 +87,13 @@ public class BulletGun : BaseGun
 
             if (_lastShootTime + _shootDelay < Time.time)
             {
-                Vector3 _direction = transform.forward; // определяем направление удара
+                Vector3 _direction = transform.forward;
 
-                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))   // если попали 
+                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))  
                 {
                     _lastShootTime = Time.time;
 
-                    _hit.collider.gameObject.GetComponent<Vitals>().GetHit(_punchDamage);
+                    _hit.collider.GetComponent<Vitals>().GetHit(_punchDamage);
                 }
                 else
                 {

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public abstract class EnemyBaseBehavior : BaseAIBehavior
 {
-    public Transform BuffPoint;
-    protected float _speed = 3.8f;
+    [SerializeField]
+    private Transform BuffPoint;
 
     public Transform GetBuffPoint()
     {

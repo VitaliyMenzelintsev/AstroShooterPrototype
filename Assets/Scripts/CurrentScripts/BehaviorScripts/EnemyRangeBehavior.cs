@@ -1,19 +1,12 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Team))]
-[RequireComponent(typeof(Vitals))]
-[RequireComponent(typeof(Animator))]
-
 public class EnemyRangeBehavior : EnemyBaseBehavior
 {
     private NavMeshAgent _navMeshAgent;
     private Animator _characterAnimator;
     private CoverManager _coverManager;
-    [SerializeField]
     private EnemyCoverSpot _currentCover = null;
-
 
 
     public override void Start()
@@ -64,6 +57,10 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
         }
     }
 
+
+    public override void StateSkill(bool _isESkill, GameObject _target) { }
+
+
     private void StateCombat()
     {
         if (IsRangeDistance())
@@ -75,6 +72,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
             StateMeleeCombat();
         }
     }
+
 
     private void StateDeath()
     {
@@ -108,8 +106,6 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetBool("HasEnemy", true);
 
-        //transform.LookAt(_currentCover.transform.position);
-
         _navMeshAgent.SetDestination(_currentCover.transform.position);
     }
 
@@ -122,17 +118,14 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetTrigger("Fire");
 
-        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position;
+        Vector3 _fixedAimPosition = CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position;
 
-        _fixedAimPosition.y = _fixedAimPosition.y - 0.5f;
+        _fixedAimPosition.y -= 0.5f;
 
         _currentGun.Aim(_fixedAimPosition);
 
         _currentGun.Shoot(_fixedAimPosition);
 
-        //_currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
-
-        //_currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position); //  действие range combat
     }
 
 
@@ -142,7 +135,7 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
 
         _characterAnimator.SetBool("Move", false);
 
-        _characterAnimator.SetTrigger("Punch");  // действие melee combat
+        _characterAnimator.SetTrigger("Punch");
 
         _currentGun.Punch();
     }
@@ -205,10 +198,5 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
         {
             return false;
         }
-    }
-
-    public override void StateSkill(bool _isESkill, GameObject _target)
-    {
-        throw new System.NotImplementedException();
     }
 }

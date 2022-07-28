@@ -29,7 +29,6 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
                 {
                     StateInvestigate();
                 }
-
             }
             else
             {
@@ -45,6 +44,9 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
     }
 
 
+    public override void StateSkill(bool _isESkill, GameObject _target) { }
+
+
     private void StateDeath()
     {
         if (_navMeshAgent != null
@@ -57,10 +59,7 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
     }
 
 
-    private void StateIdle()
-    {
-
-    }
+    private void StateIdle() { }
 
 
     private bool IsTargetNeedHeal()
@@ -81,15 +80,8 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
 
     private void StateCombat()
     {
-        transform.LookAt(CurrentTarget.transform); // смотрим на цель
+        transform.LookAt(CurrentTarget.transform); 
 
-        //_currentGun.Aim(_currentTarget.Eyes.position);
-
-        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetEyesPosition().position);
-    }
-
-    public override void StateSkill(bool _isESkill, GameObject _target)
-    {
-        throw new System.NotImplementedException();
+        _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
     }
 }

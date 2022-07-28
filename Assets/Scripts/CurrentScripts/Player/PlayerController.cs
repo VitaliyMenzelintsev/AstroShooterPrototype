@@ -220,7 +220,7 @@ public class PlayerController : BaseCharacter
     private new void GetNewTarget()
     {
         if(CurrentTarget == null)
-        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Eyes, true);
+        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Head, true);
     }
 
 
