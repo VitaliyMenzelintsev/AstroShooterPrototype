@@ -102,13 +102,13 @@ public abstract class BaseGun : MonoBehaviour
 
             _shootingParticle.Play();
 
-            Vector3 _direction = GetDirection(); // определяем направление стрельбы
+            Vector3 _direction = GetDirection(); 
 
             Ray _ray = new(_barrelOrigin.position, _direction);
 
             RaycastHit _hit;
 
-            if (Physics.Raycast(_ray, out _hit, _distance))   // если попали во что-то
+            if (Physics.Raycast(_ray, out _hit, _distance))   
             {
                 ShootRender(_hit.point);
 
