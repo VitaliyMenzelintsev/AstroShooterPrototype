@@ -56,10 +56,7 @@ public class BulletGun : BaseGun
 
             Vector3 _direction = GetDirection();
 
-            //Ray _ray = new(_barrelOrigin.position, _aimPoint - _barrelOrigin.position  /*_direction*/);
-
-
-            if (Physics.SphereCast(_barrelOrigin.position, 0.5f, _direction, out RaycastHit _hit, _distance))
+            if (Physics.SphereCast(_barrelOrigin.position, 0.15f, _direction, out RaycastHit _hit, _distance))
             {
                 ShootRender(_hit.point);
 

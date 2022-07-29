@@ -12,8 +12,7 @@ public class LaserGun : BaseGun
     private float _maxDistance;
     private bool _isMyOwnerAlive;
     private Vector3 _target;
-    private Vector3 _animationVelocity;
-    private float _animationSmoothTime = 0.2f;
+
 
     public override void Start()
     {
@@ -34,7 +33,7 @@ public class LaserGun : BaseGun
     {
         base.LateUpdate();
 
-        _isMyOwnerAlive = GetComponentInParent<Vitals>().IsAlive();
+        _isMyOwnerAlive = _myOwnerVitals.IsAlive();
 
         if (!_isMyOwnerAlive)
         {

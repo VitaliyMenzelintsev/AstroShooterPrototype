@@ -44,6 +44,12 @@ public class EnemyDroneBehavior : EnemyBaseBehavior
     }
 
 
+    public override void GetNewTarget()
+    {
+        CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Head, false);
+    }
+
+
     public override void StateSkill(bool _isESkill, GameObject _target) { }
 
 

@@ -6362,8 +6362,8 @@ MonoBehaviour:
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
   _currentGun: {fileID: 6171502553480761888}
-  _minAttackDistance: 0.5
-  _maxAttackDistance: 2
+  _minAttackDistance: 0.3
+  _maxAttackDistance: 2.2
   BuffPoint: {fileID: 0}
 --- !u!114 &6602927738360580847
 MonoBehaviour:

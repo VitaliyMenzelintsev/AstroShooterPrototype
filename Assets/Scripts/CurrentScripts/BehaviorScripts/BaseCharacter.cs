@@ -59,7 +59,7 @@ public abstract class BaseCharacter : MonoBehaviour, IVisible
     }
 
 
-    protected void GetNewTarget()
+    public virtual void GetNewTarget()
     {
         CurrentTarget = _targetManager.GetNewTarget(_myTeamNumber, Head, true);
     }

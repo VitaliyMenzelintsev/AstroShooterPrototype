@@ -73,7 +73,7 @@ public abstract class BaseGun : MonoBehaviour
     {
         Vector3 _direction = transform.forward;
 
-        if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
+        if (_addBulletSpread) 
         {
             _direction += new Vector3(
                 Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),

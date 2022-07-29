@@ -351,8 +351,8 @@ MonoBehaviour:
   _shootDelay: 0
   _shootingParticle: {fileID: 7594198233934004069}
   _isRangeGun: 1
-  _addBulletSpread: 0
-  _bulletSpreadVariance: {x: 0.05, y: 0.05, z: 0.05}
+  _addBulletSpread: 1
+  _bulletSpreadVariance: {x: 0.005, y: 0.005, z: 0.005}
   _distance: 55
   CurrentTarget: {fileID: 0}
   _lineRenderer: {fileID: 0}
