@@ -35,6 +35,7 @@ public class PlayerController : BaseCharacter
     private InputAction _healPartyAction;
     private InputAction _skillEButtonAction;
     private InputAction _skillQButtonAction;
+    private InputAction _mainMenuAction;
 
     private Vector3 _viewPoint;
 
@@ -52,6 +53,10 @@ public class PlayerController : BaseCharacter
     private LayerMask _layerMask;
 
 
+    [SerializeField]
+    private Canvas _menuCanvas;
+
+
     private void Awake()
     {
         _cameraTransform = Camera.main.transform;
@@ -66,6 +71,7 @@ public class PlayerController : BaseCharacter
         _healPartyAction = _playerInput.actions["HealParty"];
         _skillEButtonAction = _playerInput.actions["EButtonSkill"];
         _skillQButtonAction = _playerInput.actions["QButtonSkill"];
+        _mainMenuAction = _playerInput.actions["Menu"];
 
         _animator = GetComponent<Animator>();
         _shootAnimation = Animator.StringToHash("Rifle_Shooting");
@@ -113,7 +119,6 @@ public class PlayerController : BaseCharacter
 
     private void Move()
     {
-        // воздействие гравитации и модель движения игрока
         _groundedPlayer = _controller.isGrounded;
 
 
@@ -128,7 +133,7 @@ public class PlayerController : BaseCharacter
         Vector2 _input = _moveAction.ReadValue<Vector2>();
 
 
-        // "смягчение" данных input, чтобы анимации были плавнее
+        // "смягчение" input
         _blendVector = Vector2.SmoothDamp(_blendVector, _input, ref _animationVelocity, _animationSmoothTime);
        _move = new Vector3(_blendVector.x, 0, _blendVector.y);
 
@@ -235,6 +240,7 @@ public class PlayerController : BaseCharacter
         _healPartyAction.performed += _ => HealParty();
         _skillEButtonAction.performed += _ => ActivateESkill();
         _skillQButtonAction.performed += _ => ActivateQSkill();
+        _mainMenuAction.started += _ => GameMenu();
     }
 
 
@@ -245,6 +251,7 @@ public class PlayerController : BaseCharacter
         _healPartyAction.performed -= _ => HealParty();
         _skillEButtonAction.performed -= _ => ActivateESkill();
         _skillQButtonAction.performed -= _ => ActivateQSkill();
+        _mainMenuAction.canceled -= _ => GameMenu();
     }
 
 
@@ -255,6 +262,11 @@ public class PlayerController : BaseCharacter
         _currentGun.Shoot(_viewPoint);
     }
 
+
+    private void GameMenu()
+    {
+        _menuCanvas.enabled = !_menuCanvas.enabled;
+    }
 
 
     private void HealParty()

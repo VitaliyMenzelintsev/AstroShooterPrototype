@@ -4,7 +4,7 @@ using UnityEngine;
 public class DamageDecreaseLaser : MonoBehaviour
 {
     [SerializeField]
-    private GameObject[] _alliesArray/* = new GameObject[10]*/;
+    private GameObject[] _alliesArray;
 
     [SerializeField]
     private float _skillDistance = 12f;
@@ -40,7 +40,7 @@ public class DamageDecreaseLaser : MonoBehaviour
 
     private void FixedUpdate() 
     {
-        _myVitals = GetComponent<Vitals>();
+        _myVitals.IsAlive();  // ??
 
         if (_myVitals.IsAlive()
             && _alliesArray != null)
@@ -52,7 +52,7 @@ public class DamageDecreaseLaser : MonoBehaviour
                 if (_currentCharacter != null
                    && _targetManager.IsTargetAlive(_currentCharacter)
                    && _targetManager.IsDistanceCorrect(_currentCharacter, _laserPosition, _skillDistance)
-                   && _targetManager.CanSeeTarget(_currentCharacter, _laserPosition))
+                   /*&& _targetManager.CanSeeTarget(_currentCharacter, _laserPosition)*/)
                 {
                     Transform _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
 
@@ -64,11 +64,13 @@ public class DamageDecreaseLaser : MonoBehaviour
                     }
                     else
                     {
+                        _laserRender[i].enabled = false;
                         AddToDisactivated(_currentCharacter);
                     }
                 }
                 else
                 {
+                    _laserRender[i].enabled = false;
                     AddToDisactivated(_currentCharacter);
                 }
             }
@@ -78,6 +80,24 @@ public class DamageDecreaseLaser : MonoBehaviour
             EndSkill();
         }
     }
+
+
+    private void LaserRenderer()
+    {
+        for (int i = 0; i < _activatedAllies.Count; i++)
+        {
+
+
+            AddToDisactivated(_activatedAllies[i]);
+        }
+    }
+
+
+    private void LaserSwitcher()
+    {
+
+    }
+
 
 
     private void StartSkill()
