@@ -33,34 +33,8 @@ public class SpeedManager : MonoBehaviour
         {
             _target.GetComponent<PlayerController>().SpeedChange(-_value);
         }
-            
     }
      
-
-    public void PermanentAIChange(GameObject _target, bool _isOn, float _value)
-    {
-        if (_isOn)
-        {
-            _target.GetComponent<NavMeshAgent>().speed += _value;
-        }
-        else
-        {
-            _target.GetComponent<NavMeshAgent>().speed -= _value;
-        }
-    }
-     
-
-    public void PermanentPlayerChange(GameObject _target, bool _isOn, float _value)
-    {
-        if (_isOn)
-        {
-            _target.GetComponent<PlayerController>().SpeedChange(_value);
-        }
-        else
-        {
-            _target.GetComponent<PlayerController>().SpeedChange(-_value);
-        }
-    }
 
 
     private IEnumerator Timer(GameObject _target, float _value, float _time)

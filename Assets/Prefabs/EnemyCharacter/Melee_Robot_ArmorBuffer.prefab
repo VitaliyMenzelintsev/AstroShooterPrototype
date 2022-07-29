@@ -2212,7 +2212,7 @@ MonoBehaviour:
   _barrelOrigin: {fileID: 3133012815291626251}
   _magazineCapacity: 100
   _reloadTime: 0.1
-  _msBetweenShots: 2667
+  _msBetweenShots: 1667
   _damage: 80
   _shootDelay: 0
   _shootingParticle: {fileID: 7485227583928850181, guid: 318f25bfbab54df44bf2ec525c95fb65, type: 3}

@@ -17,7 +17,6 @@ public class Projectile : MonoBehaviour
     private void Start()
     {
         _speedManager = FindObjectOfType<SpeedManager>();
-        //Destroy(gameObject, 3f);
     }
 
     private void FixedUpdate()

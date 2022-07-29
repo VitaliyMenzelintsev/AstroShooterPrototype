@@ -5748,9 +5748,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.10788679
-  m_Height: 0.43154716
+  m_Height: 0.46
   m_Direction: 0
-  m_Center: {x: 0.21577358, y: 0, z: 0}
+  m_Center: {x: 0.23, y: 0, z: 0}
 --- !u!1 &4031322973035594543
 GameObject:
   m_ObjectHideFlags: 0
@@ -6210,9 +6210,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.10788692
-  m_Height: 0.43154767
+  m_Height: 0.46
   m_Direction: 0
-  m_Center: {x: -0.21577384, y: 0, z: 0}
+  m_Center: {x: -0.23, y: 0, z: 0}
 --- !u!1 &4031518964988546277
 GameObject:
   m_ObjectHideFlags: 0
@@ -7051,6 +7051,7 @@ MonoBehaviour:
   MyActivatedSkill: {fileID: 8416590095043496749}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
+  _isDead: 0
 --- !u!114 &6914673975370171443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7075,6 +7076,7 @@ MonoBehaviour:
   MyActivatedSkill: {fileID: 8416590095043496749}
   _followPoint: {fileID: 0}
   _player: {fileID: 0}
+  _isDead: 0
 --- !u!114 &5738242008061452496
 MonoBehaviour:
   m_ObjectHideFlags: 0

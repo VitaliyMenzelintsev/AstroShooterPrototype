@@ -121,7 +121,6 @@ public class EnemyRangeBehavior : EnemyBaseBehavior
         _currentGun.Aim(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
 
         _currentGun.Shoot(CurrentTarget.GetComponent<BaseCharacter>().GetHeadTransform().position);
-
     }
 
 

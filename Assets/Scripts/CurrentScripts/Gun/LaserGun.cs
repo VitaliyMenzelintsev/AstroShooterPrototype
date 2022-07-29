@@ -6,9 +6,14 @@ public class LaserGun : BaseGun
     private float _punchDamage;
     [SerializeField]
     private LineRenderer _lineRenderer;
+    [SerializeField]
+    private ParticleSystem _laserEnding;
+    private Vitals _myOwnerVitals;
     private float _maxDistance;
-    private Vector3 _myTarget;
-    public bool _myOwnerIsAlive;
+    private bool _isMyOwnerAlive;
+    private Vector3 _target;
+    private Vector3 _animationVelocity;
+    private float _animationSmoothTime = 0.2f;
 
     public override void Start()
     {
@@ -18,7 +23,9 @@ public class LaserGun : BaseGun
 
         _punchDamage = _damage / 2;
 
-        _maxDistance = gameObject.GetComponentInParent<BaseCharacter>().GetMaxAttackDistance();
+        _maxDistance = gameObject.GetComponentInParent<BaseCharacter>().GetMaxAttackDistance() - 0.5f;
+
+        _myOwnerVitals = GetComponentInParent<Vitals>();
     }
 
 
@@ -27,78 +34,79 @@ public class LaserGun : BaseGun
     {
         base.LateUpdate();
 
-        if (Vector3.Distance(gameObject.transform.position, _myTarget) > (_maxDistance - 0.5f))
+        _isMyOwnerAlive = GetComponentInParent<Vitals>().IsAlive();
+
+        if (!_isMyOwnerAlive)
         {
             _lineRenderer.enabled = false;
         }
 
-        if (_myTarget == null)
+        if(_target != null
+           && Vector3.Distance(transform.position, _target) > _maxDistance)
         {
             _lineRenderer.enabled = false;
         }
-
-
-        _myOwnerIsAlive = GetComponentInParent<Vitals>().IsAlive();
-
-        if (!_myOwnerIsAlive)
-        {
-            _lineRenderer.enabled = false;
-        }
-
-
     }
 
     public override void Shoot(Vector3 _aimPoint)
     {
-        if (IsGunReady())
+        _target = _aimPoint;
+
+        if (!IsGunReady())
         {
-            _myTarget = _aimPoint;
+            _lineRenderer.SetPosition(1, _barrelOrigin.position);
+            return;
+        }
 
-            _bulletsInMagazine--;
+        if (!IsLaserPossible(_aimPoint))
+        {
+            _lineRenderer.SetPosition(1, _barrelOrigin.position);
+            return;
+        }
 
-            _nextShotTime = Time.time + _msBetweenShots / 1000;
+        _bulletsInMagazine--;
 
-            _shootingParticle.Play();
+        _shootingParticle.Play();
 
-            Vector3 _direction = GetDirection(); 
+        Vector3 _direction = GetDirection();
 
-            Ray _ray = new Ray(_barrelOrigin.position, _direction);
+        Ray _ray = new Ray(_barrelOrigin.position, _direction);
 
-            RaycastHit _hit;
+        RaycastHit _hit;
 
-            _lineRenderer.SetPosition(0, _barrelOrigin.position);
+        _lineRenderer.SetPosition(0, _barrelOrigin.position);
 
-            if (Physics.Raycast(_ray, out _hit, _maxDistance))   
+        if (Physics.Raycast(_ray, out _hit, _maxDistance))
+        {
+            _lineRenderer.SetPosition(1, _hit.point);
+
+            Instantiate(_laserEnding, _hit.point, Quaternion.identity);
+
+            if (_hit.collider.GetComponentInParent<Vitals>().IsAlive()
+                && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
             {
-                _lastShootTime = Time.time;
+                _lineRenderer.enabled = true;
 
-                if (_hit.collider != null
-                    && _hit.collider.GetComponentInParent<Vitals>()
-                    && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
-                {
-                    _lineRenderer.enabled = true;
-
-                    _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
-
-                    _lineRenderer.SetPosition(1, _hit.point);
-
-                }
-                else
-                {
-                    //_lineRenderer.SetPosition(1, _barrelOrigin.position);
-                    _lineRenderer.enabled = false;
-                }
-
-            }
-            else
-            {
-                _lineRenderer.enabled = false;
+                _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
             }
         }
-        else 
+    }
+
+
+    public override Vector3 GetDirection()
+    {
+        Vector3 _direction = transform.forward;
+
+        if (_addBulletSpread) // если делаем разброс, то он задаётся путём рандомизации координат вектора направления
         {
-            _lineRenderer.enabled = false;
+            _direction += new Vector3(
+                Random.Range(-_bulletSpreadVariance.x, _bulletSpreadVariance.x),
+                Random.Range(-_bulletSpreadVariance.y, _bulletSpreadVariance.y),
+                Random.Range(-_bulletSpreadVariance.z, _bulletSpreadVariance.z));
+
+            _direction.Normalize();
         }
+        return _direction;
     }
 
 
@@ -111,9 +119,9 @@ public class LaserGun : BaseGun
 
             if (_lastShootTime + _shootDelay < Time.time)
             {
-                Vector3 _direction = GetDirection(); 
+                Vector3 _direction = GetDirection();
 
-                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))   
+                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))
                 {
                     _lastShootTime = Time.time;
 
@@ -129,4 +137,18 @@ public class LaserGun : BaseGun
 
 
     public override void ShootRender(Vector3 _aimPoint) { }
+
+    private bool IsLaserPossible(Vector3 _aimPoint)
+    {
+        if (_aimPoint != null
+            && (Vector3.Distance(gameObject.transform.position, _aimPoint) <= _maxDistance)
+            && _isMyOwnerAlive)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

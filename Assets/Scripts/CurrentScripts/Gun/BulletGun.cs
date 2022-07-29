@@ -56,17 +56,18 @@ public class BulletGun : BaseGun
 
             Vector3 _direction = GetDirection();
 
-            Ray _ray = new(_barrelOrigin.position, _aimPoint - _barrelOrigin.position  /*_direction*/);
+            //Ray _ray = new(_barrelOrigin.position, _aimPoint - _barrelOrigin.position  /*_direction*/);
 
-            if (Physics.Raycast(_ray, out RaycastHit _hit, _distance))   
+
+            if (Physics.SphereCast(_barrelOrigin.position, 0.5f, _direction, out RaycastHit _hit, _distance))
             {
                 ShootRender(_hit.point);
 
                 _lastShootTime = Time.time;
 
-                if (_hit.collider.GetComponentInParent<Vitals>()
-                    && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
-                    _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
+                if (_hit.transform.gameObject.GetComponentInParent<Vitals>()
+                    && _hit.transform.gameObject.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+                    _hit.transform.gameObject.GetComponentInParent<Vitals>().GetHit(_damage);
             }
             else
             {
@@ -74,6 +75,24 @@ public class BulletGun : BaseGun
 
                 _lastShootTime = Time.time;
             }
+
+
+            //if (Physics.Raycast(_ray, out RaycastHit _hit, _distance))   
+            //{
+            //    ShootRender(_hit.point);
+
+            //    _lastShootTime = Time.time;
+
+            //    if (_hit.collider.GetComponentInParent<Vitals>()
+            //        && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
+            //        _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
+            //}
+            //else
+            //{
+            //    ShootRender(_aimPoint);
+
+            //    _lastShootTime = Time.time;
+            //}
         }
     }
 
@@ -105,7 +124,7 @@ public class BulletGun : BaseGun
 
     public override void ShootRender(Vector3 _aimPoint)
     {
-        TrailRenderer _trail = Instantiate(_bulletTrail, _barrelOrigin.position, Quaternion.identity);
+        TrailRenderer _trail = Instantiate(_bulletTrail, _barrelOrigin.transform.position, Quaternion.identity);
 
         StartCoroutine(SpawnTrail(_trail, _aimPoint));
     }
@@ -121,7 +140,7 @@ public class BulletGun : BaseGun
 
     public IEnumerator SpawnTrail(TrailRenderer _trail, Vector3 _hitPoint)
     {
-        Vector3 _startPosition = _barrelOrigin.position /*_trail.transform.position*/;
+        Vector3 _startPosition = _barrelOrigin.transform.position;
         float _distance = Vector3.Distance(_trail.transform.position, _hitPoint);
         float _remainingDistance = _distance;
 
