@@ -8,7 +8,7 @@ public abstract class BaseCharacter : MonoBehaviour, IVisible
     public Team MyTeam;
     [HideInInspector]
     public Vitals MyVitals;
-    [HideInInspector]
+    //[HideInInspector]
     public float _speed = 3.2f;
     [SerializeField]
     protected Transform Head;

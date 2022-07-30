@@ -1,18 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GrenadeLauncher : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private GameObject _grenadePrefab;
+    [SerializeField]
+    private Transform _spawnPoint;
 
-    // Update is called once per frame
-    void Update()
+    public void Launch()
     {
-        
+        Instantiate(_grenadePrefab, _spawnPoint.position, _spawnPoint.rotation);
     }
 }

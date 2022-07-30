@@ -3,8 +3,8 @@ using UnityEngine.AI;
 
 public class EnemyMeleeBehavior : EnemyBaseBehavior
 {
-    private NavMeshAgent _navMeshAgent;
-    private Animator _characterAnimator;
+    protected NavMeshAgent _navMeshAgent;
+    protected Animator _characterAnimator;
 
 
     public override void Start()

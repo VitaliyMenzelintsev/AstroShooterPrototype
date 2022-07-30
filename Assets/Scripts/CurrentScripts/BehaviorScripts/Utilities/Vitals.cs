@@ -10,6 +10,8 @@ public class Vitals : MonoBehaviour, IDamageable, IHealeable, IRessurectable
     private float _ressurectHealth = 80;
     public float _damageMultiplier = 1;
 
+
+
     private void Start()
     {
         _currentHealth = _startHealth;

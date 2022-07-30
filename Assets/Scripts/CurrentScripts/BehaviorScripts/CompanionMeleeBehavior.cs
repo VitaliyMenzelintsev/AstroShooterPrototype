@@ -4,6 +4,10 @@ using UnityEngine.AI;
 
 public class CompanionMeleeBehavior : CompanionBaseBehavior
 {
+    [SerializeField]
+    private Transform _lookPoint;
+
+
     public override void Start()
     {
         base.Start();
@@ -89,6 +93,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         //_navMeshAgent.speed = 0;
 
         _characterAnimator.SetBool("HasEnemy", false);
+
+        _currentGun.Aim(_lookPoint.position);
     }
 
 
@@ -106,6 +112,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent.stoppingDistance = 0.2f;
 
         _navMeshAgent.SetDestination(_followPoint.position);
+
+        _currentGun.Aim(_lookPoint.position);
     }
 
 
@@ -124,6 +132,8 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
         _navMeshAgent.stoppingDistance = (_maxAttackDistance - _minAttackDistance) / 2;
 
         _navMeshAgent.SetDestination(CurrentTarget.transform.position);
+
+        _currentGun.Aim(_lookPoint.position);
     }
 
 

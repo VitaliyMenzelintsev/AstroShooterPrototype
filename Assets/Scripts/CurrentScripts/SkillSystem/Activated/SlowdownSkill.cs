@@ -48,7 +48,7 @@ public class SlowdownSkill : BaseActivatedSkill
 
     public override void Operation() // действие
     {
-        Vector3 _viewPoint = GameObject.FindObjectOfType<PlayerController>().GetViewPoint();
+        Vector3 _viewPoint = FindObjectOfType<PlayerController>().GetViewPoint();
 
         _targets = Physics.OverlapSphere(_viewPoint, 2.5f, _layerMask);
 
@@ -68,8 +68,6 @@ public class SlowdownSkill : BaseActivatedSkill
     private void StopOperation() // прекращение действия
     {
         _isActivated = false;
-
-        Debug.Log("Способность завершила действие");
 
         for (int i = 0; i < _targets.Length; i++)
         {

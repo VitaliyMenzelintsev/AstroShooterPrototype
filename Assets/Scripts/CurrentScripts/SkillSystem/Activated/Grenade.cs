@@ -6,17 +6,17 @@ public class Grenade : MonoBehaviour
 {
     [SerializeField]
     private float _time;
-    [SerializeField]
-    private float _speed;
+    private float _arc;
     [SerializeField]
     private float _angle;
     private float _gravity = 9.81f;
-
+    [SerializeField]
+    private GameObject _parent;
 
     [SerializeField]
     private float _explosionRadius;
     [SerializeField]
-    private LayerMask _collicionLayerMask;
+    private LayerMask _collisionLayerMask;
     [SerializeField]
     private LayerMask _damageLayerMask;
 
@@ -39,6 +39,10 @@ public class Grenade : MonoBehaviour
 
         _angle = -transform.localEulerAngles.x;
         _angle = _angle * Mathf.Deg2Rad;
+
+        _arc = Random.Range(15, 20);
+
+        Invoke("Explosion", 8f);
     }
 
 
@@ -54,8 +58,8 @@ public class Grenade : MonoBehaviour
     private void BallisticTranslate()
     {
         _time += Time.fixedDeltaTime;
-        float _vz = _speed * _time * Mathf.Cos(_angle) * Time.fixedDeltaTime;
-        float _vy = _speed * _time * Mathf.Sin(_angle) * Time.fixedDeltaTime - _gravity * _time * _time / 2 * Time.fixedDeltaTime;
+        float _vz = _arc * _time * Mathf.Cos(_angle) * Time.fixedDeltaTime;
+        float _vy = _arc * _time * Mathf.Sin(_angle) * Time.fixedDeltaTime - _gravity * _time * _time / 2 * Time.fixedDeltaTime;
         Vector3 _futurePosition = new Vector3(transform.localPosition.x, transform.localPosition.y + _vy, transform.localPosition.z + _vz);
         transform.rotation = Quaternion.LookRotation(transform.localPosition - _futurePosition);
         transform.eulerAngles += new Vector3(0, transform.parent.eulerAngles.y, 0);
@@ -64,7 +68,7 @@ public class Grenade : MonoBehaviour
 
     private void CollisionDetect()
     {
-        if(Physics.Raycast(transform.position, transform.forward, 0.1f, _collicionLayerMask))
+        if (Physics.Raycast(transform.position, transform.forward, 0.14f, _collisionLayerMask))
         {
             Explosion();
         }
@@ -72,25 +76,15 @@ public class Grenade : MonoBehaviour
 
     private void Explosion()
     {
-        //_currentHitObjects.Clear();
-
-        //RaycastHit[] _hits;
-        //_hits = Physics.SphereCastAll(transform.position, _explosionRadius, transform.forward, 0.1f, _damageLayerMask, QueryTriggerInteraction.UseGlobal);
-        //foreach(RaycastHit _hit in _hits)
-        //{
-        //    _currentHitObjects.Add(_hit.transform.gameObject);
-        //}
-
         _trailFX.Stop();
 
-        Instantiate(_explosionFXPrefab, new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z) , Quaternion.identity);
-        //_explosionFX.Play();
+        Instantiate(_explosionFXPrefab, new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z), Quaternion.identity);
 
         RaycastHit[] _hits = new RaycastHit[10];
 
         int _numberOfHits = Physics.SphereCastNonAlloc(transform.position, _explosionRadius, transform.forward, _hits, 0.1f, _damageLayerMask, QueryTriggerInteraction.UseGlobal);
 
-        for(int i = 0; i < _numberOfHits; i++)
+        for (int i = 0; i < _numberOfHits; i++)
         {
             _currentHitObjects.Add(_hits[i].transform.gameObject);
         }
@@ -107,6 +101,7 @@ public class Grenade : MonoBehaviour
                 _currentHitObjects[i].GetComponentInParent<Vitals>().GetHit(_damage);
             }
         }
-        Destroy(gameObject);
+        
+        Destroy(_parent);
     }
 }
