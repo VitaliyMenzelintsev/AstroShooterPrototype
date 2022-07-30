@@ -38,6 +38,19 @@ public class UIManager : MonoBehaviour
     public GameObject _target;
     private float _targetVitals;
 
+    [SerializeField]
+    private Image QSkill;
+    [SerializeField]
+    private SlowdownSkill _slowdownGrenade;
+
+    [SerializeField]
+    private Image ESkill;
+    [SerializeField]
+    private ShieldSkill _shield;
+
+    [SerializeField]
+    private Image FSkill;
+
 
     private void Start()
     {
