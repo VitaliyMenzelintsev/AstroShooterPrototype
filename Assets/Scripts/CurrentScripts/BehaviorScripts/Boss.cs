@@ -68,8 +68,6 @@ public class Boss : EnemyMeleeBehavior
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
 
-        Debug.Log("начал переход фазы");
-
         _characterAnimator.SetTrigger("StartTransition");
 
         _shield.SetActive(true);
@@ -103,7 +101,7 @@ public class Boss : EnemyMeleeBehavior
         for (int i = 0; i < _healTicks; i++)
         {
             yield return new WaitForSeconds(0.5f);
-            MyVitals.GetHeal(25);
+            MyVitals.GetHeal(50);
         }
 
         StopCoroutine(Heal());
@@ -113,7 +111,6 @@ public class Boss : EnemyMeleeBehavior
 
     private void RocketLaunch() // запускается в переходной фазе и в фазе комбат
     {
-        Debug.Log("Запуск ракет");
         for (int i = 0; i < _launchers.Length; i++)
         {
             _launchers[i].Launch();
@@ -123,8 +120,6 @@ public class Boss : EnemyMeleeBehavior
 
     private void StopHealState()
     {
-        Debug.Log("Закончил переходную фазу");
-
         _characterAnimator.SetBool("TransitionEnded", true);
 
         _shield.SetActive(false);
