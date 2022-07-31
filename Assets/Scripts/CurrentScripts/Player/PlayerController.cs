@@ -16,6 +16,9 @@ public class PlayerController : BaseCharacter
     [SerializeField, Range(1, 6)]
     private float _currentSpeed;
     private float _rotationSpeed = 7f;
+    private bool _isTired;
+    private float _sprintDuration = 4f;
+    private float _staminaTimer = 8f;
     private Transform _cameraTransform;
 
     private float _animationSmoothTime = 0.2f;  // смягчение скорости для анимации
@@ -204,16 +207,30 @@ public class PlayerController : BaseCharacter
             _animator.SetInteger("MoveState", 1);
             _currentSpeed = _crouchSpeed;
         }
-        else if (_sprintAction.inProgress)
+        else if (_sprintAction.inProgress && !_isTired)
         {
             _animator.SetInteger("MoveState", 2);
             _currentSpeed = _sprintSpeed;
+            Invoke(nameof(SprintSwitcher), _sprintDuration);
         }
         else
         {
             _animator.SetInteger("MoveState", 0);
             _currentSpeed = _walkSpeed;
         }
+    }
+
+
+    private void SprintSwitcher()
+    {
+        _isTired = true;
+        Invoke(nameof(StaminaRegenTimer), _staminaTimer);
+    }
+
+
+    private void StaminaRegenTimer()
+    {
+        _isTired = false;
     }
 
 

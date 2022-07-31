@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1232943348}
   m_LocalRotation: {x: -0.46113664, y: 0.5360532, z: 0.46113664, w: 0.5360532}
-  m_LocalPosition: {x: -0.27588546, y: 1.1440547, z: -0.03999746}
+  m_LocalPosition: {x: 0.384, y: 2.008, z: 2.719}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -917,7 +917,7 @@ NavMeshAgent:
   m_Height: 1.7
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 0
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &1333582193485500296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -961,7 +961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyTeam: {fileID: 0}
   MyVitals: {fileID: 0}
-  _speed: 3.8
+  _speed: 2.8
   Head: {fileID: 1339097230204124809}
   CurrentTarget: {fileID: 0}
   _myTeamNumber: 0
@@ -2475,8 +2475,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4954765324615596613}
-  m_LocalRotation: {x: -0.43264958, y: 0.559486, z: 0.48267528, w: 0.51654077}
-  m_LocalPosition: {x: -0.31164128, y: 0.49916187, z: -0.056998074}
+  m_LocalRotation: {x: 0.25573766, y: -0.21624844, z: -0.6466658, w: -0.6853162}
+  m_LocalPosition: {x: -0.418, y: 0.385, z: 0.353}
   m_LocalScale: {x: 0.8720931, y: 0.87209296, z: 0.87209314}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2488,7 +2488,7 @@ Transform:
   - {fileID: 9034121289441924101}
   m_Father: {fileID: 1335972460270465725}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0.634, y: 0.024, z: 5.344}
+  m_LocalEulerAnglesHint: {x: -39.065, y: -2.536, z: 87.576}
 --- !u!33 &4951684120146128929
 MeshFilter:
   m_ObjectHideFlags: 0
