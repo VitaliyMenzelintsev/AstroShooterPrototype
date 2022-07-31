@@ -71,11 +71,17 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
     protected void RessurectEnding()
     {
         _navMeshAgent.speed = _speed;
-        //_navMeshAgent.isStopped = false;
+        
         _isDead = false;
     }
 
 
 
     public abstract void StateIdle();
+
+
+    protected void SetAnimations()
+    {
+        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+    }
 }

@@ -82,16 +82,17 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetBool("Dead", true);
 
+
         ExitCover();
+
 
         if (!_isDead)
             _isDead = true;
 
+
         if (_navMeshAgent.speed != 0)
             _navMeshAgent.speed = 0;
 
-        //if (_navMeshAgent.isStopped != true)
-        //    _navMeshAgent.isStopped = true;
 
         for (int i = 0; i < _myColliders.Length; i++)
         {
@@ -120,10 +121,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         transform.LookAt(_player);
 
-        //_navMeshAgent.isStopped = false;
-
-        //_navMeshAgent.stoppingDistance = 0.2f;
-
         _navMeshAgent.SetDestination(_followPoint.position);
     }
 
@@ -131,8 +128,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateMoveToCover()
     {
-        //_navMeshAgent.isStopped = false;
-
         _navMeshAgent.speed = _speed;
 
         _characterAnimator.SetBool("HasEnemy", true);
@@ -144,8 +139,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
     private void StateRangeCombat()
     {
-        //_navMeshAgent.isStopped = true;
-
         _navMeshAgent.speed = 0;
 
         transform.LookAt(CurrentTarget.transform);
@@ -201,13 +194,6 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         _characterAnimator.SetBool("HasEnemy", true);
 
         _navMeshAgent.SetDestination(CurrentTarget.transform.position);
-    }
-
-
-
-    private void SetAnimations()
-    {
-        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
     }
 
 

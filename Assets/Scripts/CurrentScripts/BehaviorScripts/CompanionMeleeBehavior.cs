@@ -69,15 +69,12 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
     {
         _characterAnimator.SetBool("Dead", true);
 
-        //if (_navMeshAgent.speed != 0)
-        //    _navMeshAgent.speed = 0;
+        if (_navMeshAgent.speed != 0)
+            _navMeshAgent.speed = 0;
 
 
         if (_isDead)
             _isDead = true;
-
-        if (_navMeshAgent.isStopped != true)
-            _navMeshAgent.isStopped = true;
 
 
         for (int i = 0; i < _myColliders.Length; i++)
@@ -90,11 +87,9 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
     public override void StateIdle()
     {
-        //_navMeshAgent.speed = 0;
+        _navMeshAgent.speed = _speed;
 
         _characterAnimator.SetBool("HasEnemy", false);
-
-        //_currentGun.Aim(_lookPoint.position);
     }
 
 
@@ -107,33 +102,33 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         transform.LookAt(_player);
 
-        _navMeshAgent.isStopped = false;
-
         _navMeshAgent.stoppingDistance = 0.2f;
 
         _navMeshAgent.SetDestination(_followPoint.position);
-
-        //_currentGun.Aim(_lookPoint.position);
     }
 
 
 
     private void StateInvestigate()
     {
+        _navMeshAgent.stoppingDistance = (_maxAttackDistance - _minAttackDistance) / 2;
+
         if (Vector3.Distance(_navMeshAgent.transform.position, CurrentTarget.transform.position) <= (_maxAttackDistance - _minAttackDistance) / 2)
         {
-            _navMeshAgent.isStopped = true;
+            _navMeshAgent.speed = 0;
+        }
+        else
+        {
+            _navMeshAgent.speed = _speed;
         }
 
-        _navMeshAgent.speed = _speed;
 
         _characterAnimator.SetBool("HasEnemy", true);
 
-        _navMeshAgent.stoppingDistance = (_maxAttackDistance - _minAttackDistance) / 2;
+
+
 
         _navMeshAgent.SetDestination(CurrentTarget.transform.position);
-
-        //_currentGun.Aim(_lookPoint.position);
     }
 
 
@@ -154,12 +149,5 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _currentGun.Shoot(_fixedAimPosition);
 
-    }
-
-
-
-    private void SetAnimations()
-    {
-        _characterAnimator.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
     }
 }
