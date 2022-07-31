@@ -28,7 +28,7 @@ public class ShieldSkill : BaseActivatedSkill
 
             Operation();
 
-            Invoke("CooldownChanger", _skillCooldown); // кулдаун применения
+            Invoke(nameof(CooldownChanger), _skillCooldown); // кулдаун применения
         }
     }
 
@@ -49,5 +49,11 @@ public class ShieldSkill : BaseActivatedSkill
     protected void CooldownChanger() // переключатель кулдауна
     {
         _isCooldownOver = true;
+    }
+
+
+    public float GetCooldown()
+    {
+        return _skillCooldown;
     }
 }

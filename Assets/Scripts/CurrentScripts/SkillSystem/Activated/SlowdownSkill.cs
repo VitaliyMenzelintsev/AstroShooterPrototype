@@ -11,9 +11,9 @@ public class SlowdownSkill : BaseActivatedSkill
     [SerializeField]
     private GameObject _myTarget;
     [SerializeField]
-    private Transform _partToRotate;   // назначается в инспекторе
+    private Transform _partToRotate;   
     [SerializeField]
-    private Transform _firepoint;       // назначается в инспекторе
+    private Transform _firepoint;     
     private bool _isActivated = false;
     [SerializeField]
     private Collider[] _targets;
@@ -24,11 +24,12 @@ public class SlowdownSkill : BaseActivatedSkill
     [SerializeField]
     private float _damage = 70f;
 
-    public LayerMask _layerMask;
+    [SerializeField]
+    private LayerMask _layerMask;
 
 
 
-    public override void Activation(bool _isEButtonSkill, GameObject _target) // проверка завершённости кулдауна
+    public override void Activation(bool _isEButtonSkill, GameObject _target) 
     {
         if (!_isEButtonSkill
             && _isCooldownOver)
@@ -39,14 +40,13 @@ public class SlowdownSkill : BaseActivatedSkill
 
             Operation();
 
-            Invoke(nameof(StopOperation), _skillDuration);   // время действия способности
+            Invoke(nameof(StopOperation), _skillDuration);   
 
-            Invoke(nameof(CooldownChanger), _skillCooldown); // кулдаун применения
-            
+            Invoke(nameof(CooldownChanger), _skillCooldown);
         }
     }
 
-    public override void Operation() // действие
+    public override void Operation() 
     {
         Vector3 _viewPoint = FindObjectOfType<PlayerController>().GetViewPoint();
 
@@ -59,13 +59,13 @@ public class SlowdownSkill : BaseActivatedSkill
             if (_targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
                 && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
 
-            _targets[i].GetComponent<BaseCharacter>()._speed -= 2f;      // перестало работать, потому что каждое состояние жёстко задаёт скорость
+            _targets[i].GetComponent<BaseCharacter>()._speed -= 2f;    
             _targets[i].GetComponent<Vitals>().GetHit(_damage);
             _targets[i].GetComponent<SkillTargetFX>().FXPlay();
         }
     }
 
-    private void StopOperation() // прекращение действия
+    private void StopOperation() 
     {
         _isActivated = false;
 
@@ -81,9 +81,14 @@ public class SlowdownSkill : BaseActivatedSkill
 
 
 
-    protected void CooldownChanger() // переключатель кулдауна
+    protected void CooldownChanger() 
     {
         _isCooldownOver = true;
+    }
+
+    public float GetCooldown()
+    {
+        return _skillCooldown;
     }
 }
 

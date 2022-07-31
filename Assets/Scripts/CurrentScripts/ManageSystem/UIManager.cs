@@ -39,17 +39,33 @@ public class UIManager : MonoBehaviour
     private float _targetVitals;
 
     [SerializeField]
-    private Image QSkill;
+    private Image _imageQSkill;
     [SerializeField]
     private SlowdownSkill _slowdownGrenade;
+    [SerializeField]
+    private float _cooldownQ;
+    public bool _activatedQ;
 
     [SerializeField]
-    private Image ESkill;
+    private Image _imageESkill;
     [SerializeField]
     private ShieldSkill _shield;
-
     [SerializeField]
-    private Image FSkill;
+    private float _cooldownE;
+    public bool _activatedE;
+
+    //[SerializeField]
+    //private Image FSkill;
+
+
+    private void Awake()
+    {
+        _cooldownQ = _slowdownGrenade.GetCooldown();
+        _imageQSkill.fillAmount = 0;
+
+        _cooldownE = _shield.GetCooldown();
+        _imageESkill.fillAmount = 0;
+    }
 
 
     private void Start()
@@ -67,6 +83,12 @@ public class UIManager : MonoBehaviour
 
         _target = _player.GetMyTarget();
         _targetVitals = _target.GetComponent<Vitals>().GetCurrentHealth();
+
+        //_cooldownQ = _slowdownGrenade.GetCooldown();
+        //_imageQSkill.fillAmount = 0;
+
+        //_cooldownE = _shield.GetCooldown();
+        //_imageESkill.fillAmount = 0;
     }
 
     private void Update()
@@ -97,7 +119,67 @@ public class UIManager : MonoBehaviour
         {
             _targetHPBar.gameObject.SetActive(false);
         }
+
+        SetQSkillCooldown();
+
+        SetESkillCooldown();
+
     }
+
+
+    private void SetQSkillCooldown()
+    {
+        if (_activatedQ == false)
+        {
+            _activatedQ = true;
+
+            _imageQSkill.fillAmount = 1;
+        }
+
+        if (_activatedQ)
+        {
+            _imageQSkill.fillAmount -= 1 / _cooldownQ * Time.deltaTime;
+
+            if (_imageQSkill.fillAmount <= 0)
+            {
+                _imageQSkill.fillAmount = 0;
+
+                _activatedQ = false;
+            }
+        }
+    }
+
+
+
+    private void SetESkillCooldown()
+    {
+        if (!_activatedE)
+        {
+            _activatedE = true;
+
+            _imageESkill.fillAmount = 1;
+        }
+
+        if (_activatedE)
+        {
+            _imageESkill.fillAmount -= 1 / _cooldownE * Time.deltaTime;
+
+            if (_imageESkill.fillAmount <= 0)
+            {
+                _imageESkill.fillAmount = 0;
+
+                _activatedE = false;
+            }
+        }
+    }
+
+
+
+    public void SetFSkillCooldown()
+    {
+
+    }
+
 
 
     private void SetHealth(Slider _hpBar, float _health)

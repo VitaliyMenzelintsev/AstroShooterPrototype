@@ -55,6 +55,8 @@ public class PlayerController : BaseCharacter
 
     [SerializeField]
     private Canvas _menuCanvas;
+    [SerializeField]
+    private UIManager _managerUI;
 
 
     private void Awake()
@@ -295,6 +297,8 @@ public class PlayerController : BaseCharacter
         {
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, CurrentTarget);
         }
+
+        _managerUI._activatedE = true;
     }
 
 
@@ -305,6 +309,8 @@ public class PlayerController : BaseCharacter
         {
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(false, CurrentTarget);
         }
+
+        _managerUI._activatedQ = true;
     }
 
 
