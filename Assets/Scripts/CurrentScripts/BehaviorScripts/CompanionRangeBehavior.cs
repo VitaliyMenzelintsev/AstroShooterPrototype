@@ -106,6 +106,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
     {
         _navMeshAgent.speed = _speed;
 
+        _currentGun.Aim(_lookPoint.position);
+
         _characterAnimator.SetBool("HasEnemy", false);
     }
 
@@ -121,6 +123,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
 
         transform.LookAt(_player);
 
+        _currentGun.Aim(_lookPoint.position);
+
         _navMeshAgent.SetDestination(_followPoint.position);
     }
 
@@ -131,6 +135,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         _navMeshAgent.speed = _speed;
 
         _characterAnimator.SetBool("HasEnemy", true);
+
+        _currentGun.Aim(_lookPoint.position);
 
         _navMeshAgent.SetDestination(_currentCover.transform.position);
     }
@@ -192,6 +198,8 @@ public class CompanionRangeBehavior : CompanionBaseBehavior
         }
 
         _characterAnimator.SetBool("HasEnemy", true);
+
+        _currentGun.Aim(_lookPoint.position);
 
         _navMeshAgent.SetDestination(CurrentTarget.transform.position);
     }

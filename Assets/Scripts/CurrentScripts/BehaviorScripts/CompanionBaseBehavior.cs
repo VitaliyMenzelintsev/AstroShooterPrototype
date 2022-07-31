@@ -9,6 +9,8 @@ public abstract class CompanionBaseBehavior : BaseAIBehavior
     protected Transform _followPoint;
     [SerializeField]
     protected Transform _player;
+    [SerializeField]
+    protected Transform _lookPoint;
     protected NavMeshAgent _navMeshAgent;
     protected Animator _characterAnimator;
     protected CoverManager _coverManager;

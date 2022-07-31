@@ -72,24 +72,6 @@ public class BulletGun : BaseGun
 
                 _lastShootTime = Time.time;
             }
-
-
-            //if (Physics.Raycast(_ray, out RaycastHit _hit, _distance))   
-            //{
-            //    ShootRender(_hit.point);
-
-            //    _lastShootTime = Time.time;
-
-            //    if (_hit.collider.GetComponentInParent<Vitals>()
-            //        && _hit.collider.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
-            //        _hit.collider.GetComponentInParent<Vitals>().GetHit(_damage);
-            //}
-            //else
-            //{
-            //    ShootRender(_aimPoint);
-
-            //    _lastShootTime = Time.time;
-            //}
         }
     }
 
@@ -129,7 +111,7 @@ public class BulletGun : BaseGun
 
     public void Recoil()
     {
-        transform.localPosition -= Vector3.back * Random.Range(_kickMinMax.x, _kickMinMax.y);
+        transform.localPosition -= -Vector3.back * Random.Range(_kickMinMax.x, _kickMinMax.y);
         _recoilAngle += Random.Range(_recoilAngleMinMax.x, _recoilAngleMinMax.y);
         _recoilAngle = Mathf.Clamp(_recoilAngle, 0, 25);
     }
