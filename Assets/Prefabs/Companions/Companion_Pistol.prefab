@@ -960,7 +960,7 @@ MonoBehaviour:
   _targets: []
   _myOwnerTeamNumber: 0
   _fxExplosion: {fileID: 6193042020458909464, guid: 1ec7b13651eb9e74b855e0bb57204233, type: 3}
-  _damage: 70
+  _damage: 15
   _layerMask:
     serializedVersion: 2
     m_Bits: 256

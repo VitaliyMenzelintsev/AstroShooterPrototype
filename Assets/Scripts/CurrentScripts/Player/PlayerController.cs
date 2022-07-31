@@ -171,7 +171,7 @@ public class PlayerController : BaseCharacter
             _viewPoint = _hit.point;
 
             if (_hit.collider != null
-                     && _hit.collider.GetComponent<Vitals>())      // TryGetComponent(out IDamageable _damageableObject)
+                     && _hit.collider.GetComponentInParent<Vitals>())      // TryGetComponent(out IDamageable _damageableObject)
             {
                 CurrentTarget = _hit.collider.gameObject;
             }
