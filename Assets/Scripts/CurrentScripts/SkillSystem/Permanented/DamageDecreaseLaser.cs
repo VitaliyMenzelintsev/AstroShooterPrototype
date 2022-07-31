@@ -40,7 +40,7 @@ public class DamageDecreaseLaser : MonoBehaviour
 
     private void FixedUpdate() 
     {
-        _myVitals.IsAlive();  // ??
+        _myVitals.IsAlive();  
 
         if (_myVitals.IsAlive()
             && _alliesArray != null)
@@ -52,7 +52,7 @@ public class DamageDecreaseLaser : MonoBehaviour
                 if (_currentCharacter != null
                    && _targetManager.IsTargetAlive(_currentCharacter)
                    && _targetManager.IsDistanceCorrect(_currentCharacter, _laserPosition, _skillDistance)
-                   /*&& _targetManager.CanSeeTarget(_currentCharacter, _laserPosition)*/)
+                   && _targetManager.CanSeeTarget(_currentCharacter, _laserPosition))
                 {
                     Transform _buffPoint = _currentCharacter.GetComponent<EnemyBaseBehavior>().GetBuffPoint();
 

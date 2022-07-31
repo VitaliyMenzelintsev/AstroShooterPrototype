@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class TargetManager : MonoBehaviour
 {
-    public GameObject[] _allCharactersArray;
+    private GameObject[] _allCharactersArray;
+   
 
-     
     private void Awake()
     {
         _allCharactersArray = GameObject.FindGameObjectsWithTag("Character");

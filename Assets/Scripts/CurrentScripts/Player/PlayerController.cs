@@ -298,7 +298,7 @@ public class PlayerController : BaseCharacter
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(true, CurrentTarget);
         }
 
-        _managerUI._activatedE = true;
+        _managerUI._isEActivated = true;
     }
 
 
@@ -310,7 +310,7 @@ public class PlayerController : BaseCharacter
             _companions[i].GetComponent<CompanionBaseBehavior>().StateSkill(false, CurrentTarget);
         }
 
-        _managerUI._activatedQ = true;
+        _managerUI._isQActivated = true;
     }
 
 

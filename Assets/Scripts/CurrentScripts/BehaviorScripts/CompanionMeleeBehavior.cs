@@ -94,7 +94,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _characterAnimator.SetBool("HasEnemy", false);
 
-        _currentGun.Aim(_lookPoint.position);
+        //_currentGun.Aim(_lookPoint.position);
     }
 
 
@@ -113,7 +113,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _navMeshAgent.SetDestination(_followPoint.position);
 
-        _currentGun.Aim(_lookPoint.position);
+        //_currentGun.Aim(_lookPoint.position);
     }
 
 
@@ -133,7 +133,7 @@ public class CompanionMeleeBehavior : CompanionBaseBehavior
 
         _navMeshAgent.SetDestination(CurrentTarget.transform.position);
 
-        _currentGun.Aim(_lookPoint.position);
+        //_currentGun.Aim(_lookPoint.position);
     }
 
 

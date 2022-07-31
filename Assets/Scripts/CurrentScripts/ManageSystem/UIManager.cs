@@ -44,7 +44,8 @@ public class UIManager : MonoBehaviour
     private SlowdownSkill _slowdownGrenade;
     [SerializeField]
     private float _cooldownQ;
-    public bool _activatedQ;
+    private bool _iscooldownQStarted = false;
+    public bool _isQActivated = false;
 
     [SerializeField]
     private Image _imageESkill;
@@ -52,7 +53,8 @@ public class UIManager : MonoBehaviour
     private ShieldSkill _shield;
     [SerializeField]
     private float _cooldownE;
-    public bool _activatedE;
+    private bool _isCooldownEStarted = false;
+    public bool _isEActivated = false;
 
     //[SerializeField]
     //private Image FSkill;
@@ -61,10 +63,10 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         _cooldownQ = _slowdownGrenade.GetCooldown();
-        _imageQSkill.fillAmount = 0;
+        _imageQSkill.fillAmount = 1;
 
         _cooldownE = _shield.GetCooldown();
-        _imageESkill.fillAmount = 0;
+        _imageESkill.fillAmount = 1;
     }
 
 
@@ -129,22 +131,25 @@ public class UIManager : MonoBehaviour
 
     private void SetQSkillCooldown()
     {
-        if (_activatedQ == false)
+        if (!_iscooldownQStarted 
+            && _isQActivated)
         {
-            _activatedQ = true;
+            _iscooldownQStarted = true;
 
             _imageQSkill.fillAmount = 1;
         }
 
-        if (_activatedQ)
+        if (_iscooldownQStarted)
         {
             _imageQSkill.fillAmount -= 1 / _cooldownQ * Time.deltaTime;
 
             if (_imageQSkill.fillAmount <= 0)
             {
-                _imageQSkill.fillAmount = 0;
+                _imageQSkill.fillAmount = 1;
 
-                _activatedQ = false;
+                _iscooldownQStarted = false;
+
+                _isQActivated = false;
             }
         }
     }
@@ -153,22 +158,25 @@ public class UIManager : MonoBehaviour
 
     private void SetESkillCooldown()
     {
-        if (!_activatedE)
+        if (!_isCooldownEStarted
+            && _isEActivated)
         {
-            _activatedE = true;
+            _isCooldownEStarted = true;
 
             _imageESkill.fillAmount = 1;
         }
 
-        if (_activatedE)
+        if (_isCooldownEStarted)
         {
             _imageESkill.fillAmount -= 1 / _cooldownE * Time.deltaTime;
 
             if (_imageESkill.fillAmount <= 0)
             {
-                _imageESkill.fillAmount = 0;
+                _imageESkill.fillAmount = 1;
 
-                _activatedE = false;
+                _isCooldownEStarted = false;
+
+                _isEActivated = false;
             }
         }
     }
