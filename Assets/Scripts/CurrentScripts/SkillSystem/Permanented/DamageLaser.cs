@@ -58,7 +58,7 @@ public class DamageLaser : MonoBehaviour
             {
                 _laserRender[i].enabled = true;
                 _laserRender[i].SetPosition(0, _laserPoints[i].position);
-                _laserRender[i].SetPosition(1, _currentTarget.transform.position);
+                _laserRender[i].SetPosition(1, new Vector3(_currentTarget.transform.position.x, _currentTarget.transform.position.y + Random.Range(0.8f, 1.4f), _currentTarget.transform.position.z));
                 _currentTarget.GetComponent<Vitals>().GetHit(_damage);
             }
         }

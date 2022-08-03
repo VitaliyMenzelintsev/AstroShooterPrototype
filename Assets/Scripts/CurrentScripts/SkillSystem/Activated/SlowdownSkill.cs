@@ -42,7 +42,7 @@ public class SlowdownSkill : BaseActivatedSkill
 
             Invoke(nameof(StopOperation), _skillDuration);   
 
-            Invoke(nameof(CooldownChanger), _skillCooldown);
+            Invoke(nameof(CooldownSwitcher), _skillCooldown);
         }
     }
 
@@ -59,9 +59,9 @@ public class SlowdownSkill : BaseActivatedSkill
             if (_targets[i].gameObject.TryGetComponent(out ITeamable _targetableObject)
                 && _targetableObject.GetTeamNumber() != _myOwnerTeamNumber)
 
-            _targets[i].GetComponent<BaseCharacter>()._speed -= 2f;    
-            _targets[i].GetComponent<Vitals>().GetHit(_damage);
-            _targets[i].GetComponent<SkillTargetFX>().FXPlay();
+            _targets[i].GetComponentInParent<BaseCharacter>()._speed -= 2f;    
+            _targets[i].GetComponentInParent<Vitals>().GetHit(_damage);
+            _targets[i].GetComponentInParent<SkillTargetFX>().FXPlay();
         }
     }
 
@@ -73,15 +73,15 @@ public class SlowdownSkill : BaseActivatedSkill
         {
             if(_targets[i] != null)
             {
-                _targets[i].GetComponent<BaseCharacter>()._speed += 2f;
-                _targets[i].GetComponent<SkillTargetFX>().StopFX();
+                _targets[i].GetComponentInParent<BaseCharacter>()._speed += 2f;
+                _targets[i].GetComponentInParent<SkillTargetFX>().StopFX();
             }
         }
     }
 
 
 
-    protected void CooldownChanger() 
+    protected void CooldownSwitcher() 
     {
         _isCooldownOver = true;
     }

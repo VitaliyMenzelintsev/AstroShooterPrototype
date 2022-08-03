@@ -4,12 +4,16 @@ using UnityEngine;
 public class BulletGun : BaseGun
 {
     [Header("Gun Settings")]
-    
+
     public float _punchDamage = 30;
     [SerializeField]
     protected float _bulletSpeed = 200;
     [SerializeField]
     protected TrailRenderer _bulletTrail;
+    [SerializeField]
+    private ParticleSystem _bulletImpact;
+    [SerializeField]
+    private LayerMask _layerMask;
 
     [Header("Recoil")]
     [SerializeField]
@@ -21,7 +25,7 @@ public class BulletGun : BaseGun
     protected float _recoilBackTime = 0.1f;
     protected float _recoilRotSmoothDampVelocity;
     protected float _recoilAngle;
-    
+
 
     public override void Start()
     {
@@ -56,7 +60,9 @@ public class BulletGun : BaseGun
 
             Vector3 _direction = GetDirection();
 
-            if (Physics.SphereCast(_barrelOrigin.position, 0.15f, _direction, out RaycastHit _hit, _distance))
+
+
+            if (Physics.SphereCast(_barrelOrigin.position, 0.15f, _direction, out RaycastHit _hit, _distance, _layerMask))
             {
                 ShootRender(_hit.point);
 
@@ -65,13 +71,21 @@ public class BulletGun : BaseGun
                 if (_hit.transform.gameObject.GetComponentInParent<Vitals>()
                     && _hit.transform.gameObject.GetComponentInParent<Team>().GetTeamNumber() != _myOwnerTeamNumber)
                     _hit.transform.gameObject.GetComponentInParent<Vitals>().GetHit(_damage);
+
+                if (_bulletImpact != null)
+                    Instantiate(_bulletImpact, _hit.point, Quaternion.LookRotation(_hit.normal));
             }
             else
             {
                 ShootRender(_aimPoint);
 
+                if (_bulletImpact != null)
+                    Instantiate(_bulletImpact, _hit.point, Quaternion.LookRotation(-Vector3.forward));
+
                 _lastShootTime = Time.time;
             }
+
+
         }
     }
 
@@ -86,7 +100,7 @@ public class BulletGun : BaseGun
             {
                 Vector3 _direction = transform.forward;
 
-                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))  
+                if (Physics.Raycast(_barrelOrigin.position, _direction, out RaycastHit _hit, float.MaxValue))
                 {
                     _lastShootTime = Time.time;
 

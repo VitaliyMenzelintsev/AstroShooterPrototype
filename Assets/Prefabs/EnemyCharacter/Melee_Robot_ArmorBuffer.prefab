@@ -2100,7 +2100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3133012815841528511}
   - component: {fileID: 1471647363014695157}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spine_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}

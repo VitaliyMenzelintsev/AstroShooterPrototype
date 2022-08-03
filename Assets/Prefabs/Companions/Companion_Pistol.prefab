@@ -2566,6 +2566,10 @@ MonoBehaviour:
   _punchDamage: 30
   _bulletSpeed: 200
   _bulletTrail: {fileID: 1921083361938323580, guid: 434dc2a8b152dcf41aff1e13876fc714, type: 3}
+  _bulletImpact: {fileID: 0}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 15809
   _kickMinMax: {x: 0.1, y: 0.5}
   _recoilAngleMinMax: {x: 5, y: 15}
 --- !u!114 &4951684120146128931

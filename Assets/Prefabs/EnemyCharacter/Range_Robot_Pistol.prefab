@@ -730,7 +730,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1148364700220998521}
   - component: {fileID: 3749963837570221617}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spine_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12359,6 +12359,10 @@ MonoBehaviour:
   _punchDamage: 30
   _bulletSpeed: 200
   _bulletTrail: {fileID: 1921083361938323580, guid: 434dc2a8b152dcf41aff1e13876fc714, type: 3}
+  _bulletImpact: {fileID: 0}
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 15809
   _kickMinMax: {x: 0.05, y: 0.2}
   _recoilAngleMinMax: {x: 2, y: 5}
 --- !u!114 &1434138307100814765
